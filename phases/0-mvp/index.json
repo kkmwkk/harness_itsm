@@ -37,7 +37,10 @@
     {
       "step": 4,
       "name": "api-routes",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-21T22:55:39+0900",
+      "summary": "src/app/api/summarize, summaries (GET list / GET by id) 라우트 작성. services 모킹 기반 라우트 핸들러 테스트 통과.",
+      "completed_at": "2026-05-21T23:01:45+0900"
     },
     {
       "step": 5,
