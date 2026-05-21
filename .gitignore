@@ -4,6 +4,18 @@ out/
 next-env.d.ts
 tsconfig.tsbuildinfo
 
+# macOS
+.DS_Store
+
 # phase execution outputs
 phases/**/phase*-output.json
 phases/**/step*-output.json
+
+# TubeNote runtime artifacts
+output/
+data/
+
+# env
+.env
+.env.local
+.env*.local
