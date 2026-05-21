@@ -16,7 +16,7 @@
       "status": "completed",
       "started_at": "2026-05-21T20:14:55+0900",
       "summary": "src/lib/db.ts (better-sqlite3) + src/types/summary.ts 작성, summaries 테이블 + CRUD + TDD 8 케이스 통과.",
-      "completed_at": "2026-05-21T20:22:11+0900"
+      "completed_at": "2026-05-21T22:46:19+0900"
     },
     {
       "step": 2,
