@@ -67,9 +67,13 @@ function rowToSummary(row: SummaryRow): Summary {
   };
 }
 
-export function insertSummary(db: Database, input: NewSummary): Summary {
-  const id = randomUUID();
-  const createdAt = new Date().toISOString();
+export function insertSummary(
+  db: Database,
+  input: NewSummary,
+  opts?: { id?: string; createdAt?: string },
+): Summary {
+  const id = opts?.id ?? randomUUID();
+  const createdAt = opts?.createdAt ?? new Date().toISOString();
   db.prepare(
     `INSERT INTO summaries (id, url, title, channel, duration, one_liner, md_path, created_at)
      VALUES (@id, @url, @title, @channel, @duration, @oneLiner, @mdPath, @createdAt)`,
