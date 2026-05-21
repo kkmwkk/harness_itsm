@@ -24,7 +24,7 @@
       "status": "completed",
       "started_at": "2026-05-21T22:46:19+0900",
       "summary": "src/lib/gemini.ts (Gemini SDK 래퍼) + src/services/summarizer.ts (URL 검증·frontmatter 파싱) 작성, 모킹 기반 테스트 통과.",
-      "completed_at": "2026-05-21T22:50:30+0900"
+      "completed_at": "2026-05-21T22:51:05+0900"
     },
     {
       "step": 3,
