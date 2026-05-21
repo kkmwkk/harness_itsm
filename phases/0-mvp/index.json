@@ -7,7 +7,8 @@
       "name": "project-setup",
       "status": "completed",
       "started_at": "2026-05-21T18:53:34+0900",
-      "summary": "Next.js 15 + TS strict + Tailwind v4 + Vitest 셋업 완료. 빈 페이지 렌더 테스트 통과."
+      "summary": "Next.js 15 + TS strict + Tailwind v4 + Vitest 셋업 완료. 빈 페이지 렌더 테스트 통과.",
+      "completed_at": "2026-05-21T20:14:55+0900"
     },
     {
       "step": 1,
