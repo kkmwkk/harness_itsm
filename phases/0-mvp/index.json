@@ -56,7 +56,7 @@
       "status": "completed",
       "started_at": "2026-05-23T12:21:20+0900",
       "summary": "src/lib/notion.ts + src/services/notion.ts + POST /api/notion + SyncToNotionButton 작성. 멱등 동기화 테스트 통과.",
-      "completed_at": "2026-05-23T12:29:00+0900"
+      "completed_at": "2026-05-23T12:29:45+0900"
     }
   ],
   "created_at": "2026-05-21T18:53:34+0900"
