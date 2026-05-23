@@ -13,7 +13,9 @@
   },
   "dependencies": {
     "@google/genai": "^2.5.0",
+    "@notionhq/client": "^5.22.0",
     "@tailwindcss/postcss": "^4.0.0",
+    "@tryfabric/martian": "^1.2.4",
     "better-sqlite3": "^12.10.0",
     "gray-matter": "^4.0.3",
     "next": "^15.0.0",
