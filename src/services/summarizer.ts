@@ -37,6 +37,20 @@ export function isValidYoutubeUrl(url: string): boolean {
   return YOUTUBE_URL_PATTERNS.some((re) => re.test(url));
 }
 
+const VIDEO_ID_EXTRACTORS: RegExp[] = [
+  /youtube\.com\/watch\?v=([A-Za-z0-9_-]{11})/,
+  /youtube\.com\/shorts\/([A-Za-z0-9_-]{11})/,
+  /youtu\.be\/([A-Za-z0-9_-]{11})/,
+];
+
+export function normalizeYoutubeUrl(url: string): string {
+  for (const re of VIDEO_ID_EXTRACTORS) {
+    const m = url.match(re);
+    if (m && m[1]) return `https://www.youtube.com/watch?v=${m[1]}`;
+  }
+  return url;
+}
+
 function isPlainString(v: unknown): v is string {
   return typeof v === 'string' && v.length > 0;
 }
@@ -50,7 +64,7 @@ export async function summarize(url: string): Promise<SummarizerOutput> {
     throw new InvalidUrlError(`Invalid YouTube URL: ${url}`);
   }
 
-  const raw = await summarizeYoutubeUrl(url);
+  const raw = await summarizeYoutubeUrl(normalizeYoutubeUrl(url));
 
   let parsed: matter.GrayMatterFile<string>;
   try {

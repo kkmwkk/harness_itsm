@@ -73,7 +73,7 @@ export async function summarizeYoutubeUrl(
         {
           role: 'user',
           parts: [
-            { fileData: { fileUri: url } },
+            { fileData: { fileUri: url, mimeType: 'video/*' } },
             { text: buildPrompt(url) },
           ],
         },
