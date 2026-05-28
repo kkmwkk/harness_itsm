@@ -37,7 +37,10 @@
     {
       "step": 4,
       "name": "dynamic-form",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-29T07:10:20+0900",
+      "summary": "vee-validate + @vee-validate/zod + zod(v3, vee-validate 호환) 도입. shadcn 5종(textarea·select·radio-group·checkbox·label) 추가. useFormSchema(buildFormSchema FieldType 12종 → Zod, required string 은 min(1)) + DynamicForm.vue (layout single/two-column md 2열, 라벨 위 14px/500 + 필수 * danger, 검증 메시지 12px/400 danger, 액션 우측 정렬 취소→저장, VeeValidate useForm+toTypedSchema, setFieldValue 단일 바인딩). 단위 테스트 8 케이스. DynamicFormSampler 8필드 mock, /_dev/dynamic-form 라우트.",
+      "completed_at": "2026-05-29T07:20:30+0900"
     },
     {
       "step": 5,
