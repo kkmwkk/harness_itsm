@@ -53,6 +53,11 @@ const routes: RouteRecordRaw[] = [
     name: 'dev-shadcn',
     component: () => import('@/views/_dev/ShadcnSampler.vue'),
   },
+  {
+    path: '/_dev/data-table',
+    name: 'dev-data-table',
+    component: () => import('@/views/_dev/DataTableSampler.vue'),
+  },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ];
 
