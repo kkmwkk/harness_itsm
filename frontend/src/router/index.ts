@@ -58,6 +58,11 @@ const routes: RouteRecordRaw[] = [
     name: 'dev-data-table',
     component: () => import('@/views/_dev/DataTableSampler.vue'),
   },
+  {
+    path: '/_dev/ag-grid',
+    name: 'dev-ag-grid',
+    component: () => import('@/views/_dev/AgGridSampler.vue'),
+  },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ];
 

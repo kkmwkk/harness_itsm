@@ -21,7 +21,10 @@
     {
       "step": 2,
       "name": "ag-grid-adapter",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-29T07:03:45+0900",
+      "summary": "ag-grid-community + ag-grid-vue3 32.x Community 도입(Enterprise 차단, ADR-007). lib/ag-grid-modules.ts 에 모듈 등록(v32 에 맞춰 ClientSideRowModelModule). ag-theme-itg.css 로 --ag-* 변수를 UI_GUIDE 토큰(--color-*)에 매핑(헤더/호버/선택/zebra-off/폰트 600). AgGridSampler.vue 1500행 mock 가상 스크롤 검증, /_dev/ag-grid 라우트.",
+      "completed_at": "2026-05-29T07:07:00+0900"
     },
     {
       "step": 3,

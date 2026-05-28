@@ -1,0 +1,46 @@
+/* ag-theme-itg — AG Grid Community 전용 커스텀 테마.
+   UI_GUIDE §5-4 Don't: alpine/balham/material 기본 테마 CSS 는 import 하지 않는다.
+   구조 CSS(ag-grid.css)만 가져오고, --ag-* 변수를 UI_GUIDE §3 토큰(--color-*)에 매핑한다. */
+@import "ag-grid-community/styles/ag-grid.css";
+
+.ag-theme-itg {
+  /* 폰트 (UI_GUIDE §4 · 그리드 셀 13px) */
+  --ag-font-family: var(--font-sans);
+  --ag-font-size: 13px;
+
+  /* 색상 (UI_GUIDE §3) */
+  --ag-background-color: var(--color-surface);
+  --ag-foreground-color: var(--color-foreground);
+  --ag-header-background-color: var(--color-surface-muted);
+  --ag-header-foreground-color: var(--color-foreground);
+  --ag-border-color: var(--color-border);
+  --ag-row-border-color: var(--color-border-subtle);
+  --ag-row-hover-color: var(--color-surface-hover);
+  --ag-selected-row-background-color: var(--color-surface-selected);
+
+  /* 사이즈 — UI_GUIDE §5-4 default 40px 행 */
+  --ag-grid-size: 4px;
+  --ag-row-height: 40px;
+  --ag-header-height: 40px;
+  --ag-cell-horizontal-padding: 12px;
+
+  /* 포커스 (UI_GUIDE §11 — :focus-visible 2px) */
+  --ag-input-focus-border-color: var(--color-ring);
+  --ag-range-selection-border-color: var(--color-ring);
+
+  /* zebra-stripe 비활성 (UI_GUIDE §12 Don't) — 홀수 행 배경을 기본 배경과 동일하게 */
+  --ag-odd-row-background-color: var(--color-surface);
+
+  font-family: var(--ag-font-family);
+}
+
+/* 헤더 폰트 가중치 (UI_GUIDE §4-2 그리드 헤더 13px / 600) */
+.ag-theme-itg .ag-header-cell-label {
+  font-weight: 600;
+}
+
+/* 다크 모드 — tokens.css 의 .dark 토큰을 위 --ag-* 변수가 자동으로 따라오므로
+   별도 값 재정의는 불필요. (확인용 셀렉터) */
+.dark .ag-theme-itg {
+  /* intentionally empty — .dark 토큰이 --color-* 를 통해 전파됨 */
+}
