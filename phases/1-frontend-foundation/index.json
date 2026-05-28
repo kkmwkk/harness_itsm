@@ -2,10 +2,33 @@
   "project": "Polestar10 ITG v2",
   "phase": "1-frontend-foundation",
   "steps": [
-    { "step": 0, "name": "vue-vite-skeleton", "status": "pending" },
-    { "step": 1, "name": "tailwind-v4-and-tokens", "status": "pending" },
-    { "step": 2, "name": "shadcn-vue-setup", "status": "pending" },
-    { "step": 3, "name": "layout-and-routing", "status": "pending" },
-    { "step": 4, "name": "api-client-and-meta-fetch", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "vue-vite-skeleton",
+      "status": "completed",
+      "started_at": "2026-05-28T23:46:27+0900",
+      "summary": "frontend/ Vite 6 + Vue 3.5 + TypeScript 5 strict + pnpm 스켈레톤 + ESLint flat config (no-console·no-explicit-any error) + Prettier + tsconfig 분리(app/node), strict server port 5173, pnpm type-check·lint·build 통과"
+    },
+    {
+      "step": 1,
+      "name": "tailwind-v4-and-tokens",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "shadcn-vue-setup",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "layout-and-routing",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "api-client-and-meta-fetch",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-05-28T23:46:27+0900"
 }
