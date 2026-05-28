@@ -48,7 +48,7 @@
       "status": "completed",
       "started_at": "2026-05-29T07:20:54+0900",
       "summary": "DynamicPage.vue (usePageMeta + asPageMetaBody 좁히기 + DynamicGrid + DynamicForm dialog + action 핸들러) + pages/_DynamicRoute.vue + router meta.groupId 매핑(itsm=itg-ticket, itam=itg-asset, pms=itg-project, common=itg-code). phase 1 더미 페이지 제거. ADR-004 No-code 약속 실코드 이행.",
-      "completed_at": "2026-05-29T07:25:00+0900"
+      "completed_at": "2026-05-29T07:24:19+0900"
     },
     {
       "step": 6,
