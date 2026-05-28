@@ -24,7 +24,7 @@
       "status": "completed",
       "started_at": "2026-05-28T22:52:52+0900",
       "summary": "Enum 3종(SystemType/PackageType/MetaStatus) + PageMeta Entity (@JdbcTypeCode(SqlTypes.JSON)) + 도메인 메서드(publish/copyAs/archive) + 단위 테스트 8케이스, ddl-auto: validate 부팅 통과",
-      "completed_at": "2026-05-28T22:55:30+0900"
+      "completed_at": "2026-05-28T22:56:05+0900"
     },
     {
       "step": 3,
