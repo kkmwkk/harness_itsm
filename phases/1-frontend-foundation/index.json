@@ -29,7 +29,10 @@
     {
       "step": 3,
       "name": "layout-and-routing",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-29T00:06:29+0900",
+      "summary": "Pinia 2 + Vue Router 4 + VueUse 11 도입. AppLayout(TopBar 56px sticky + Sidebar 240px collapsible + PageHeader 64px) + 5 모듈 더미 페이지(/, /itsm, /itam, /pms, /common, /system/meta) + _dev 라우트 2개. useLayoutStore (storeToRefs 패턴). 8 개 라우트 200 응답 확인.",
+      "completed_at": "2026-05-29T00:13:00+0900"
     },
     {
       "step": 4,
