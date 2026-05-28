@@ -53,7 +53,10 @@
     {
       "step": 6,
       "name": "meta-controller-and-swagger",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-28T23:16:28+0900",
+      "summary": "MetaController 9 엔드포인트 (active/versions/by-id/publish/archive/copy/system-active/package/system-package) + @Operation·@Parameter·@ApiResponses 어노테이션 완비 + PageMetaResponse/Version @Schema 가상 샘플 예시 + @WebMvcTest 10 케이스. springdoc 2.6.0 → 2.8.6 으로 업그레이드 (Spring Boot 3.5/Spring Framework 6.2 호환). /v3/api-docs 에 9 경로 모두 등록 확인.",
+      "completed_at": "2026-05-28T23:24:00+0900"
     },
     {
       "step": 7,

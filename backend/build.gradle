@@ -26,7 +26,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     // --- Swagger / OpenAPI ---
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+    // springdoc 2.6.0 은 Spring Boot 3.5(Spring Framework 6.2)에서 제거된
+    // ControllerAdviceBean(Object) 시그니처에 의존해 NoSuchMethodError 가 발생한다.
+    // Spring Boot 3.5 와 호환되는 2.8.x 로 고정.
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6'
 
     // --- DB ---
     runtimeOnly 'org.postgresql:postgresql'
