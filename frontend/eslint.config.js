@@ -2,7 +2,15 @@ import vue from 'eslint-plugin-vue';
 import ts from 'typescript-eslint';
 
 export default ts.config(
-  { ignores: ['dist', 'node_modules', 'eslint.config.js'] },
+  {
+    ignores: [
+      'dist',
+      'node_modules',
+      'eslint.config.js',
+      'src/components/ui/**',
+      'src/lib/utils.ts',
+    ],
+  },
   ...ts.configs.recommendedTypeChecked,
   ...vue.configs['flat/recommended'],
   {

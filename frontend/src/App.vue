@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import TokenGallery from './views/_dev/TokenGallery.vue';
+import ShadcnSampler from './views/_dev/ShadcnSampler.vue';
 </script>
 
 <template>
-  <TokenGallery />
+  <ShadcnSampler />
 </template>

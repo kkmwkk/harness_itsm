@@ -1,4 +1,9 @@
 @layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-border);
+  }
   html,
   body,
   #app {

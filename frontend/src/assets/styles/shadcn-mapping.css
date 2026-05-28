@@ -1,0 +1,94 @@
+
+@import "tw-animate-css";
+/*
+ ---break---
+ */
+@custom-variant dark (&:is(.dark *));
+/*
+ ---break---
+ */
+
+/*
+ * shadcn/vue 컴포넌트가 기대하는 시맨틱 변수(--background, --primary, --border 등)를
+ * 우리 시맨틱 토큰(--color-background, --color-primary 등)의 별칭으로 정의한다.
+ *
+ * 매핑 방향: shadcn 변수 → 우리 토큰. tokens.css 는 도메인 자산이며 건드리지 않는다.
+ * Tailwind v4 의 유틸리티 클래스(bg-secondary 등)가 동작하도록 @theme inline 으로
+ * shadcn 변수를 색상 토큰 공간(--color-*)에 다시 노출한다.
+ */
+
+@layer base {
+  :root {
+    --background:             var(--color-background);
+    --foreground:             var(--color-foreground);
+    --card:                   var(--color-surface);
+    --card-foreground:        var(--color-foreground);
+    --popover:                var(--color-surface);
+    --popover-foreground:     var(--color-foreground);
+    --primary:                var(--color-primary);
+    --primary-foreground:     var(--color-primary-foreground);
+    --secondary:              var(--color-surface-muted);
+    --secondary-foreground:   var(--color-foreground);
+    --muted:                  var(--color-surface-muted);
+    --muted-foreground:       var(--color-foreground-muted);
+    --accent:                 var(--color-surface-hover);
+    --accent-foreground:      var(--color-foreground);
+    --destructive:            var(--color-danger);
+    --destructive-foreground: #ffffff;
+    --border:                 var(--color-border);
+    --input:                  var(--color-border);
+    --ring:                   var(--color-ring);
+    --radius:                 var(--radius-md);
+  }
+
+  .dark {
+    --background:             var(--color-background);
+    --foreground:             var(--color-foreground);
+    --card:                   var(--color-surface);
+    --card-foreground:        var(--color-foreground);
+    --popover:                var(--color-surface);
+    --popover-foreground:     var(--color-foreground);
+    --primary:                var(--color-primary);
+    --primary-foreground:     var(--color-primary-foreground);
+    --secondary:              var(--color-surface-muted);
+    --secondary-foreground:   var(--color-foreground);
+    --muted:                  var(--color-surface-muted);
+    --muted-foreground:       var(--color-foreground-muted);
+    --accent:                 var(--color-surface-hover);
+    --accent-foreground:      var(--color-foreground);
+    --destructive:            var(--color-danger);
+    --destructive-foreground: #ffffff;
+    --border:                 var(--color-border);
+    --input:                  var(--color-border);
+    --ring:                   var(--color-ring);
+  }
+}
+
+/*
+ * Tailwind v4 유틸리티(bg-card, text-muted-foreground 등)가 위 별칭을 인식하도록
+ * 색상 토큰 네임스페이스(--color-*)에 재노출한다.
+ */
+@theme inline {
+  --color-card:                   var(--card);
+  --color-card-foreground:        var(--card-foreground);
+  --color-popover:                var(--popover);
+  --color-popover-foreground:     var(--popover-foreground);
+  --color-secondary:              var(--secondary);
+  --color-secondary-foreground:   var(--secondary-foreground);
+  --color-muted:                  var(--muted);
+  --color-muted-foreground:       var(--muted-foreground);
+  --color-accent:                 var(--accent);
+  --color-accent-foreground:      var(--accent-foreground);
+  --color-destructive:            var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-input:                  var(--input);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) + 8px);
+  --font-heading:             var(--font-sans);
+}
+/*
+ ---break---
+ */
