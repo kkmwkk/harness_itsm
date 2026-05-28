@@ -2,12 +2,43 @@
   "project": "Polestar10 ITG v2",
   "phase": "2-dynamic-render",
   "steps": [
-    { "step": 0, "name": "meta-body-types", "status": "pending" },
-    { "step": 1, "name": "shadcn-data-table", "status": "pending" },
-    { "step": 2, "name": "ag-grid-adapter", "status": "pending" },
-    { "step": 3, "name": "dynamic-grid", "status": "pending" },
-    { "step": 4, "name": "dynamic-form", "status": "pending" },
-    { "step": 5, "name": "dynamic-page-assembly", "status": "pending" },
-    { "step": 6, "name": "e2e-mock-render", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "meta-body-types",
+      "status": "completed",
+      "started_at": "2026-05-29T06:57:36+0900",
+      "summary": "types/meta-body.ts (FieldType 12종 + FieldMeta/FormMeta/GridColumnMeta/GridMeta/ActionMeta/PageMetaBody) + lib/meta-body.ts (type guard + asPageMetaBody + MetaBodyShapeError) + Vitest 셋업 + 단위 테스트 11 케이스 통과"
+    },
+    {
+      "step": 1,
+      "name": "shadcn-data-table",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "ag-grid-adapter",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "dynamic-grid",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "dynamic-form",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "dynamic-page-assembly",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "name": "e2e-mock-render",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-05-29T06:57:36+0900"
 }
