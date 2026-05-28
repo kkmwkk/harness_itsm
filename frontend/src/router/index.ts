@@ -63,6 +63,11 @@ const routes: RouteRecordRaw[] = [
     name: 'dev-ag-grid',
     component: () => import('@/views/_dev/AgGridSampler.vue'),
   },
+  {
+    path: '/_dev/dynamic-grid',
+    name: 'dev-dynamic-grid',
+    component: () => import('@/views/_dev/DynamicGridSampler.vue'),
+  },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ];
 
