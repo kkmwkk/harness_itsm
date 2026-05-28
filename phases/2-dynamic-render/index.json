@@ -7,7 +7,8 @@
       "name": "meta-body-types",
       "status": "completed",
       "started_at": "2026-05-29T06:57:36+0900",
-      "summary": "types/meta-body.ts (FieldType 12종 + FieldMeta/FormMeta/GridColumnMeta/GridMeta/ActionMeta/PageMetaBody) + lib/meta-body.ts (type guard + asPageMetaBody + MetaBodyShapeError) + Vitest 셋업 + 단위 테스트 11 케이스 통과"
+      "summary": "types/meta-body.ts (FieldType 12종 + FieldMeta/FormMeta/GridColumnMeta/GridMeta/ActionMeta/PageMetaBody) + lib/meta-body.ts (type guard + asPageMetaBody + MetaBodyShapeError) + Vitest 셋업 + 단위 테스트 11 케이스 통과",
+      "completed_at": "2026-05-29T07:00:40+0900"
     },
     {
       "step": 1,
