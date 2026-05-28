@@ -27,3 +27,6 @@ backend/out/
 backend/.idea/
 backend/*.iml
 backend/HELP.md
+
+# Docker
+**/pgadmin-data/

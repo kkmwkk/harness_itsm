@@ -1,6 +1,21 @@
 spring:
   application:
     name: itg-backend
+  jpa:
+    open-in-view: false
+  threads:
+    virtual:
+      enabled: true
 
 server:
   port: 8080
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    try-it-out-enabled: true
+    display-request-duration: true

@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "docker-infra-and-schema",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-28T22:48:58+0900",
+      "summary": "docker-compose.yml (postgres:16 + pgadmin), sql/init/01_schema.sql (page_meta + 인덱스 + page_meta_active 뷰 + 자동 DEPRECATE 트리거 + updated_at 트리거), application(-local).yml 분리, Virtual Thread 활성화, /actuator/health UP 확인",
+      "completed_at": "2026-05-28T22:53:30+0900"
     },
     {
       "step": 2,
