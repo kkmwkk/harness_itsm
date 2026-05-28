@@ -7,7 +7,8 @@
       "name": "project-skeleton",
       "status": "completed",
       "started_at": "2026-05-28T22:43:26+0900",
-      "summary": "backend/ Gradle 8.14.5 + Spring Boot 3.5.0 + Java 21 toolchain 스켈레톤, com.nkia.itg.{common,meta,itsm,itam,pms,system} 패키지 골격, Application.java, ApplicationContextLoadTest contextLoads 통과 (DataSource/JPA auto-config 테스트에서 제외)"
+      "summary": "backend/ Gradle 8.14.5 + Spring Boot 3.5.0 + Java 21 toolchain 스켈레톤, com.nkia.itg.{common,meta,itsm,itam,pms,system} 패키지 골격, Application.java, ApplicationContextLoadTest contextLoads 통과 (DataSource/JPA auto-config 테스트에서 제외)",
+      "completed_at": "2026-05-28T22:48:58+0900"
     },
     {
       "step": 1,
