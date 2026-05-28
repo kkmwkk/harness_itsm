@@ -1,0 +1,13 @@
+{
+  "project": "Polestar10 ITG v2",
+  "phase": "2-dynamic-render",
+  "steps": [
+    { "step": 0, "name": "meta-body-types", "status": "pending" },
+    { "step": 1, "name": "shadcn-data-table", "status": "pending" },
+    { "step": 2, "name": "ag-grid-adapter", "status": "pending" },
+    { "step": 3, "name": "dynamic-grid", "status": "pending" },
+    { "step": 4, "name": "dynamic-form", "status": "pending" },
+    { "step": 5, "name": "dynamic-page-assembly", "status": "pending" },
+    { "step": 6, "name": "e2e-mock-render", "status": "pending" }
+  ]
+}

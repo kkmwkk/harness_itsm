@@ -9,6 +9,10 @@
       "dir": "1-frontend-foundation",
       "status": "completed",
       "completed_at": "2026-05-29T06:38:26+0900"
+    },
+    {
+      "dir": "2-dynamic-render",
+      "status": "pending"
     }
   ]
 }
