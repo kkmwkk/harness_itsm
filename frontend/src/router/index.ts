@@ -14,26 +14,26 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'itsm',
         name: 'itsm',
-        component: () => import('@/pages/itsm/IndexPage.vue'),
-        meta: { title: 'ITSM' },
+        component: () => import('@/pages/_DynamicRoute.vue'),
+        meta: { title: 'ITSM', groupId: 'itg-ticket' },
       },
       {
         path: 'itam',
         name: 'itam',
-        component: () => import('@/pages/itam/IndexPage.vue'),
-        meta: { title: 'ITAM' },
+        component: () => import('@/pages/_DynamicRoute.vue'),
+        meta: { title: 'ITAM', groupId: 'itg-asset' },
       },
       {
         path: 'pms',
         name: 'pms',
-        component: () => import('@/pages/pms/IndexPage.vue'),
-        meta: { title: 'PMS' },
+        component: () => import('@/pages/_DynamicRoute.vue'),
+        meta: { title: 'PMS', groupId: 'itg-project' },
       },
       {
         path: 'common',
         name: 'common',
-        component: () => import('@/pages/common/IndexPage.vue'),
-        meta: { title: '공통' },
+        component: () => import('@/pages/_DynamicRoute.vue'),
+        meta: { title: '공통', groupId: 'itg-code' },
       },
       {
         path: 'system/meta',
@@ -52,6 +52,31 @@ const routes: RouteRecordRaw[] = [
     path: '/_dev/shadcn',
     name: 'dev-shadcn',
     component: () => import('@/views/_dev/ShadcnSampler.vue'),
+  },
+  {
+    path: '/_dev/data-table',
+    name: 'dev-data-table',
+    component: () => import('@/views/_dev/DataTableSampler.vue'),
+  },
+  {
+    path: '/_dev/ag-grid',
+    name: 'dev-ag-grid',
+    component: () => import('@/views/_dev/AgGridSampler.vue'),
+  },
+  {
+    path: '/_dev/dynamic-grid',
+    name: 'dev-dynamic-grid',
+    component: () => import('@/views/_dev/DynamicGridSampler.vue'),
+  },
+  {
+    path: '/_dev/dynamic-form',
+    name: 'dev-dynamic-form',
+    component: () => import('@/views/_dev/DynamicFormSampler.vue'),
+  },
+  {
+    path: '/_dev/dynamic-page',
+    name: 'dev-dynamic-page',
+    component: () => import('@/views/_dev/DynamicPageSampler.vue'),
   },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ];
