@@ -2,13 +2,71 @@
   "project": "Polestar10 ITG v2",
   "phase": "0-meta-backend-m1",
   "steps": [
-    { "step": 0, "name": "project-skeleton", "status": "pending" },
-    { "step": 1, "name": "docker-infra-and-schema", "status": "pending" },
-    { "step": 2, "name": "meta-domain-and-entity", "status": "pending" },
-    { "step": 3, "name": "common-foundation", "status": "pending" },
-    { "step": 4, "name": "meta-repository", "status": "pending" },
-    { "step": 5, "name": "meta-service", "status": "pending" },
-    { "step": 6, "name": "meta-controller-and-swagger", "status": "pending" },
-    { "step": 7, "name": "e2e-verification", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "project-skeleton",
+      "status": "completed",
+      "started_at": "2026-05-28T22:43:26+0900",
+      "summary": "backend/ Gradle 8.14.5 + Spring Boot 3.5.0 + Java 21 toolchain 스켈레톤, com.nkia.itg.{common,meta,itsm,itam,pms,system} 패키지 골격, Application.java, ApplicationContextLoadTest contextLoads 통과 (DataSource/JPA auto-config 테스트에서 제외)",
+      "completed_at": "2026-05-28T22:48:58+0900"
+    },
+    {
+      "step": 1,
+      "name": "docker-infra-and-schema",
+      "status": "completed",
+      "started_at": "2026-05-28T22:48:58+0900",
+      "summary": "docker-compose.yml (postgres:16 + pgadmin), sql/init/01_schema.sql (page_meta + 인덱스 + page_meta_active 뷰 + 자동 DEPRECATE 트리거 + updated_at 트리거), application(-local).yml 분리, Virtual Thread 활성화, /actuator/health UP 확인",
+      "completed_at": "2026-05-28T22:52:51+0900"
+    },
+    {
+      "step": 2,
+      "name": "meta-domain-and-entity",
+      "status": "completed",
+      "started_at": "2026-05-28T22:52:52+0900",
+      "summary": "Enum 3종(SystemType/PackageType/MetaStatus) + PageMeta Entity (@JdbcTypeCode(SqlTypes.JSON)) + 도메인 메서드(publish/copyAs/archive) + 단위 테스트 8케이스, ddl-auto: validate 부팅 통과",
+      "completed_at": "2026-05-28T22:56:05+0900"
+    },
+    {
+      "step": 3,
+      "name": "common-foundation",
+      "status": "completed",
+      "started_at": "2026-05-28T22:56:05+0900",
+      "summary": "ApiResponse<T> Record + ITGException + GlobalExceptionHandler (5종 예외 매핑) + SwaggerConfig (bearerAuth, example.com) + SecurityConfig (STATELESS, /api/meta/** permitAll, CORS localhost:5173) + JwtAuthenticationFilter 골격. /swagger-ui · /v3/api-docs · /actuator/health 200 확인",
+      "completed_at": "2026-05-28T23:01:18+0900"
+    },
+    {
+      "step": 4,
+      "name": "meta-repository",
+      "status": "completed",
+      "started_at": "2026-05-28T23:01:18+0900",
+      "summary": "MetaRepository (Derived Query 5종 + @Modifying deprecatePublished + findMaxMinorVersion) + PostgresIntegrationTestBase (Testcontainers postgres:16 + withInitScript) + MetaRepositoryIT 8 케이스(트리거 동작·UNIQUE 위반·정렬 검증 포함) 통과. src/test/resources/init/01_schema.sql 동기화. Docker Desktop 4.50+ 호환 위해 docker-java 3.5.1 + DOCKER_API_VERSION 1.44 명시.",
+      "completed_at": "2026-05-28T23:11:48+0900"
+    },
+    {
+      "step": 5,
+      "name": "meta-service",
+      "status": "completed",
+      "started_at": "2026-05-28T23:11:48+0900",
+      "summary": "MetaService (publish/copy/archive/getActive/getById/getVersions/getActiveBySystem/getByPackage/getBySystemAndPackage) + PageMetaResponse/PageMetaVersionResponse Record + MetaFixture (draft/published/archived) + Mockito 단위 테스트 11 케이스. publish 가 deprecatePublished + Entity.publish() 이중 안전망 호출.",
+      "completed_at": "2026-05-28T23:16:28+0900"
+    },
+    {
+      "step": 6,
+      "name": "meta-controller-and-swagger",
+      "status": "completed",
+      "started_at": "2026-05-28T23:16:28+0900",
+      "summary": "MetaController 9 엔드포인트 (active/versions/by-id/publish/archive/copy/system-active/package/system-package) + @Operation·@Parameter·@ApiResponses 어노테이션 완비 + PageMetaResponse/Version @Schema 가상 샘플 예시 + @WebMvcTest 10 케이스. springdoc 2.6.0 → 2.8.6 으로 업그레이드 (Spring Boot 3.5/Spring Framework 6.2 호환). /v3/api-docs 에 9 경로 모두 등록 확인.",
+      "completed_at": "2026-05-28T23:21:55+0900"
+    },
+    {
+      "step": 7,
+      "name": "e2e-verification",
+      "status": "completed",
+      "started_at": "2026-05-28T23:21:55+0900",
+      "summary": "E2E 시나리오 12 단계 모두 PASS (DRAFT 노출 차단·복사본 DRAFT·자동 DEPRECATE 이중 안전망 검증). OpenAPI JSON/YAML 산출. E2E_REPORT.md 작성. M1 마일스톤 완료.",
+      "completed_at": "2026-05-28T23:25:28+0900"
+    }
+  ],
+  "created_at": "2026-05-28T22:43:26+0900",
+  "completed_at": "2026-05-28T23:25:28+0900"
 }

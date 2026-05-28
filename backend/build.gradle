@@ -1,0 +1,67 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.0'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.nkia.itg'
+version = '2.0.0-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // --- Spring Boot ---
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // --- Swagger / OpenAPI ---
+    // springdoc 2.6.0 은 Spring Boot 3.5(Spring Framework 6.2)에서 제거된
+    // ControllerAdviceBean(Object) 시그니처에 의존해 NoSuchMethodError 가 발생한다.
+    // Spring Boot 3.5 와 호환되는 2.8.x 로 고정.
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6'
+
+    // --- DB ---
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // --- JWT (step 3 에서 사용 예정, 미리 의존성만 추가) ---
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    runtimeOnly  'io.jsonwebtoken:jjwt-impl:0.12.6'
+    runtimeOnly  'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
+    // --- Lombok (제한적 사용 — @RequiredArgsConstructor·@Slf4j·@Getter·@Builder 만) ---
+    compileOnly         'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly         'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    // --- 테스트 ---
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.testcontainers:junit-jupiter:1.21.3'
+    testImplementation 'org.testcontainers:postgresql:1.21.3'
+    testImplementation 'com.github.docker-java:docker-java-core:3.5.1'
+    testImplementation 'com.github.docker-java:docker-java-transport-zerodep:3.5.1'
+    testRuntimeOnly   'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    // Testcontainers/docker-java 의 기본 API 버전(1.43)이 Docker Desktop 4.50+ 의 리다이렉트 응답(BadRequest 400)을 트리거한다.
+    // docker-java 가 인식하는 시스템 프로퍼티(api.version)와 환경변수(DOCKER_API_VERSION) 양쪽에 1.44 를 명시.
+    systemProperty 'api.version', System.getenv('DOCKER_API_VERSION') ?: '1.44'
+    environment 'DOCKER_API_VERSION', System.getenv('DOCKER_API_VERSION') ?: '1.44'
+    if (System.getenv('DOCKER_HOST')) {
+        environment 'DOCKER_HOST', System.getenv('DOCKER_HOST')
+    }
+}

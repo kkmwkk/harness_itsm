@@ -19,3 +19,14 @@ data/
 .env
 .env.local
 .env*.local
+
+# Gradle / Spring
+backend/.gradle/
+backend/build/
+backend/out/
+backend/.idea/
+backend/*.iml
+backend/HELP.md
+
+# Docker
+**/pgadmin-data/
