@@ -45,7 +45,10 @@
     {
       "step": 5,
       "name": "meta-service",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-28T23:11:48+0900",
+      "summary": "MetaService (publish/copy/archive/getActive/getById/getVersions/getActiveBySystem/getByPackage/getBySystemAndPackage) + PageMetaResponse/PageMetaVersionResponse Record + MetaFixture (draft/published/archived) + Mockito 단위 테스트 11 케이스. publish 가 deprecatePublished + Entity.publish() 이중 안전망 호출.",
+      "completed_at": "2026-05-28T23:15:56+0900"
     },
     {
       "step": 6,

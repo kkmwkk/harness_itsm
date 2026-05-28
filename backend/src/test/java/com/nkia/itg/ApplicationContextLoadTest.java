@@ -1,8 +1,10 @@
 package com.nkia.itg;
 
+import com.nkia.itg.meta.repository.MetaRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @SpringBootTest
 @TestPropertySource(properties = {
@@ -12,6 +14,10 @@ import org.springframework.test.context.TestPropertySource;
                 "org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration"
 })
 class ApplicationContextLoadTest {
+
+    @MockitoBean
+    private MetaRepository metaRepository;
+
     @Test
     void contextLoads() {}
 }
