@@ -73,6 +73,11 @@ const routes: RouteRecordRaw[] = [
     name: 'dev-dynamic-form',
     component: () => import('@/views/_dev/DynamicFormSampler.vue'),
   },
+  {
+    path: '/_dev/dynamic-page',
+    name: 'dev-dynamic-page',
+    component: () => import('@/views/_dev/DynamicPageSampler.vue'),
+  },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ];
 
