@@ -45,11 +45,20 @@ dependencies {
     // --- 테스트 ---
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation 'org.testcontainers:junit-jupiter:1.20.2'
-    testImplementation 'org.testcontainers:postgresql:1.20.2'
+    testImplementation 'org.testcontainers:junit-jupiter:1.21.3'
+    testImplementation 'org.testcontainers:postgresql:1.21.3'
+    testImplementation 'com.github.docker-java:docker-java-core:3.5.1'
+    testImplementation 'com.github.docker-java:docker-java-transport-zerodep:3.5.1'
     testRuntimeOnly   'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+    // Testcontainers/docker-java 의 기본 API 버전(1.43)이 Docker Desktop 4.50+ 의 리다이렉트 응답(BadRequest 400)을 트리거한다.
+    // docker-java 가 인식하는 시스템 프로퍼티(api.version)와 환경변수(DOCKER_API_VERSION) 양쪽에 1.44 를 명시.
+    systemProperty 'api.version', System.getenv('DOCKER_API_VERSION') ?: '1.44'
+    environment 'DOCKER_API_VERSION', System.getenv('DOCKER_API_VERSION') ?: '1.44'
+    if (System.getenv('DOCKER_HOST')) {
+        environment 'DOCKER_HOST', System.getenv('DOCKER_HOST')
+    }
 }

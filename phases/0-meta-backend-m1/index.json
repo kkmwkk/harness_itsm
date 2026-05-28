@@ -37,7 +37,10 @@
     {
       "step": 4,
       "name": "meta-repository",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-28T23:01:18+0900",
+      "summary": "MetaRepository (Derived Query 5종 + @Modifying deprecatePublished + findMaxMinorVersion) + PostgresIntegrationTestBase (Testcontainers postgres:16 + withInitScript) + MetaRepositoryIT 8 케이스(트리거 동작·UNIQUE 위반·정렬 검증 포함) 통과. src/test/resources/init/01_schema.sql 동기화. Docker Desktop 4.50+ 호환 위해 docker-java 3.5.1 + DOCKER_API_VERSION 1.44 명시.",
+      "completed_at": "2026-05-28T23:11:30+0900"
     },
     {
       "step": 5,
