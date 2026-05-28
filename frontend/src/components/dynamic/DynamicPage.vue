@@ -1,0 +1,155 @@
+<script setup lang="ts">
+import { computed, ref, watchEffect } from 'vue';
+import PageHeader from '@/components/layout/PageHeader.vue';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { usePageMeta } from '@/composables/usePageMeta';
+import { asPageMetaBody, MetaBodyShapeError } from '@/lib/meta-body';
+import { useApiFetch } from '@/lib/api';
+import DynamicGrid from './DynamicGrid.vue';
+import DynamicForm from './DynamicForm.vue';
+import type { PageMetaBody, ActionMeta } from '@/types/meta-body';
+import type { ApiEnvelope } from '@/types/meta';
+
+/**
+ * 메타 한 건으로 화면 전체를 자동 구성하는 No-code 진입 컴포넌트 (ADR-004).
+ * usePageMeta(PUBLISHED 최신) → asPageMetaBody(강타입 좁히기) → DynamicGrid + DynamicForm(dialog).
+ * `rows` 가 주어지면 그것을 그리드 데이터로 사용(본 phase 의 mock 검증 경로),
+ * 미제공이면 meta.api 로 GET 시도(정식 fetch·페이지네이션은 다음 phase 의 책임).
+ */
+interface Props {
+  groupId: string;
+  rows?: unknown[];
+}
+const props = defineProps<Props>();
+
+const groupRef = computed(() => props.groupId);
+const {
+  meta,
+  notPublished,
+  error: metaError,
+  isFetching: isMetaFetching,
+} = usePageMeta(groupRef);
+
+// 메타 본문 강타입 좁히기 — 실패 시 페이지를 깨지 않고 명시 에러 카드만 노출.
+const body = ref<PageMetaBody | null>(null);
+const bodyError = ref<string | null>(null);
+
+watchEffect(() => {
+  body.value = null;
+  bodyError.value = null;
+  if (!meta.value) return;
+  try {
+    body.value = asPageMetaBody(meta.value.id, meta.value.metaJson);
+  } catch (e) {
+    if (e instanceof MetaBodyShapeError) bodyError.value = e.message;
+    else throw e;
+  }
+});
+
+// 데이터 fetch — props.rows 미제공 시 meta.api 로 GET (다음 phase 에서 정식 처리).
+const dataUrl = computed(() => body.value?.api ?? '');
+const { data: rowsEnvelope, execute: fetchRows } = useApiFetch(dataUrl, {
+  immediate: false,
+}).json<ApiEnvelope<unknown[]>>();
+
+watchEffect(() => {
+  if (body.value && !props.rows) void fetchRows();
+});
+
+const rows = computed<unknown[]>(
+  () => props.rows ?? rowsEnvelope.value?.data ?? [],
+);
+
+// dialog-form 액션
+const dialogOpen = ref(false);
+const dialogFormMeta = computed(() => body.value?.form ?? null);
+
+function onAction(a: ActionMeta): void {
+  if (a.type === 'dialog-form') dialogOpen.value = true;
+  // navigate / export / custom 은 다음 phase 의 책임
+}
+
+function onFormSubmit(values: Record<string, unknown>): void {
+  // 본 phase 는 mock — POST 호출은 다음 phase 의 책임
+  console.warn('[DynamicPage] form submit (mock)', values);
+  dialogOpen.value = false;
+}
+</script>
+
+<template>
+  <section class="space-y-4">
+    <PageHeader :title="meta?.title">
+      <template
+        v-if="body?.actions?.length"
+        #actions
+      >
+        <div class="flex gap-2">
+          <Button
+            v-for="a in body.actions"
+            :key="a.id"
+            :variant="a.type === 'dialog-form' ? 'default' : 'outline'"
+            @click="onAction(a)"
+          >
+            {{ a.label }}
+          </Button>
+        </div>
+      </template>
+    </PageHeader>
+
+    <p
+      v-if="isMetaFetching"
+      class="text-foreground-muted"
+    >
+      조회 중...
+    </p>
+    <Card v-else-if="notPublished">
+      <CardContent class="py-6">
+        <p class="text-warning">
+          배포된 메타가 없습니다 (groupId: {{ groupId }}).
+        </p>
+      </CardContent>
+    </Card>
+    <Card v-else-if="metaError">
+      <CardContent class="py-6">
+        <p class="text-danger">
+          {{ metaError }}
+        </p>
+      </CardContent>
+    </Card>
+    <Card v-else-if="bodyError">
+      <CardContent class="py-6">
+        <p class="text-danger">
+          메타 본문이 손상되었습니다. {{ bodyError }}
+        </p>
+      </CardContent>
+    </Card>
+
+    <template v-else-if="body">
+      <DynamicGrid
+        :meta="body.grid"
+        :rows="rows"
+      />
+
+      <Dialog v-model:open="dialogOpen">
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{{ meta?.title }}</DialogTitle>
+          </DialogHeader>
+          <DynamicForm
+            v-if="dialogFormMeta"
+            :meta="dialogFormMeta"
+            @submit="onFormSubmit"
+            @cancel="dialogOpen = false"
+          />
+        </DialogContent>
+      </Dialog>
+    </template>
+  </section>
+</template>
