@@ -16,7 +16,7 @@
       "status": "completed",
       "started_at": "2026-05-29T07:00:40+0900",
       "summary": "@tanstack/vue-table 도입. components/ui/data-table/DataTable.vue (generic TData, ColumnDef, sticky 헤더 13px/600, 행 40/36px 분기, 호버·선택 행, zebra 없음, ChevronUp/Down 정렬 아이콘, 간단 페이지네이션 prev/next + 페이지당 선택, tabindex+aria-selected). DataTableSampler 라우트 추가.",
-      "completed_at": "2026-05-29T07:03:00+0900"
+      "completed_at": "2026-05-29T07:03:45+0900"
     },
     {
       "step": 2,
