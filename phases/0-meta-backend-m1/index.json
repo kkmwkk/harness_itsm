@@ -1,0 +1,14 @@
+{
+  "project": "Polestar10 ITG v2",
+  "phase": "0-meta-backend-m1",
+  "steps": [
+    { "step": 0, "name": "project-skeleton", "status": "pending" },
+    { "step": 1, "name": "docker-infra-and-schema", "status": "pending" },
+    { "step": 2, "name": "meta-domain-and-entity", "status": "pending" },
+    { "step": 3, "name": "common-foundation", "status": "pending" },
+    { "step": 4, "name": "meta-repository", "status": "pending" },
+    { "step": 5, "name": "meta-service", "status": "pending" },
+    { "step": 6, "name": "meta-controller-and-swagger", "status": "pending" },
+    { "step": 7, "name": "e2e-verification", "status": "pending" }
+  ]
+}
