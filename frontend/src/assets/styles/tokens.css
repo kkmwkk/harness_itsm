@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── 액센트 ── */
+  --color-primary:            #0066cc;
+  --color-primary-hover:      #0057b3;
+  --color-primary-foreground: #ffffff;
+
+  /* ── 서피스 ── */
+  --color-background:         #ffffff;
+  --color-surface:            #ffffff;
+  --color-surface-muted:      #f5f7fa;
+  --color-surface-hover:      #eef2f7;
+  --color-surface-selected:   #e6f0fb;
+
+  /* ── 텍스트 ── */
+  --color-foreground:         #1d1d1f;
+  --color-foreground-muted:   #5a6270;
+  --color-foreground-subtle:  #9097a3;
+  --color-link:               #0066cc;
+
+  /* ── 보더 ── */
+  --color-border:             #e3e6ea;
+  --color-border-subtle:      #eef0f3;
+  --color-ring:               #0066cc;
+
+  /* ── 시맨틱 (상태 전용) ── */
+  --color-success:            #16a34a;
+  --color-warning:            #d97706;
+  --color-danger:             #dc2626;
+  --color-info:               #0284c7;
+  --color-neutral:            #525252;
+
+  /* ── Radius ── */
+  --radius-none:              0;
+  --radius-sm:                6px;
+  --radius-md:                8px;
+  --radius-lg:                12px;
+  --radius-pill:              9999px;
+  --radius-full:              50%;
+
+  /* ── 폰트 ── */
+  --font-sans: "Pretendard Variable", "Inter", system-ui, -apple-system,
+               "Segoe UI", "Apple SD Gothic Neo", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* 다크 모드 토큰 (다음 phase 에서 토글 도입 예정) */
+.dark {
+  --color-primary:            #3b9eff;
+  --color-primary-hover:      #5cb0ff;
+  --color-primary-foreground: #0b0d10;
+  --color-background:         #0b0d10;
+  --color-surface:            #15181d;
+  --color-surface-muted:      #1a1e24;
+  --color-surface-hover:      #1f242b;
+  --color-surface-selected:   #13314f;
+  --color-foreground:         #f5f7fa;
+  --color-foreground-muted:   #a1a8b4;
+  --color-foreground-subtle:  #6b7280;
+  --color-link:               #3b9eff;
+  --color-border:             #2a2f37;
+  --color-border-subtle:      #1f242b;
+  --color-ring:               #3b9eff;
+}

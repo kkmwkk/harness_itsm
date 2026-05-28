@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "tailwind-v4-and-tokens",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-28T23:53:07+0900",
+      "summary": "Tailwind CSS v4 + @tailwindcss/vite 통합. assets/styles/tokens.css 에 @theme 토큰 매핑(액센트·서피스·텍스트·보더·시맨틱·radius·폰트). base.css 의 reset+타이포 위계. _dev/TokenGallery.vue 미니 갤러리 + App.vue 렌더링. pnpm build 후 dist CSS 에 --color-primary 변수 포함 확인.",
+      "completed_at": "2026-05-29T00:05:00+0900"
     },
     {
       "step": 2,
