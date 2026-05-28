@@ -1,0 +1,10 @@
+{
+  "project": "Polestar10 ITG v2",
+  "phase": "3-itsm-ticket-backend",
+  "steps": [
+    { "step": 0, "name": "ticket-schema-and-entity", "status": "pending" },
+    { "step": 1, "name": "ticket-repository-and-service", "status": "pending" },
+    { "step": 2, "name": "ticket-controller-and-swagger", "status": "pending" },
+    { "step": 3, "name": "e2e-with-itg-ticket-meta", "status": "pending" }
+  ]
+}
