@@ -2,10 +2,47 @@
   "project": "Polestar10 ITG v2",
   "phase": "1-frontend-foundation",
   "steps": [
-    { "step": 0, "name": "vue-vite-skeleton", "status": "pending" },
-    { "step": 1, "name": "tailwind-v4-and-tokens", "status": "pending" },
-    { "step": 2, "name": "shadcn-vue-setup", "status": "pending" },
-    { "step": 3, "name": "layout-and-routing", "status": "pending" },
-    { "step": 4, "name": "api-client-and-meta-fetch", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "vue-vite-skeleton",
+      "status": "completed",
+      "started_at": "2026-05-28T23:46:27+0900",
+      "summary": "frontend/ Vite 6 + Vue 3.5 + TypeScript 5 strict + pnpm 스켈레톤 + ESLint flat config (no-console·no-explicit-any error) + Prettier + tsconfig 분리(app/node), strict server port 5173, pnpm type-check·lint·build 통과",
+      "completed_at": "2026-05-28T23:53:07+0900"
+    },
+    {
+      "step": 1,
+      "name": "tailwind-v4-and-tokens",
+      "status": "completed",
+      "started_at": "2026-05-28T23:53:07+0900",
+      "summary": "Tailwind CSS v4 + @tailwindcss/vite 통합. assets/styles/tokens.css 에 @theme 토큰 매핑(액센트·서피스·텍스트·보더·시맨틱·radius·폰트). base.css 의 reset+타이포 위계. _dev/TokenGallery.vue 미니 갤러리 + App.vue 렌더링. pnpm build 후 dist CSS 에 --color-primary 변수 포함 확인.",
+      "completed_at": "2026-05-28T23:57:46+0900"
+    },
+    {
+      "step": 2,
+      "name": "shadcn-vue-setup",
+      "status": "completed",
+      "started_at": "2026-05-28T23:57:46+0900",
+      "summary": "shadcn/vue 통합(components.json + lib/utils.ts) + 컴포넌트 5종(Button·Input·Card·Dialog·Table) + Pretendard Variable + shadcn-mapping.css 로 시맨틱 토큰(--color-primary 등)을 shadcn 변수(--primary 등)에 별칭 매핑. ShadcnSampler.vue 로 시각 검증.",
+      "completed_at": "2026-05-29T00:06:28+0900"
+    },
+    {
+      "step": 3,
+      "name": "layout-and-routing",
+      "status": "completed",
+      "started_at": "2026-05-29T00:06:29+0900",
+      "summary": "Pinia 2 + Vue Router 4 + VueUse 11 도입. AppLayout(TopBar 56px sticky + Sidebar 240px collapsible + PageHeader 64px) + 5 모듈 더미 페이지(/, /itsm, /itam, /pms, /common, /system/meta) + _dev 라우트 2개. useLayoutStore (storeToRefs 패턴). 8 개 라우트 200 응답 확인.",
+      "completed_at": "2026-05-29T00:13:11+0900"
+    },
+    {
+      "step": 4,
+      "name": "api-client-and-meta-fetch",
+      "status": "completed",
+      "started_at": "2026-05-29T00:13:11+0900",
+      "summary": "VueUse useFetch 기반 useApiFetch (baseURL + JWT beforeFetch 골격 + ApiEnvelope onFetchError 정규화) + types/meta.ts (백엔드 PageMetaResponse 1:1) + usePageMeta(groupId) composable (404 META_NOT_PUBLISHED → notPublished 신호) + /system/meta?groupId=... 페이지 카드 + JSON 미리보기. 백엔드 동시 부팅 E2E 시나리오 (DRAFT only → 404, PUBLISHED → 200, CORS preflight 통과) 통과. frontend/E2E_REPORT.md 작성. M2 절반(foundation) 완료.",
+      "completed_at": "2026-05-29T06:38:26+0900"
+    }
+  ],
+  "created_at": "2026-05-28T23:46:27+0900",
+  "completed_at": "2026-05-29T06:38:26+0900"
 }

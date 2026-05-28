@@ -1,0 +1,7 @@
+packages:
+  - 'frontend'
+allowBuilds:
+  esbuild: true
+  vue-demi: false
+onlyBuiltDependencies:
+  - esbuild
