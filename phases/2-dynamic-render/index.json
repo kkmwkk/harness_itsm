@@ -32,7 +32,7 @@
       "status": "completed",
       "started_at": "2026-05-29T07:07:40+0900",
       "summary": "useGridColumns composable(decideRenderer + toDataTableColumns + toAgGridColDefs, AG_GRID_ROW_THRESHOLD=1000 단일 정의) + components/dynamic/DynamicGrid.vue (rows>1000 or inlineEdit or export → AG Grid, 그 외 shadcn DataTable). 단위 테스트 6 케이스. DynamicGridSampler 라우트에서 4모드 자동 분기 시각 검증.",
-      "completed_at": "2026-05-29T07:10:00+0900"
+      "completed_at": "2026-05-29T07:10:20+0900"
     },
     {
       "step": 4,
