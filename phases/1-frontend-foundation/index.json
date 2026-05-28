@@ -24,7 +24,7 @@
       "status": "completed",
       "started_at": "2026-05-28T23:57:46+0900",
       "summary": "shadcn/vue 통합(components.json + lib/utils.ts) + 컴포넌트 5종(Button·Input·Card·Dialog·Table) + Pretendard Variable + shadcn-mapping.css 로 시맨틱 토큰(--color-primary 등)을 shadcn 변수(--primary 등)에 별칭 매핑. ShadcnSampler.vue 로 시각 검증.",
-      "completed_at": "2026-05-29T00:06:00+0900"
+      "completed_at": "2026-05-29T00:06:28+0900"
     },
     {
       "step": 3,
