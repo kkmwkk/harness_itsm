@@ -61,7 +61,10 @@
     {
       "step": 7,
       "name": "e2e-verification",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-28T23:21:55+0900",
+      "summary": "E2E 시나리오 12 단계 모두 PASS (DRAFT 노출 차단·복사본 DRAFT·자동 DEPRECATE 이중 안전망 검증). OpenAPI JSON/YAML 산출. E2E_REPORT.md 작성. M1 마일스톤 완료.",
+      "completed_at": "2026-05-28T23:25:00+0900"
     }
   ],
   "created_at": "2026-05-28T22:43:26+0900"

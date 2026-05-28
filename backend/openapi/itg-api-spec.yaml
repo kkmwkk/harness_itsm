@@ -1,0 +1,464 @@
+openapi: 3.1.0
+info:
+  title: ITG No-code Platform API
+  description: Polestar10 ITG v2 — ITSM · ITAM · PMS REST API
+  contact:
+    name: ITG Dev Team
+    email: dev-team@example.com
+  version: v2.0.0
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+security:
+- bearerAuth: []
+tags:
+- name: Meta - 페이지 메타 관리
+  description: page_meta 의 조회·버전 전이(publish/archive/copy) API. 신규 메타 생성은 다음 phase
+    의 admin API 로 별도 제공.
+paths:
+  /api/meta/{metaId}/copy:
+    post:
+      tags:
+      - Meta - 페이지 메타 관리
+      summary: 메타 복사 (새 DRAFT 버전 생성)
+      description: 원본 메타를 복사해 동일 groupId 의 새 DRAFT 를 생성한다. minorVersion 은 기존 최대값 +
+        1. 원본 상태와 무관하게 복사본은 항상 DRAFT.
+      operationId: copy
+      parameters:
+      - name: metaId
+        in: path
+        description: 복사 원본 메타 ID
+        required: true
+        schema:
+          type: string
+        example: itg-ticket-v1-2
+      responses:
+        "201":
+          description: 새 DRAFT 생성 성공
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageMetaResponse"
+        "404":
+          description: 원본 메타를 찾을 수 없음
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageMetaResponse"
+  /api/meta/{metaId}/publish:
+    patch:
+      tags:
+      - Meta - 페이지 메타 관리
+      summary: DRAFT → PUBLISHED 배포
+      description: DRAFT 메타를 PUBLISHED 로 전환한다. 동일 groupId 의 기존 PUBLISHED 는 자동 DEPRECATED
+        처리 (Service 로직 + DB 트리거 이중 안전망). DRAFT 가 아니면 400.
+      operationId: publish
+      parameters:
+      - name: metaId
+        in: path
+        description: 배포할 DRAFT 메타 ID
+        required: true
+        schema:
+          type: string
+        example: itg-ticket-v1-2
+      responses:
+        "200":
+          description: 배포 성공
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageMetaResponse"
+        "400":
+          description: DRAFT 상태가 아님
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageMetaResponse"
+        "404":
+          description: 메타를 찾을 수 없음
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageMetaResponse"
+  /api/meta/{metaId}/archive:
+    patch:
+      tags:
+      - Meta - 페이지 메타 관리
+      summary: 메타 보관 (ARCHIVED)
+      description: 메타를 ARCHIVED 로 전환한다. 이력 보관 용도. 이미 ARCHIVED 인 경우 그대로 반환.
+      operationId: archive
+      parameters:
+      - name: metaId
+        in: path
+        description: 보관할 메타 ID
+        required: true
+        schema:
+          type: string
+        example: itg-ticket-v1-2
+      responses:
+        "200":
+          description: 보관 성공
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageMetaResponse"
+        "404":
+          description: 메타를 찾을 수 없음
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageMetaResponse"
+  /api/meta/{metaId}:
+    get:
+      tags:
+      - Meta - 페이지 메타 관리
+      summary: 특정 버전 단건 조회
+      description: metaId 로 특정 버전 1건을 조회. 자산 등록 당시 메타 복원 등 이력 추적에 사용.
+      operationId: getById
+      parameters:
+      - name: metaId
+        in: path
+        description: "메타 ID ({groupId}-v{major}-{minor})"
+        required: true
+        schema:
+          type: string
+        example: itg-ticket-v1-2
+      responses:
+        "200":
+          description: 조회 성공
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageMetaResponse"
+        "404":
+          description: 메타를 찾을 수 없음
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageMetaResponse"
+  /api/meta/system/{systemType}/package/{packageType}:
+    get:
+      tags:
+      - Meta - 페이지 메타 관리
+      summary: 모듈 + 패키지 교차 메타 목록
+      description: "systemType 과 packageType 을 동시에 만족하는 메타 목록을 반환. 예: ITSM 모듈의 PACKAGE\
+        \ 기준선 메타만 조회."
+      operationId: getBySystemAndPackage
+      parameters:
+      - name: systemType
+        in: path
+        description: 시스템 모듈 구분
+        required: true
+        schema:
+          type: string
+          enum:
+          - ITSM
+          - ITAM
+          - PMS
+          - COMMON
+          - SYSTEM
+        example: ITSM
+      - name: packageType
+        in: path
+        description: 패키지 구분
+        required: true
+        schema:
+          type: string
+          enum:
+          - PACKAGE
+          - CUSTOM
+        example: PACKAGE
+      responses:
+        "200":
+          description: 조회 성공
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListPageMetaResponse"
+        "400":
+          description: 잘못된 systemType 또는 packageType
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListPageMetaResponse"
+  /api/meta/system/{systemType}/active:
+    get:
+      tags:
+      - Meta - 페이지 메타 관리
+      summary: 모듈별 화면 노출 메타 목록
+      description: systemType(ITSM/ITAM/PMS/COMMON/SYSTEM) 에 속한 PUBLISHED 메타 목록을 반환.
+        모듈 단위 배포 현황 파악에 사용.
+      operationId: getActiveBySystem
+      parameters:
+      - name: systemType
+        in: path
+        description: 시스템 모듈 구분
+        required: true
+        schema:
+          type: string
+          enum:
+          - ITSM
+          - ITAM
+          - PMS
+          - COMMON
+          - SYSTEM
+        example: ITSM
+      responses:
+        "200":
+          description: 조회 성공
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListPageMetaResponse"
+        "400":
+          description: 잘못된 systemType
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListPageMetaResponse"
+  /api/meta/package/{packageType}:
+    get:
+      tags:
+      - Meta - 페이지 메타 관리
+      summary: 패키지 구분별 메타 목록
+      description: packageType(PACKAGE/CUSTOM) 에 속한 모든 메타 목록을 반환. 본사 기본 메타와 고객사 커스터마이징
+        분리 운영에 사용.
+      operationId: getByPackage
+      parameters:
+      - name: packageType
+        in: path
+        description: 패키지 구분
+        required: true
+        schema:
+          type: string
+          enum:
+          - PACKAGE
+          - CUSTOM
+        example: PACKAGE
+      responses:
+        "200":
+          description: 조회 성공
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListPageMetaResponse"
+        "400":
+          description: 잘못된 packageType
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListPageMetaResponse"
+  /api/meta/group/{groupId}/versions:
+    get:
+      tags:
+      - Meta - 페이지 메타 관리
+      summary: 그룹 전체 버전 이력 조회
+      description: "동일 groupId 의 모든 버전(DRAFT/PUBLISHED/DEPRECATED/ARCHIVED 포함)을 (major\
+        \ DESC, minor DESC) 순으로 반환. 버전 관리 화면에서 사용."
+      operationId: getVersions
+      parameters:
+      - name: groupId
+        in: path
+        description: 페이지 그룹 ID
+        required: true
+        schema:
+          type: string
+        example: itg-ticket
+      responses:
+        "200":
+          description: 조회 성공 (빈 리스트 가능)
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListPageMetaVersionResponse"
+  /api/meta/active/{groupId}:
+    get:
+      tags:
+      - Meta - 페이지 메타 관리
+      summary: 화면 노출용 메타 조회 (PUBLISHED 최신 버전)
+      description: "groupId 기준 PUBLISHED 상태 중 (major, minor) 가 가장 높은 단 1건만 반환. DynamicPage\
+        \ 가 화면 렌더링에 사용하는 핵심 API. DRAFT 메타는 절대 노출되지 않는다."
+      operationId: getActive
+      parameters:
+      - name: groupId
+        in: path
+        description: 페이지 그룹 ID
+        required: true
+        schema:
+          type: string
+        example: itg-ticket
+      responses:
+        "200":
+          description: 조회 성공
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageMetaResponse"
+        "404":
+          description: 배포된 버전이 없음
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageMetaResponse"
+components:
+  schemas:
+    ApiResponsePageMetaResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/PageMetaResponse"
+        message:
+          type: string
+        errorCode:
+          type: string
+    PageMetaResponse:
+      type: object
+      description: PageMeta 응답 DTO — 화면 렌더링 및 단건 조회에 사용
+      properties:
+        id:
+          type: string
+          description: "메타 ID ({groupId}-v{major}-{minor})"
+          example: itg-ticket-v1-2
+        title:
+          type: string
+          description: 페이지 타이틀
+          example: ITSM 티켓 관리
+        systemType:
+          type: string
+          description: 시스템 모듈 구분
+          enum:
+          - ITSM
+          - ITAM
+          - PMS
+          - COMMON
+          - SYSTEM
+          example: ITSM
+        packageType:
+          type: string
+          description: 패키지 구분 (본사 기본 / 고객사 커스터마이징)
+          enum:
+          - PACKAGE
+          - CUSTOM
+          example: PACKAGE
+        groupId:
+          type: string
+          description: 페이지 그룹 ID
+          example: itg-ticket
+        majorVersion:
+          type: integer
+          format: int32
+          description: 메이저 버전
+          example: 1
+        minorVersion:
+          type: integer
+          format: int32
+          description: 마이너 버전
+          example: 2
+        metaStatus:
+          type: string
+          description: 메타 상태
+          enum:
+          - DRAFT
+          - PUBLISHED
+          - DEPRECATED
+          - ARCHIVED
+          example: PUBLISHED
+        metaJson:
+          type: object
+          additionalProperties:
+            type: object
+          description: 메타 본문 (api / grid / form / detail / actions 구조)
+          example:
+            api: /api/tickets
+            grid:
+              columns: []
+            form:
+              fields: []
+        active:
+          type: boolean
+          description: 활성 여부 (soft delete 플래그)
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          description: 생성 일시
+          example: 2026-05-28T10:15:30
+        updatedAt:
+          type: string
+          format: date-time
+          description: 수정 일시
+          example: 2026-05-28T11:20:45
+    ApiResponseListPageMetaResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/PageMetaResponse"
+        message:
+          type: string
+        errorCode:
+          type: string
+    ApiResponseListPageMetaVersionResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/PageMetaVersionResponse"
+        message:
+          type: string
+        errorCode:
+          type: string
+    PageMetaVersionResponse:
+      type: object
+      description: PageMeta 버전 이력 항목 — meta_json 본문은 제외한 경량 응답
+      properties:
+        id:
+          type: string
+          description: 메타 ID
+          example: itg-ticket-v1-2
+        groupId:
+          type: string
+          description: 페이지 그룹 ID
+          example: itg-ticket
+        majorVersion:
+          type: integer
+          format: int32
+          description: 메이저 버전
+          example: 1
+        minorVersion:
+          type: integer
+          format: int32
+          description: 마이너 버전
+          example: 2
+        metaStatus:
+          type: string
+          description: 메타 상태
+          enum:
+          - DRAFT
+          - PUBLISHED
+          - DEPRECATED
+          - ARCHIVED
+          example: PUBLISHED
+        createdAt:
+          type: string
+          format: date-time
+          description: 생성 일시
+          example: 2026-05-28T10:15:30
+        updatedAt:
+          type: string
+          format: date-time
+          description: 수정 일시
+          example: 2026-05-28T11:20:45
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
