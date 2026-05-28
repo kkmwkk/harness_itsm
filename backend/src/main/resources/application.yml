@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: itg-backend
+
+server:
+  port: 8080
