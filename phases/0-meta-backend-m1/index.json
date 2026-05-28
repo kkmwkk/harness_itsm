@@ -29,7 +29,10 @@
     {
       "step": 3,
       "name": "common-foundation",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-28T22:56:05+0900",
+      "summary": "ApiResponse<T> Record + ITGException + GlobalExceptionHandler (5종 예외 매핑) + SwaggerConfig (bearerAuth, example.com) + SecurityConfig (STATELESS, /api/meta/** permitAll, CORS localhost:5173) + JwtAuthenticationFilter 골격. /swagger-ui · /v3/api-docs · /actuator/health 200 확인",
+      "completed_at": "2026-05-28T23:00:30+0900"
     },
     {
       "step": 4,
