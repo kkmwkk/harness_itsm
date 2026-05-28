@@ -4,6 +4,10 @@
       "dir": "0-meta-backend-m1",
       "status": "completed",
       "completed_at": "2026-05-28T23:25:28+0900"
+    },
+    {
+      "dir": "1-frontend-foundation",
+      "status": "pending"
     }
   ]
 }

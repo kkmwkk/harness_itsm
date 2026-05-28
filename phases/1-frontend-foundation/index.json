@@ -1,0 +1,11 @@
+{
+  "project": "Polestar10 ITG v2",
+  "phase": "1-frontend-foundation",
+  "steps": [
+    { "step": 0, "name": "vue-vite-skeleton", "status": "pending" },
+    { "step": 1, "name": "tailwind-v4-and-tokens", "status": "pending" },
+    { "step": 2, "name": "shadcn-vue-setup", "status": "pending" },
+    { "step": 3, "name": "layout-and-routing", "status": "pending" },
+    { "step": 4, "name": "api-client-and-meta-fetch", "status": "pending" }
+  ]
+}
