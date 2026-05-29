@@ -34,6 +34,10 @@
       "dir": "6-itam-asset-frontend",
       "status": "completed",
       "completed_at": "2026-05-29T11:55:14+0900"
+    },
+    {
+      "dir": "7-ai-meta-generation",
+      "status": "pending"
     }
   ]
 }

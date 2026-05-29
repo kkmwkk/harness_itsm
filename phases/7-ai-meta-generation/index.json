@@ -1,0 +1,10 @@
+{
+  "project": "Polestar10 ITG v2",
+  "phase": "7-ai-meta-generation",
+  "steps": [
+    { "step": 0, "name": "meta-generator-cli", "status": "pending" },
+    { "step": 1, "name": "meta-validator", "status": "pending" },
+    { "step": 2, "name": "prompt-templates-and-guide", "status": "pending" },
+    { "step": 3, "name": "e2e-generate-itg-change", "status": "pending" }
+  ]
+}
