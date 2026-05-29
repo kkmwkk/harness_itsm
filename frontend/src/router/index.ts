@@ -27,7 +27,19 @@ const routes: RouteRecordRaw[] = [
         path: 'itsm',
         name: 'itsm',
         component: () => import('@/pages/_DynamicRoute.vue'),
-        meta: { title: 'ITSM', groupId: 'itg-ticket' },
+        meta: { title: 'ITSM', groupId: 'itg-ticket', detailUrlTemplate: '/itsm/{id}' },
+      },
+      {
+        path: 'itsm/new/:requestType',
+        name: 'itsm-new',
+        component: () => import('@/pages/itsm/TicketNewPage.vue'),
+        meta: { title: '티켓 등록' },
+      },
+      {
+        path: 'itsm/:id(\\d+)',
+        name: 'itsm-detail',
+        component: () => import('@/pages/itsm/TicketDetailPage.vue'),
+        meta: { title: '티켓 상세' },
       },
       {
         path: 'itam',
