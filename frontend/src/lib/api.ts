@@ -1,5 +1,11 @@
 import { createFetch } from '@vueuse/core';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { mapErrorCode } from '@/lib/ui-messages';
+
+/** 백엔드 errorCode 를 분기·로깅용으로 보존하는 Error 확장 (ADR-020 — message 는 한글 카탈로그만). */
+export interface ApiError extends Error {
+  code?: string;
+}
 
 const baseURL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080';
 
@@ -44,7 +50,10 @@ export const useApiFetch = createFetch({
         }
       }
       if (data?.errorCode) {
-        ctx.error = new Error(`${data.errorCode}: ${data.message ?? ''}`.trim());
+        // 화면 노출 메시지는 카탈로그 매핑(한글)만. raw errorCode 토큰은 .code 로 보존(분기·로깅 전용).
+        const err: ApiError = new Error(mapErrorCode(data.errorCode));
+        err.code = data.errorCode;
+        ctx.error = err;
       }
       return ctx;
     },

@@ -57,6 +57,22 @@
     {
       "dir": "11-ux-baseline-and-playwright",
       "status": "pending"
+    },
+    {
+      "dir": "12-domain-depth-workflow-category",
+      "status": "pending"
+    },
+    {
+      "dir": "13-meta-editor-form-ui",
+      "status": "pending"
+    },
+    {
+      "dir": "14-meta-editor-drag-and-drop",
+      "status": "pending"
+    },
+    {
+      "dir": "15-stretch-wysiwyg-bpmn",
+      "status": "pending"
     }
   ]
 }

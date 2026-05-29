@@ -2,8 +2,23 @@
   "project": "Polestar10 ITG v2",
   "phase": "11-ux-baseline-and-playwright",
   "steps": [
-    { "step": 0, "name": "ui-messages-catalog", "status": "pending" },
-    { "step": 1, "name": "playwright-setup-and-specs", "status": "pending" },
-    { "step": 2, "name": "ci-integration-and-report", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "ui-messages-catalog",
+      "status": "completed",
+      "started_at": "2026-05-29T21:25:35+0900",
+      "summary": "lib/ui-messages.ts (UI.empty/error/loading/success 카탈로그 + ERROR_CODE_MAP 백엔드 13개 코드 매핑 + mapErrorCode fallback) + usePageMeta/usePageData/useDataMutation/lib/api.ts 의 error 가 카탈로그 매핑 + DynamicPage·LoginPage·MetaPage 적용. raw errorCode 화면 노출 차단(ADR-020)."
+    },
+    {
+      "step": 1,
+      "name": "playwright-setup-and-specs",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "ci-integration-and-report",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-05-29T21:25:35+0900"
 }

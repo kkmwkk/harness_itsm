@@ -1,5 +1,6 @@
 import { computed, ref, type Ref } from 'vue';
 import { useApiFetch } from '@/lib/api';
+import { UI, mapErrorCode } from '@/lib/ui-messages';
 import type { ApiEnvelope } from '@/types/meta';
 import type { PageResponse } from '@/types/page';
 
@@ -63,9 +64,11 @@ export function usePageData<T>(api: Ref<string | null | undefined>): UsePageData
   const size          = computed(() => data.value?.data?.size          ?? (query.value.size ?? 20));
 
   const errorMsg = computed<string | null>(() => {
-    if (error.value) return error.value.message ?? '데이터 조회 실패';
+    // 백엔드 errorCode 는 카탈로그(ADR-020)로 매핑. 매핑 없으면 일반 데이터 로드 실패 메시지.
+    const code = data.value?.errorCode;
+    if (error.value) return code ? mapErrorCode(code) : UI.error.dataLoad;
     if (statusCode.value && statusCode.value >= 400) {
-      return data.value?.message ?? `HTTP ${statusCode.value}`;
+      return code ? mapErrorCode(code) : UI.error.dataLoad;
     }
     return null;
   });

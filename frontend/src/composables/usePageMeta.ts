@@ -1,5 +1,6 @@
 import { computed, toValue, type MaybeRefOrGetter, type Ref } from 'vue';
 import { useApiFetch } from '@/lib/api';
+import { UI, mapErrorCode } from '@/lib/ui-messages';
 import type { ApiEnvelope, PageMeta } from '@/types/meta';
 
 /**
@@ -71,13 +72,9 @@ export function usePageMeta(
   const errorMsg = computed<string | null>(() => {
     if (notPublished.value) return null;
     if (error.value) {
-      // 백엔드 envelope 의 errorCode 가 있고 메시지가 코드를 포함하면 한글 메시지만 노출
-      const raw = error.value.message ?? '';
+      // 백엔드 errorCode 는 카탈로그(ADR-020)로 매핑하여 한글 메시지만 노출. raw 토큰·message 직접 노출 금지.
       const code = data.value?.errorCode;
-      if (code && raw.startsWith(`${code}:`)) {
-        return raw.slice(code.length + 1).trim() || '메타 조회 실패';
-      }
-      return raw || '메타 조회 실패';
+      return code ? mapErrorCode(code) : UI.error.metaLoad;
     }
     return null;
   });

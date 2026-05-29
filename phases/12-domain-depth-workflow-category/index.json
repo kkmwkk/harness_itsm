@@ -1,0 +1,13 @@
+{
+  "project": "Polestar10 ITG v2",
+  "phase": "12-domain-depth-workflow-category",
+  "steps": [
+    { "step": 0, "name": "workflow-schema-and-engine", "status": "pending" },
+    { "step": 1, "name": "asset-category-schema", "status": "pending" },
+    { "step": 2, "name": "workflow-and-category-controllers", "status": "pending" },
+    { "step": 3, "name": "request-type-meta-seeds", "status": "pending" },
+    { "step": 4, "name": "workflow-panel-frontend", "status": "pending" },
+    { "step": 5, "name": "asset-category-frontend", "status": "pending" },
+    { "step": 6, "name": "e2e-workflow-and-category", "status": "pending" }
+  ]
+}

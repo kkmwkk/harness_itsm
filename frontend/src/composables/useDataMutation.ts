@@ -1,5 +1,6 @@
 import { ref, type Ref } from 'vue';
 import { useApiFetch } from '@/lib/api';
+import { UI, mapErrorCode } from '@/lib/ui-messages';
 import type { ApiEnvelope } from '@/types/meta';
 
 export interface MutationResult<TIn, TOut> {
@@ -35,8 +36,11 @@ export function useDataMutation<TIn, TOut>(): MutationResult<TIn, TOut> {
         .json<ApiEnvelope<TOut>>();
 
       if (fetchError.value || (statusCode.value && statusCode.value >= 400)) {
-        error.value =
-          data.value?.message ?? fetchError.value?.message ?? '저장 실패';
+        // errorCode 가 있으면 카탈로그(ADR-020)로 매핑, 없으면 백엔드 message → UI.error.submit fallback.
+        const code = data.value?.errorCode;
+        error.value = code
+          ? mapErrorCode(code)
+          : (data.value?.message ?? fetchError.value?.message ?? UI.error.submit);
         return null;
       }
       return data.value?.data ?? null;

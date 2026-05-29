@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useApiFetch } from '@/lib/api';
+import { UI, mapErrorCode } from '@/lib/ui-messages';
 import { useAuthStore } from '@/stores/useAuthStore';
 import type { ApiEnvelope } from '@/types/meta';
 import type { TokenResponse } from '@/types/auth';
@@ -36,15 +37,15 @@ async function onSubmit() {
       .json<ApiEnvelope<TokenResponse>>();
 
     if (statusCode.value && statusCode.value >= 400) {
-      toast.error('아이디 또는 비밀번호가 올바르지 않습니다.');
+      toast.error(mapErrorCode(data.value?.errorCode ?? 'LOGIN_FAILED'));
       return;
     }
     if (!data.value?.data) {
-      toast.error('로그인에 실패했습니다.');
+      toast.error(mapErrorCode('LOGIN_FAILED'));
       return;
     }
     auth.setSession(data.value.data);
-    toast.success(`${data.value.data.user.name}님 환영합니다.`);
+    toast.success(UI.success.loggedIn(data.value.data.user.name));
     const next = (route.query.next as string | undefined) ?? '/';
     void router.replace(next);
   } finally {
