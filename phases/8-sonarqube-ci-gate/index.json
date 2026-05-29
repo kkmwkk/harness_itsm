@@ -1,0 +1,10 @@
+{
+  "project": "Polestar10 ITG v2",
+  "phase": "8-sonarqube-ci-gate",
+  "steps": [
+    { "step": 0, "name": "gradle-sonar-plugin", "status": "pending" },
+    { "step": 1, "name": "coverage-baseline", "status": "pending" },
+    { "step": 2, "name": "ci-workflow", "status": "pending" },
+    { "step": 3, "name": "quality-gate-and-report", "status": "pending" }
+  ]
+}
