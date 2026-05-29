@@ -1,0 +1,9 @@
+{
+  "project": "Polestar10 ITG v2",
+  "phase": "11-ux-baseline-and-playwright",
+  "steps": [
+    { "step": 0, "name": "ui-messages-catalog", "status": "pending" },
+    { "step": 1, "name": "playwright-setup-and-specs", "status": "pending" },
+    { "step": 2, "name": "ci-integration-and-report", "status": "pending" }
+  ]
+}

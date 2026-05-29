@@ -53,6 +53,10 @@
     {
       "dir": "10-menu-and-routing",
       "status": "pending"
+    },
+    {
+      "dir": "11-ux-baseline-and-playwright",
+      "status": "pending"
     }
   ]
 }
