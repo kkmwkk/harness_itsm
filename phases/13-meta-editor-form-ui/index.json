@@ -40,7 +40,7 @@
       "status": "completed",
       "started_at": "2026-05-30T06:23:47+0900",
       "summary": "액션 편집 + 미리보기 + 발행 흐름 — ActionEditor.vue(id·label·type(dialog-form/export/navigate/custom)·to(navigate) 추가/삭제, 외부 URL 새 탭 안내), useActionEditor.ts 순수 로직(ACTION_TYPES·createBlankAction·duplicateActionIds·validateActions·isExternalUrl), MetaPreview.vue(DynamicPage :meta-id+:rows=mockRows 렌더 + 등록 폼 DynamicForm 다이얼로그), useMetaPreview.ts buildMockRows(grid.columns→샘플 5건, number=n), MetaEditorDetailPage 통합(폼·그리드·액션 3탭 + 미리보기 사이드 패널 토글 + 발행 확인 다이얼로그(자동 DEPRECATE 안내)·새 버전 만들기(copy)·보관, dry-run 검증된 스냅샷에서만 canPublish 활성, 발행/복사 중 버튼 disable), ActionEditor.spec·MetaPreview.spec 단위 테스트.",
-      "completed_at": "2026-05-30T06:34:00+0900"
+      "completed_at": "2026-05-30T06:33:49+0900"
     },
     {
       "step": 5,
