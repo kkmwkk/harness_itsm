@@ -2,9 +2,29 @@
   "project": "Polestar10 ITG v2",
   "phase": "10-menu-and-routing",
   "steps": [
-    { "step": 0, "name": "login-and-auth-store", "status": "pending" },
-    { "step": 1, "name": "menu-store-and-dynamic-sidebar", "status": "pending" },
-    { "step": 2, "name": "system-admin-pages", "status": "pending" },
-    { "step": 3, "name": "e2e-login-flow", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "login-and-auth-store",
+      "status": "completed",
+      "started_at": "2026-05-29T20:20:05+0900",
+      "summary": "useAuthStore (Pinia setup, localStorage access/refresh + user/roles/permissions, hasRole/hasPermission) + lib/api.ts readToken 실 구현 + 401 자동 /login 리다이렉트 + LoginPage.vue (카드 + 폼 + 토스트) + 라우터 가드(meta.requiresAuth + /me 자동 호출) + TopBar 로그인 사용자 + 로그아웃. 단위 테스트 4 케이스(happy-dom). vitest happy-dom 의존 추가, eslint --fix 로 기존 DynamicPage 포맷 경고 동반 정리(lint 0).",
+      "completed_at": "2026-05-29T20:26:00+0900"
+    },
+    {
+      "step": 1,
+      "name": "menu-store-and-dynamic-sidebar",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "system-admin-pages",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "e2e-login-flow",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-05-29T20:20:05+0900"
 }

@@ -1,8 +1,22 @@
 <script setup lang="ts">
-import { MenuIcon, CircleUserIcon } from '@lucide/vue';
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { MenuIcon, CircleUserIcon, LogOutIcon } from '@lucide/vue';
+import { storeToRefs } from 'pinia';
 import { useLayoutStore } from '@/stores/useLayoutStore';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 const layout = useLayoutStore();
+const auth = useAuthStore();
+const router = useRouter();
+const { user } = storeToRefs(auth);
+
+const displayName = computed(() => user.value?.name ?? user.value?.username ?? '');
+
+function onLogout() {
+  auth.clearSession();
+  void router.push('/login');
+}
 </script>
 
 <template>
@@ -26,17 +40,26 @@ const layout = useLayoutStore();
     >
       Polestar10 ITG
     </RouterLink>
-    <div class="ml-auto flex items-center gap-2">
-      <button
-        type="button"
-        class="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm text-foreground hover:bg-surface-hover"
-        aria-label="사용자 메뉴"
+    <div class="ml-auto flex items-center gap-1">
+      <span
+        class="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm text-foreground"
       >
         <CircleUserIcon
           class="h-5 w-5"
           :stroke-width="1.5"
         />
-        <span class="hidden sm:inline">샘플 사용자</span>
+        <span class="hidden sm:inline">{{ displayName }}</span>
+      </span>
+      <button
+        type="button"
+        class="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm text-foreground hover:bg-surface-hover"
+        @click="onLogout"
+      >
+        <LogOutIcon
+          class="h-5 w-5"
+          :stroke-width="1.5"
+        />
+        <span class="hidden sm:inline">로그아웃</span>
       </button>
     </div>
   </header>

@@ -1,9 +1,20 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { useApiFetch } from '@/lib/api';
+import type { ApiEnvelope } from '@/types/meta';
+import type { MeResponse } from '@/types/auth';
 
 const routes: RouteRecordRaw[] = [
   {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/pages/LoginPage.vue'),
+    meta: { public: true },
+  },
+  {
     path: '/',
     component: () => import('@/components/layout/AppLayout.vue'),
+    meta: { requiresAuth: true },
     children: [
       {
         path: '',
@@ -92,7 +103,39 @@ const routes: RouteRecordRaw[] = [
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ];
 
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+/**
+ * 인증 가드 (PRD §5-6 · ARCHITECTURE §8).
+ * - public 라우트(`/login`)는 통과.
+ * - 미인증이면 `/login?next=...` 으로 리다이렉트 (loop 방지 — /login 은 public).
+ * - 인증됐지만 user 가 비어있으면(새로고침 케이스) /me 로 user/roles/permissions 복원.
+ *   /me 실패(토큰 만료 등)는 useApiFetch onFetchError 가 /login 리다이렉트를 처리한다.
+ */
+router.beforeEach(async (to) => {
+  if (to.meta.public) return true;
+  const auth = useAuthStore();
+  if (!auth.isAuthenticated) {
+    return { path: '/login', query: { next: to.fullPath } };
+  }
+  if (!auth.user) {
+    try {
+      const { data } = await useApiFetch('/api/auth/me').json<
+        ApiEnvelope<MeResponse>
+      >();
+      if (data.value?.data) {
+        auth.user = data.value.data.user;
+        auth.roles = data.value.data.roles;
+        auth.permissions = data.value.data.permissions;
+      }
+    } catch {
+      /* /me 실패 시 onFetchError 가 /login 리다이렉트 */
+    }
+  }
+  return true;
+});
+
+export default router;
