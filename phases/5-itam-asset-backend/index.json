@@ -1,0 +1,10 @@
+{
+  "project": "Polestar10 ITG v2",
+  "phase": "5-itam-asset-backend",
+  "steps": [
+    { "step": 0, "name": "asset-schema-and-entity", "status": "pending" },
+    { "step": 1, "name": "asset-repository-and-service", "status": "pending" },
+    { "step": 2, "name": "asset-controller-and-swagger", "status": "pending" },
+    { "step": 3, "name": "e2e-with-itg-asset-meta", "status": "pending" }
+  ]
+}

@@ -24,6 +24,10 @@
       "dir": "4-itsm-ticket-frontend",
       "status": "completed",
       "completed_at": "2026-05-29T10:13:15+0900"
+    },
+    {
+      "dir": "5-itam-asset-backend",
+      "status": "pending"
     }
   ]
 }
