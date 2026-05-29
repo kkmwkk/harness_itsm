@@ -46,6 +46,14 @@ export function needsOptions(type: FieldType): boolean {
   return OPTION_TYPES.includes(type);
 }
 
+/**
+ * 폼 너비(span) 토글 — 반 폭(1) ↔ 전체 폭(2).
+ * undefined 는 반 폭(1)로 간주하므로 토글 시 전체 폭(2)이 된다 (phase 14 step 1).
+ */
+export function toggleSpan(span: 1 | 2 | undefined): 1 | 2 {
+  return span === 2 ? 1 : 2;
+}
+
 /** name 은 영문 소문자/언더스코어로 시작하는 식별자(snake_case·camelCase 허용). */
 const NAME_RE = /^[a-z_][a-zA-Z0-9_]*$/;
 export function isValidFieldName(name: string): boolean {
