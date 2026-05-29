@@ -10,18 +10,17 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { usePageMeta } from '@/composables/usePageMeta';
+import { usePageData } from '@/composables/usePageData';
 import { asPageMetaBody, MetaBodyShapeError } from '@/lib/meta-body';
-import { useApiFetch } from '@/lib/api';
 import DynamicGrid from './DynamicGrid.vue';
 import DynamicForm from './DynamicForm.vue';
 import type { PageMetaBody, ActionMeta } from '@/types/meta-body';
-import type { ApiEnvelope } from '@/types/meta';
 
 /**
  * 메타 한 건으로 화면 전체를 자동 구성하는 No-code 진입 컴포넌트 (ADR-004).
  * usePageMeta(PUBLISHED 최신) → asPageMetaBody(강타입 좁히기) → DynamicGrid + DynamicForm(dialog).
- * `rows` 가 주어지면 그것을 그리드 데이터로 사용(본 phase 의 mock 검증 경로),
- * 미제공이면 meta.api 로 GET 시도(정식 fetch·페이지네이션은 다음 phase 의 책임).
+ * `rows` 가 주어지면 그것을 그리드 데이터로 사용(phase 2 DynamicPageSampler 호환 경로),
+ * 미제공이면 usePageData 가 meta.api 로 PageResponse<T> 를 자동 fetch(페이지·정렬·필터 setQuery).
  */
 interface Props {
   groupId: string;
@@ -53,19 +52,23 @@ watchEffect(() => {
   }
 });
 
-// 데이터 fetch — props.rows 미제공 시 meta.api 로 GET (다음 phase 에서 정식 처리).
-const dataUrl = computed(() => body.value?.api ?? '');
-const { data: rowsEnvelope, execute: fetchRows } = useApiFetch(dataUrl, {
-  immediate: false,
-}).json<ApiEnvelope<unknown[]>>();
-
-watchEffect(() => {
-  if (body.value && !props.rows) void fetchRows();
-});
-
-const rows = computed<unknown[]>(
-  () => props.rows ?? rowsEnvelope.value?.data ?? [],
+// 데이터 fetch — props.rows 우선(phase 2 호환), 미제공 시 meta.api 로 자동 fetch.
+// api 가 null 이면 usePageData 는 no-op(빈 결과)로 동작한다.
+const api = computed<string | null>(() =>
+  props.rows ? null : (body.value?.api ?? null),
 );
+const {
+  rows: fetchedRows,
+  isFetching: isDataFetching,
+  error: dataError,
+  reload,
+  setQuery,
+} = usePageData<Record<string, unknown>>(api);
+
+const rows = computed<unknown[]>(() => props.rows ?? fetchedRows.value ?? []);
+
+// 그리드의 page/sort 이벤트 연결과 reload 트리거는 후속 step 에서 사용 (defineExpose 로 노출).
+defineExpose({ reload, setQuery });
 
 // dialog-form 액션
 const dialogOpen = ref(false);
@@ -132,6 +135,20 @@ function onFormSubmit(values: Record<string, unknown>): void {
     </Card>
 
     <template v-else-if="body">
+      <Card v-if="dataError">
+        <CardContent class="py-6">
+          <p class="text-danger">
+            {{ dataError }}
+          </p>
+        </CardContent>
+      </Card>
+      <p
+        v-else-if="isDataFetching && !props.rows"
+        class="text-foreground-muted"
+      >
+        데이터 조회 중...
+      </p>
+
       <DynamicGrid
         :meta="body.grid"
         :rows="rows"

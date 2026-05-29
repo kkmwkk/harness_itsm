@@ -2,9 +2,28 @@
   "project": "Polestar10 ITG v2",
   "phase": "4-itsm-ticket-frontend",
   "steps": [
-    { "step": 0, "name": "data-fetch-integration", "status": "pending" },
-    { "step": 1, "name": "status-priority-badges", "status": "pending" },
-    { "step": 2, "name": "form-submit-integration", "status": "pending" },
-    { "step": 3, "name": "e2e-itsm-ticket-frontend", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "data-fetch-integration",
+      "status": "completed",
+      "started_at": "2026-05-29T09:49:45+0900",
+      "summary": "PageResponse<T> 타입 추가. usePageData composable (buildUrl 분리 + reactive URL + useApiFetch refetch + page/sort/filters setQuery + reload). DynamicPage props.rows 우선 + 미제공 시 meta.api 자동 fetch. /itsm 진입 시 백엔드 시드 5건 그리드 표시. 단위 테스트 5 케이스(buildUrl)."
+    },
+    {
+      "step": 1,
+      "name": "status-priority-badges",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "form-submit-integration",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "e2e-itsm-ticket-frontend",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-05-29T09:49:45+0900"
 }
