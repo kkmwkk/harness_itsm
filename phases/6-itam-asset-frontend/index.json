@@ -2,9 +2,28 @@
   "project": "Polestar10 ITG v2",
   "phase": "6-itam-asset-frontend",
   "steps": [
-    { "step": 0, "name": "meta-version-override", "status": "pending" },
-    { "step": 1, "name": "asset-detail-page", "status": "pending" },
-    { "step": 2, "name": "history-restore-binding", "status": "pending" },
-    { "step": 3, "name": "e2e-with-meta-rotation", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "meta-version-override",
+      "status": "completed",
+      "started_at": "2026-05-29T10:53:12+0900",
+      "summary": "usePageMeta 확장(MetaIdent: group|metaId 두 모드, resolvePageMetaUrl 분리) + DynamicPage props.metaId 추가(groupId 와 동시 지정 시 metaId 우선, 둘 다 없으면 에러 카드). 단위 테스트 4 케이스. 기존 /itsm 등 회귀 없음."
+    },
+    {
+      "step": 1,
+      "name": "asset-detail-page",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "history-restore-binding",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "e2e-with-meta-rotation",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-05-29T10:53:12+0900"
 }
