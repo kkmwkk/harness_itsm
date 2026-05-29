@@ -24,6 +24,8 @@ SPRING_PROFILES_ACTIVE=local ./gradlew bootRun               # 8080 기동
 
 > 프론트엔드 · DynamicPage 는 후속 phase 에서 추가된다.
 
+> 신규 모듈 메타 생성은 [`docs/META_GENERATION_GUIDE.md`](./docs/META_GENERATION_GUIDE.md) 참고.
+
 ## 더 보기
 
 - 절대 규칙 / 개발 프로세스 → [`CLAUDE.md`](./CLAUDE.md)

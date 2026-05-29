@@ -1,0 +1,103 @@
+{
+  "components": {
+    "schemas": {
+      "TicketCreateRequest": {
+        "type": "object",
+        "description": "티켓 신규 생성 요청",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "제목",
+            "example": "샘플 티켓 제목",
+            "maxLength": 200,
+            "minLength": 0
+          },
+          "content": {
+            "type": "string",
+            "description": "본문",
+            "example": "샘플 본문"
+          },
+          "priority": {
+            "type": "string",
+            "description": "우선순위",
+            "enum": [
+              "LOW",
+              "MEDIUM",
+              "HIGH",
+              "CRITICAL"
+            ],
+            "example": "MEDIUM"
+          },
+          "category": {
+            "type": "string",
+            "description": "분류",
+            "example": "BUG"
+          },
+          "assigneeId": {
+            "type": "string",
+            "description": "담당자 ID",
+            "example": "assignee-sample-1"
+          }
+        },
+        "required": [
+          "priority"
+        ]
+      },
+      "TicketSummary": {
+        "type": "object",
+        "description": "티켓 목록용 경량 DTO (content 제외)",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "내부 ID",
+            "example": 1
+          },
+          "ticketNo": {
+            "type": "string",
+            "description": "표시용 티켓 번호",
+            "example": "ITSM-00001"
+          },
+          "title": {
+            "type": "string",
+            "description": "제목",
+            "example": "샘플 티켓 제목"
+          },
+          "priority": {
+            "type": "string",
+            "description": "우선순위",
+            "enum": [
+              "LOW",
+              "MEDIUM",
+              "HIGH",
+              "CRITICAL"
+            ],
+            "example": "MEDIUM"
+          },
+          "status": {
+            "type": "string",
+            "description": "상태",
+            "enum": [
+              "OPEN",
+              "IN_PROGRESS",
+              "RESOLVED",
+              "CLOSED"
+            ],
+            "example": "OPEN"
+          },
+          "assigneeId": {
+            "type": "string",
+            "description": "담당자 ID",
+            "example": "assignee-sample-1"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "생성 일시",
+            "example": "2026-05-29T10:15:30"
+          }
+        }
+      }
+    }
+  }
+}
