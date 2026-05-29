@@ -16,7 +16,7 @@
       "status": "completed",
       "started_at": "2026-05-29T09:02:19+0900",
       "summary": "TicketRepository (findByTicketNo + search Page) + TicketService (create/getById/getByTicketNo/search/update/changeStatus/changePriority/assign) + DTO Record 6종(Request 5 + Response/Summary) + Ticket#assignTicketNo 추가 + TicketFixture + Mockito 단위 테스트 14 케이스. ticket_no 는 save 후 ITSM-{id5} 부여 + dirty checking. 모든 상태 가드는 Entity 도메인 메서드 위임.",
-      "completed_at": "2026-05-29T09:06:30+0900"
+      "completed_at": "2026-05-29T09:06:36+0900"
     },
     {
       "step": 2,
