@@ -21,10 +21,10 @@
     {
       "step": 2,
       "name": "workflow-and-category-controllers",
-      "status": "error",
+      "status": "completed",
       "started_at": "2026-05-29T22:10:29+0900",
-      "error_message": "[3회 시도 후 실패] Step did not update status",
-      "failed_at": "2026-05-29T22:24:21+0900"
+      "summary": "TicketRequestTypeController + WorkflowDefinitionController + WorkflowInstanceController + AssetCategoryController + Swagger 어노테이션 + @PreAuthorize 권한 가드 + @WebMvcTest. 산출물 commit cea51b4(feat) + f6c5654(chore) 정상. execute.py status 자동 갱신 메커니즘 미작동으로 수동 completed 복구.",
+      "completed_at": "2026-05-29T22:24:21+0900"
     },
     {
       "step": 3,
