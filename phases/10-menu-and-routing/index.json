@@ -16,7 +16,7 @@
       "status": "completed",
       "started_at": "2026-05-29T20:26:25+0900",
       "summary": "types/menu.ts + useMenuStore (load/clear/findByRoute) + MenuTreeNode.vue 재귀 컴포넌트 + Sidebar 동적 트리 (하드코딩 제거, lucide 아이콘 동적 매핑, depth 들여쓰기, active 표시) + 시스템 라우트 4개 등록(/system/users·depts·roles·menus stub) + 라우터 가드가 menuStore.load 1회 호출(tree 비었을 때만) + TopBar 로그아웃 시 menu.clear(). 단위 테스트 4 케이스(useApiFetch mock).",
-      "completed_at": "2026-05-29T20:31:00+0900"
+      "completed_at": "2026-05-29T20:31:10+0900"
     },
     {
       "step": 2,
