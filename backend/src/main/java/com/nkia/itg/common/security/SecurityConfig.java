@@ -24,8 +24,10 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/v3/api-docs.yaml").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
-                        // phase-0 한정: 인증·인가는 다음 phase 에서 강화한다.
+                        // phase-3 한정: 모듈 API 도 인증 도입 전까지 permitAll.
+                        // 인증·인가는 별도 phase 에서 강화한다 (JWT 검증 + 권한 체크).
                         .requestMatchers("/api/meta/**").permitAll()
+                        .requestMatchers("/api/tickets/**").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();
