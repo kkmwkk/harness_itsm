@@ -16,7 +16,7 @@
       "status": "completed",
       "started_at": "2026-05-29T10:56:06+0900",
       "summary": "pages/itam/DetailPage.vue (자산 단건 useApiFetch + usePageMeta metaId 모드로 등록 메타 fetch + dl 형태 속성 표시 + 메타 JSON 미리보기) + router /itam/:id(\\d+) 라우트. 백엔드 단건 200, 미존재 자산도 SPA 200(에러 카드).",
-      "completed_at": "2026-05-29T11:00:00+0900"
+      "completed_at": "2026-05-29T10:59:11+0900"
     },
     {
       "step": 2,
