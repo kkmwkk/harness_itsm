@@ -29,7 +29,10 @@
     {
       "step": 3,
       "name": "e2e-with-itg-ticket-meta",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-29T09:36:00+0900",
+      "summary": "sql/init/03_itg_ticket_meta.sql (itg-ticket-v1-1 PUBLISHED, ITSM/PACKAGE, grid 6컬럼 + form 6필드 + create dialog-form) + 04_sample_tickets.sql (5건, OPEN/IN_PROGRESS/RESOLVED/CLOSED 혼합). E2E 시나리오 14 단계 PASS — 상태 매트릭스(OPEN→IN_PROGRESS→CLOSED, IN_PROGRESS→OPEN 거부) + CLOSED 가드(update/priority/assign 400) + ticket_no ITSM-{id5} 자동 부여 + OpenAPI 산출 갱신. backend/E2E_REPORT_PHASE3.md 작성. M3 백엔드 완료. 시드 유지(다음 phase frontend 통합 사용).",
+      "completed_at": "2026-05-29T09:42:00+0900"
     }
   ],
   "created_at": "2026-05-29T08:57:40+0900"
