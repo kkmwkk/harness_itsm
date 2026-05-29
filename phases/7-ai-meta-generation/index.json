@@ -21,7 +21,10 @@
     {
       "step": 2,
       "name": "prompt-templates-and-guide",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-29T14:07:55+0900",
+      "summary": "docs/META_GENERATION_GUIDE.md (7단계 워크플로우 + Claude Code 라벨 다듬기 프롬프트 템플릿 + 결함 사례·한계) + scripts/templates/ (README + 입출력·프롬프트 예시 3 파일) + (선택) ADR-014. backend/frontend 회귀 없음.",
+      "completed_at": "2026-05-29T14:20:00+0900"
     },
     {
       "step": 3,
