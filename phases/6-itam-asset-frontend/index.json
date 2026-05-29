@@ -1,0 +1,10 @@
+{
+  "project": "Polestar10 ITG v2",
+  "phase": "6-itam-asset-frontend",
+  "steps": [
+    { "step": 0, "name": "meta-version-override", "status": "pending" },
+    { "step": 1, "name": "asset-detail-page", "status": "pending" },
+    { "step": 2, "name": "history-restore-binding", "status": "pending" },
+    { "step": 3, "name": "e2e-with-meta-rotation", "status": "pending" }
+  ]
+}
