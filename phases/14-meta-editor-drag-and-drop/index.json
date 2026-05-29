@@ -21,7 +21,10 @@
     {
       "step": 2,
       "name": "grid-column-drag-sort-and-resize",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-30T06:55:48+0900",
+      "summary": "GridColumnEditor 에 VueDraggable(grip 핸들 전용·동일 리스트 reorder·200ms·ghost/chosen) + Alt+↑/↓ 키보드 순서 변경 적용. 폭 모드 px(width)↔flex 채움 토글(usesFlex/setFlexMode/setWidthMode — flex 시 width 비활성, 둘 동시 금지) + 그리드 헤더 미리보기 stripe(width/flex 비례, 실 데이터 fetch 없음). pinned 는 기존 none/left/right 단일 select 유지. 단위 테스트 5건 추가. type-check·lint(0)·build·test(150) 통과.",
+      "completed_at": "2026-05-30T07:00:00+0900"
     },
     {
       "step": 3,

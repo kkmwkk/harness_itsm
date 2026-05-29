@@ -12,7 +12,11 @@ import {
   setPinned,
   hideAtValue,
   setHideAt,
+  usesFlex,
+  setFlexMode,
+  setWidthMode,
 } from '@/composables/useGridColumnEditor';
+import { reorder } from '@/lib/drag';
 import type { GridColumnMeta } from '@/types/meta-body';
 
 /**
@@ -111,6 +115,49 @@ describe('pinned/hideAt — undefined ↔ none 변환', () => {
     expect(c.hideAt).toBe('md');
     setHideAt(c, 'none');
     expect(c.hideAt).toBeUndefined();
+  });
+});
+
+describe('컬럼 순서 드래그(reorder) — phase 14', () => {
+  it('드래그 종료 시 oldIndex→newIndex 로 컬럼 순서를 바꾼 새 배열을 만든다', () => {
+    const columns: GridColumnMeta[] = [
+      { field: 'a', label: 'A', type: 'text' },
+      { field: 'b', label: 'B', type: 'text' },
+      { field: 'c', label: 'C', type: 'text' },
+    ];
+    // 2번('c')을 0번 위치로 드래그
+    const next = reorder(columns, 2, 0);
+    expect(next.map((c) => c.field)).toEqual(['c', 'a', 'b']);
+    // 원본 불변
+    expect(columns.map((c) => c.field)).toEqual(['a', 'b', 'c']);
+  });
+});
+
+describe('폭 모드 — px(width) ↔ flex 토글 (phase 14)', () => {
+  it('width 만 있는 컬럼은 px 모드(usesFlex=false)', () => {
+    const c: GridColumnMeta = { field: 'a', label: 'A', type: 'text', width: 120 };
+    expect(usesFlex(c)).toBe(false);
+  });
+
+  it('flex 모드로 전환하면 flex=1 이 되고 width 가 제거된다', () => {
+    const c: GridColumnMeta = { field: 'a', label: 'A', type: 'text', width: 120 };
+    setFlexMode(c);
+    expect(usesFlex(c)).toBe(true);
+    expect(c.flex).toBe(1);
+    expect(c.width).toBeUndefined();
+  });
+
+  it('px 모드로 전환하면 flex 가 제거된다', () => {
+    const c: GridColumnMeta = { field: 'a', label: 'A', type: 'text', flex: 2 };
+    setWidthMode(c);
+    expect(usesFlex(c)).toBe(false);
+    expect(c.flex).toBeUndefined();
+  });
+
+  it('이미 flex 가 있으면 setFlexMode 가 값을 덮어쓰지 않는다', () => {
+    const c: GridColumnMeta = { field: 'a', label: 'A', type: 'text', flex: 3 };
+    setFlexMode(c);
+    expect(c.flex).toBe(3);
   });
 });
 
