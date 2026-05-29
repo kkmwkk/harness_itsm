@@ -32,7 +32,7 @@
       "status": "completed",
       "started_at": "2026-05-29T11:02:17+0900",
       "summary": "백엔드 + 프런트 동시 부팅 + 메타 회전(v1-1 DEPRECATED·v1-2 PUBLISHED) 상태에서 자산 이력 복원 e2e 시나리오 PASS — 시드 자산(AST-SAMPLE-*) 의 /registration-meta 는 v1-1 보존, 신규 자산은 v1-2 로 등록. /itam/:id 상세 페이지가 DynamicForm 으로 등록 메타에 따라 화면 복원(v1.1·DEPRECATED / v1.2·PUBLISHED 버전 라벨). frontend/E2E_REPORT_PHASE6.md 작성. PRD §5-2 활용 사례·M4 마일스톤 완료.",
-      "completed_at": "2026-05-29T11:06:30+0900"
+      "completed_at": "2026-05-29T11:55:14+0900"
     }
   ],
   "created_at": "2026-05-29T10:53:12+0900"
