@@ -3,6 +3,7 @@ package com.nkia.itg;
 import com.nkia.itg.itam.asset.repository.AssetLifecycleEventRepository;
 import com.nkia.itg.itam.asset.repository.AssetRepository;
 import com.nkia.itg.itam.category.repository.AssetCategoryRepository;
+import com.nkia.itg.itsm.requesttype.repository.TicketRequestTypeRepository;
 import com.nkia.itg.itsm.ticket.repository.TicketRepository;
 import com.nkia.itg.meta.repository.MetaRepository;
 import com.nkia.itg.system.dept.repository.DepartmentRepository;
@@ -65,6 +66,9 @@ class ApplicationContextLoadTest {
 
     @MockitoBean
     private WorkflowInstanceStepRepository workflowInstanceStepRepository;
+
+    @MockitoBean
+    private TicketRequestTypeRepository ticketRequestTypeRepository;
 
     @Test
     void contextLoads() {}

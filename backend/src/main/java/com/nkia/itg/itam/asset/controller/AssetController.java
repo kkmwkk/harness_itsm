@@ -6,6 +6,8 @@ import com.nkia.itg.itam.asset.domain.AssetStatus;
 import com.nkia.itg.itam.asset.domain.AssetType;
 import com.nkia.itg.itam.asset.dto.AssetAssignRequest;
 import com.nkia.itg.itam.asset.dto.AssetCreateRequest;
+import com.nkia.itg.itam.asset.dto.AssetLifecycleEventCreateRequest;
+import com.nkia.itg.itam.asset.dto.AssetLifecycleEventResponse;
 import com.nkia.itg.itam.asset.dto.AssetResponse;
 import com.nkia.itg.itam.asset.dto.AssetStatusChangeRequest;
 import com.nkia.itg.itam.asset.dto.AssetSummary;
@@ -15,11 +17,13 @@ import com.nkia.itg.meta.dto.PageMetaResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -184,5 +188,45 @@ public class AssetController {
             @Parameter(description = "자산 PK", example = "42") @PathVariable Long id
     ) {
         return ResponseEntity.ok(ApiResponse.ok(assetService.getRegistrationMeta(id)));
+    }
+
+    @Operation(
+            summary = "자산 이력 이벤트 목록",
+            description = "자산의 이력 이벤트(취득·이관·수리·폐기·갱신)를 이벤트 일자 내림차순으로 반환한다. ASSET_READ 필요."
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공 (빈 목록 가능)"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "자산 없음")
+    })
+    @GetMapping("/{id}/lifecycle-events")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ASSET_READ') or hasAuthority('ASSET_ADMIN')")
+    public ResponseEntity<ApiResponse<List<AssetLifecycleEventResponse>>> getLifecycleEvents(
+            @Parameter(description = "자산 PK", example = "42") @PathVariable Long id
+    ) {
+        List<AssetLifecycleEventResponse> data = assetService.listLifecycleEvents(id).stream()
+                .map(AssetLifecycleEventResponse::from)
+                .toList();
+        return ResponseEntity.ok(ApiResponse.ok(data));
+    }
+
+    @Operation(
+            summary = "자산 이력 이벤트 기록",
+            description = "자산에 이력 이벤트(이관·수리·폐기 등)를 기록한다. event_type 은 Enum 으로만 받는다. ASSET_ADMIN 필요."
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "기록 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "검증 실패"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "자산 없음")
+    })
+    @PostMapping("/{id}/lifecycle-events")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ASSET_ADMIN')")
+    public ResponseEntity<ApiResponse<AssetLifecycleEventResponse>> recordLifecycleEvent(
+            @Parameter(description = "자산 PK", example = "42") @PathVariable Long id,
+            @Valid @RequestBody AssetLifecycleEventCreateRequest req
+    ) {
+        AssetLifecycleEventResponse data = AssetLifecycleEventResponse.from(
+                assetService.recordLifecycleEvent(id, req.eventType(), req.byUserId(), req.payload()));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.ok(data, "이력 이벤트가 기록되었습니다."));
     }
 }

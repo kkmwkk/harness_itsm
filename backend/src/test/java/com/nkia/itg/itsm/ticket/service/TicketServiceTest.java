@@ -19,6 +19,8 @@ import com.nkia.itg.itsm.ticket.dto.TicketStatusChangeRequest;
 import com.nkia.itg.itsm.ticket.dto.TicketUpdateRequest;
 import com.nkia.itg.itsm.ticket.entity.Ticket;
 import com.nkia.itg.itsm.ticket.repository.TicketRepository;
+import com.nkia.itg.itsm.requesttype.repository.TicketRequestTypeRepository;
+import com.nkia.itg.itsm.workflow.service.WorkflowEngineService;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,6 +40,12 @@ class TicketServiceTest {
 
     @Mock
     private TicketRepository ticketRepository;
+
+    @Mock
+    private TicketRequestTypeRepository requestTypeRepository;
+
+    @Mock
+    private WorkflowEngineService workflowEngineService;
 
     @InjectMocks
     private TicketService ticketService;
@@ -72,7 +80,7 @@ class TicketServiceTest {
         when(ticketRepository.save(any(Ticket.class))).thenReturn(persisted);
 
         TicketCreateRequest req = new TicketCreateRequest(
-                "샘플 티켓 제목", "샘플 본문", Priority.MEDIUM, "BUG", "assignee-sample-1");
+                "샘플 티켓 제목", "샘플 본문", Priority.MEDIUM, "BUG", "assignee-sample-1", "INCIDENT");
 
         // when
         TicketResponse result = ticketService.create(req);
@@ -94,9 +102,10 @@ class TicketServiceTest {
                 .status(TicketStatus.OPEN)
                 .build();
         when(ticketRepository.save(any(Ticket.class))).thenReturn(persisted);
+        when(requestTypeRepository.findById(any())).thenReturn(Optional.empty());
 
         TicketCreateRequest req = new TicketCreateRequest(
-                "샘플 티켓 제목", null, Priority.MEDIUM, null, null);
+                "샘플 티켓 제목", null, Priority.MEDIUM, null, null, "INCIDENT");
 
         // when
         TicketResponse result = ticketService.create(req);
@@ -104,6 +113,51 @@ class TicketServiceTest {
         // then
         assertThat(result.status()).isEqualTo(TicketStatus.OPEN);
         assertThat(result.closedAt()).isNull();
+    }
+
+    @Test
+    @DisplayName("create — 요청 유형에 기본 워크플로우가 있으면 WorkflowEngineService.start 호출")
+    void create_요청_유형_기본_워크플로우_있으면_워크플로우_시작() {
+        // given
+        Ticket persisted = Ticket.builder()
+                .id(7L).ticketNo(null).title("샘플").priority(Priority.MEDIUM)
+                .status(TicketStatus.OPEN).requestTypeCode("INCIDENT").build();
+        when(ticketRepository.save(any(Ticket.class))).thenReturn(persisted);
+        when(requestTypeRepository.findById("INCIDENT")).thenReturn(Optional.of(
+                com.nkia.itg.itsm.requesttype.entity.TicketRequestType.builder()
+                        .code("INCIDENT").label("장애").defaultWorkflowCode("WF_INCIDENT_STD")
+                        .active(true).build()));
+
+        TicketCreateRequest req = new TicketCreateRequest(
+                "샘플", null, Priority.MEDIUM, null, null, "INCIDENT");
+
+        // when
+        ticketService.create(req);
+
+        // then
+        verify(workflowEngineService).start(persisted, "WF_INCIDENT_STD");
+    }
+
+    @Test
+    @DisplayName("create — 요청 유형에 기본 워크플로우가 없으면 워크플로우 미시작")
+    void create_요청_유형_기본_워크플로우_없으면_미시작() {
+        // given
+        Ticket persisted = Ticket.builder()
+                .id(8L).ticketNo(null).title("샘플").priority(Priority.MEDIUM)
+                .status(TicketStatus.OPEN).requestTypeCode("QNA").build();
+        when(ticketRepository.save(any(Ticket.class))).thenReturn(persisted);
+        when(requestTypeRepository.findById("QNA")).thenReturn(Optional.of(
+                com.nkia.itg.itsm.requesttype.entity.TicketRequestType.builder()
+                        .code("QNA").label("QnA").defaultWorkflowCode(null).active(true).build()));
+
+        TicketCreateRequest req = new TicketCreateRequest(
+                "샘플", null, Priority.MEDIUM, null, null, "QNA");
+
+        // when
+        ticketService.create(req);
+
+        // then
+        org.mockito.BDDMockito.then(workflowEngineService).shouldHaveNoInteractions();
     }
 
     @Test

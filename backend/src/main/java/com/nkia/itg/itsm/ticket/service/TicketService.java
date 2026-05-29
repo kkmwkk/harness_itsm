@@ -12,6 +12,9 @@ import com.nkia.itg.itsm.ticket.dto.TicketSummary;
 import com.nkia.itg.itsm.ticket.dto.TicketUpdateRequest;
 import com.nkia.itg.itsm.ticket.entity.Ticket;
 import com.nkia.itg.itsm.ticket.repository.TicketRepository;
+import com.nkia.itg.itsm.requesttype.entity.TicketRequestType;
+import com.nkia.itg.itsm.requesttype.repository.TicketRequestTypeRepository;
+import com.nkia.itg.itsm.workflow.service.WorkflowEngineService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,8 +30,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class TicketService {
 
     private final TicketRepository ticketRepository;
+    private final TicketRequestTypeRepository requestTypeRepository;
+    private final WorkflowEngineService workflowEngineService;
 
-    /** 신규 생성. ticket_no 는 ITSM-{id5} 패턴으로 부여 (save 후 dirty checking). */
+    /**
+     * 신규 생성. ticket_no 는 ITSM-{id5} 패턴으로 부여 (save 후 dirty checking). 요청 유형에 기본
+     * 워크플로우가 지정되어 있으면 WorkflowInstance 를 자동 시작하고 그 id 를 티켓에 연결한다 (ADR-015).
+     */
     public TicketResponse create(TicketCreateRequest req) {
         Ticket ticket = Ticket.builder()
                 .ticketNo(null)
@@ -38,10 +46,27 @@ public class TicketService {
                 .status(TicketStatus.OPEN)
                 .category(req.category())
                 .assigneeId(req.assigneeId())
+                .requestTypeCode(req.requestTypeCode())
                 .build();
         Ticket saved = ticketRepository.save(ticket);
         saved.assignTicketNo("ITSM-" + String.format("%05d", saved.getId()));
+        startWorkflowIfConfigured(saved);
         return TicketResponse.from(saved);
+    }
+
+    /**
+     * 요청 유형의 default_workflow 가 있으면 워크플로우 인스턴스를 시작한다. 요청 유형이 없거나
+     * 기본 워크플로우가 비어 있으면 워크플로우 없이 진행한다 (티켓 생성 자체는 막지 않는다).
+     */
+    private void startWorkflowIfConfigured(Ticket ticket) {
+        String requestTypeCode = ticket.getRequestTypeCode();
+        if (requestTypeCode == null || requestTypeCode.isBlank()) {
+            return;
+        }
+        requestTypeRepository.findById(requestTypeCode)
+                .map(TicketRequestType::getDefaultWorkflowCode)
+                .filter(code -> code != null && !code.isBlank())
+                .ifPresent(workflowCode -> workflowEngineService.start(ticket, workflowCode));
     }
 
     @Transactional(readOnly = true)

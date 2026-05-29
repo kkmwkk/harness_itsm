@@ -75,6 +75,12 @@ public class AssetCategoryService {
         loadOrThrow(code).deactivate();
     }
 
+    /** 단건 조회 (어떤 상태든). 없으면 ASSET_CATEGORY_NOT_FOUND(404). */
+    @Transactional(readOnly = true)
+    public AssetCategory getByCode(String code) {
+        return loadOrThrow(code);
+    }
+
     /** path 사전순으로 로드해 부모→자식 순서를 보장한 뒤 parent_code 기준 트리 조립. */
     @Transactional(readOnly = true)
     public List<AssetCategoryTreeNode> getTree() {

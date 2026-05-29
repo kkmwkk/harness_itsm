@@ -4,6 +4,7 @@ import com.nkia.itg.common.exception.ITGException;
 import com.nkia.itg.itsm.requesttype.domain.StepAction;
 import com.nkia.itg.itsm.ticket.entity.Ticket;
 import com.nkia.itg.itsm.ticket.repository.TicketRepository;
+import com.nkia.itg.itsm.workflow.dto.WorkflowInstanceResponse;
 import com.nkia.itg.itsm.workflow.entity.WorkflowDefinition;
 import com.nkia.itg.itsm.workflow.entity.WorkflowInstance;
 import com.nkia.itg.itsm.workflow.entity.WorkflowInstanceStep;
@@ -101,6 +102,33 @@ public class WorkflowEngineService {
 
         applyTransition(instance, def, stepIndex, action);
         return instance;
+    }
+
+    /**
+     * 단계 액션 실행 후 인스턴스 + 단계 이력을 응답 DTO 로 반환 (한 트랜잭션). 컨트롤러용 —
+     * 같은 트랜잭션에서 새로 저장된 단계 row 까지 조회한다.
+     */
+    public WorkflowInstanceResponse executeActionAndLoad(
+            Long instanceId, int stepIndex, StepAction action,
+            Long actorUserId, Set<String> actorRoles, String comment) {
+        WorkflowInstance instance = executeAction(
+                instanceId, stepIndex, action, actorUserId, actorRoles, comment);
+        return toResponse(instance);
+    }
+
+    /** 티켓 ID 로 워크플로우 인스턴스 + 단계 이력 조회. */
+    @Transactional(readOnly = true)
+    public WorkflowInstanceResponse getByTicket(Long ticketId) {
+        WorkflowInstance instance = instanceRepo.findByTicketId(ticketId)
+                .orElseThrow(() -> new ITGException("WORKFLOW_INSTANCE_NOT_FOUND",
+                        "티켓의 워크플로우 인스턴스를 찾을 수 없습니다: " + ticketId, HttpStatus.NOT_FOUND));
+        return toResponse(instance);
+    }
+
+    private WorkflowInstanceResponse toResponse(WorkflowInstance instance) {
+        List<WorkflowInstanceStep> steps =
+                stepRepo.findByInstanceIdOrderByStepIndexAscIdAsc(instance.getId());
+        return WorkflowInstanceResponse.of(instance, steps);
     }
 
     /** SLA 초과 단계 조회 (배치 또는 polling 용). */

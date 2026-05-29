@@ -16,6 +16,7 @@ import com.nkia.itg.itam.asset.repository.AssetRepository;
 import com.nkia.itg.itam.category.repository.AssetCategoryRepository;
 import com.nkia.itg.meta.dto.PageMetaResponse;
 import com.nkia.itg.meta.service.MetaService;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -82,6 +83,13 @@ public class AssetService {
                                                     Long byUserId, Map<String, Object> payload) {
         loadOrThrow(assetId);
         return assetLifecycleService.record(assetId, eventType, byUserId, payload);
+    }
+
+    /** 자산 이력 이벤트 목록 (이벤트 일자 내림차순). 자산 존재 검증 후 위임 조회. */
+    @Transactional(readOnly = true)
+    public List<AssetLifecycleEvent> listLifecycleEvents(Long assetId) {
+        loadOrThrow(assetId);
+        return assetLifecycleService.findByAsset(assetId);
     }
 
     @Transactional(readOnly = true)

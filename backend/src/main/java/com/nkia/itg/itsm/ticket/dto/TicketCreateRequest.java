@@ -21,5 +21,8 @@ public record TicketCreateRequest(
         String category,
 
         @Schema(description = "담당자 ID", example = "assignee-sample-1")
-        String assigneeId
+        String assigneeId,
+
+        @Schema(description = "요청 유형 코드 (TicketRequestType.code). 기본 워크플로우가 있으면 자동 시작.", example = "INCIDENT")
+        @NotBlank @Size(max = 40) String requestTypeCode
 ) {}
