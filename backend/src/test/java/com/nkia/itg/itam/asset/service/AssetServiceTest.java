@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import com.nkia.itg.common.exception.ITGException;
 import com.nkia.itg.fixture.AssetFixture;
+import com.nkia.itg.itam.asset.domain.AssetLifecycleEventType;
 import com.nkia.itg.itam.asset.domain.AssetStatus;
 import com.nkia.itg.itam.asset.domain.AssetType;
 import com.nkia.itg.itam.asset.dto.AssetAssignRequest;
@@ -51,6 +52,12 @@ class AssetServiceTest {
     @Mock
     MetaService metaService;
 
+    @Mock
+    com.nkia.itg.itam.category.repository.AssetCategoryRepository assetCategoryRepository;
+
+    @Mock
+    AssetLifecycleService assetLifecycleService;
+
     @InjectMocks
     AssetService assetService;
 
@@ -58,7 +65,14 @@ class AssetServiceTest {
         return new AssetCreateRequest(
                 "샘플 자산", AssetType.HARDWARE, "SAMPLE-MODEL", "SN-SAMPLE-1",
                 "노트북", "assignee-sample-1", "본사 3층",
-                LocalDate.of(2026, 1, 15), "itg-asset");
+                LocalDate.of(2026, 1, 15), "itg-asset", null);
+    }
+
+    private AssetCreateRequest createRequestWithCategory(String categoryCode) {
+        return new AssetCreateRequest(
+                "샘플 자산", AssetType.HARDWARE, "SAMPLE-MODEL", "SN-SAMPLE-1",
+                "노트북", "assignee-sample-1", "본사 3층",
+                LocalDate.of(2026, 1, 15), "itg-asset", categoryCode);
     }
 
     private PageMetaResponse publishedMeta(String id) {
@@ -120,6 +134,63 @@ class AssetServiceTest {
                 .satisfies(e -> assertThat(((ITGException) e).getErrorCode()).isEqualTo("META_NOT_PUBLISHED"));
 
         verify(assetRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("create 는 categoryCode 가 asset_category 에 없으면 ASSET_CATEGORY_NOT_FOUND(404) 를 던지고 save 하지 않는다")
+    void create_categoryCode_검증_없으면_거부() {
+        when(metaService.getActive("itg-asset")).thenReturn(publishedMeta("itg-asset-v1-1"));
+        when(assetCategoryRepository.existsById("HW_LAPTOP")).thenReturn(false);
+
+        assertThatThrownBy(() -> assetService.create(createRequestWithCategory("HW_LAPTOP")))
+                .isInstanceOf(ITGException.class)
+                .satisfies(e -> {
+                    assertThat(((ITGException) e).getErrorCode()).isEqualTo("ASSET_CATEGORY_NOT_FOUND");
+                    assertThat(((ITGException) e).getHttpStatus()).isEqualTo(HttpStatus.NOT_FOUND);
+                });
+
+        verify(assetRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("create 는 categoryCode 가 존재하면 Asset.categoryCode 에 저장한다")
+    void create_categoryCode_존재하면_저장() {
+        when(metaService.getActive("itg-asset")).thenReturn(publishedMeta("itg-asset-v1-1"));
+        when(assetCategoryRepository.existsById("HW_LAPTOP")).thenReturn(true);
+        stubSaveWithId(7L);
+
+        AssetResponse res = assetService.create(createRequestWithCategory("HW_LAPTOP"));
+
+        ArgumentCaptor<Asset> captor = ArgumentCaptor.forClass(Asset.class);
+        verify(assetRepository).save(captor.capture());
+        assertThat(captor.getValue().getCategoryCode()).isEqualTo("HW_LAPTOP");
+        assertThat(res.assetNo()).isEqualTo("AST-00007");
+    }
+
+    @Test
+    @DisplayName("recordLifecycleEvent 는 자산 존재 확인 후 AssetLifecycleService 에 위임한다")
+    void recordLifecycleEvent_정상() {
+        Asset asset = AssetFixture.active();
+        when(assetRepository.findById(1L)).thenReturn(Optional.of(asset));
+
+        assetService.recordLifecycleEvent(
+                1L, AssetLifecycleEventType.ACQUIRED, 100L, Map.of("note", "최초 취득"));
+
+        verify(assetRepository).findById(1L);
+        verify(assetLifecycleService).record(eq(1L), eq(AssetLifecycleEventType.ACQUIRED), eq(100L), any());
+    }
+
+    @Test
+    @DisplayName("recordLifecycleEvent 는 자산이 없으면 ASSET_NOT_FOUND(404) 를 던지고 위임하지 않는다")
+    void recordLifecycleEvent_자산_없으면_거부() {
+        when(assetRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> assetService.recordLifecycleEvent(
+                999L, AssetLifecycleEventType.REPAIRED, 100L, Map.of()))
+                .isInstanceOf(ITGException.class)
+                .satisfies(e -> assertThat(((ITGException) e).getErrorCode()).isEqualTo("ASSET_NOT_FOUND"));
+
+        verify(assetLifecycleService, never()).record(any(), any(), any(), any());
     }
 
     @Test

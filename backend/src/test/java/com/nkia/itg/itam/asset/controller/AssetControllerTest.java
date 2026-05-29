@@ -111,7 +111,7 @@ class AssetControllerTest {
     void POST_create_201() throws Exception {
         AssetCreateRequest req = new AssetCreateRequest(
                 "샘플 자산", AssetType.HARDWARE, "SAMPLE-MODEL", "SN-SAMPLE-1",
-                "노트북", "assignee-sample-1", "본사 3층", LocalDate.of(2026, 1, 15), "itg-asset");
+                "노트북", "assignee-sample-1", "본사 3층", LocalDate.of(2026, 1, 15), "itg-asset", null);
         given(assetService.create(any())).willReturn(sampleResponse(42L, AssetStatus.ACTIVE, "assignee-sample-1"));
 
         mockMvc.perform(post("/api/assets")
@@ -131,7 +131,7 @@ class AssetControllerTest {
     @DisplayName("POST /api/assets — name 누락 시 400 VALIDATION_FAILED")
     void POST_create_name_누락_400() throws Exception {
         AssetCreateRequest req = new AssetCreateRequest(
-                "  ", AssetType.HARDWARE, null, null, null, null, null, null, "itg-asset");
+                "  ", AssetType.HARDWARE, null, null, null, null, null, null, "itg-asset", null);
 
         mockMvc.perform(post("/api/assets")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -147,7 +147,7 @@ class AssetControllerTest {
     @DisplayName("POST /api/assets — pageGroupId 누락 시 400 VALIDATION_FAILED")
     void POST_create_pageGroupId_누락_400() throws Exception {
         AssetCreateRequest req = new AssetCreateRequest(
-                "샘플 자산", AssetType.HARDWARE, null, null, null, null, null, null, "  ");
+                "샘플 자산", AssetType.HARDWARE, null, null, null, null, null, null, "  ", null);
 
         mockMvc.perform(post("/api/assets")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -291,7 +291,7 @@ class AssetControllerTest {
     @DisplayName("POST /api/assets — 배포 메타 없으면 404 META_NOT_PUBLISHED (도메인 정합성 거부)")
     void POST_create_META_NOT_PUBLISHED_400_또는_404() throws Exception {
         AssetCreateRequest req = new AssetCreateRequest(
-                "샘플 자산", AssetType.HARDWARE, null, null, null, null, null, null, "itg-asset");
+                "샘플 자산", AssetType.HARDWARE, null, null, null, null, null, null, "itg-asset", null);
         given(assetService.create(any()))
                 .willThrow(new ITGException("META_NOT_PUBLISHED", "배포된 메타가 없습니다: itg-asset", HttpStatus.NOT_FOUND));
 

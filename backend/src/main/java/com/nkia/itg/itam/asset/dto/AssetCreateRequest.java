@@ -34,5 +34,8 @@ public record AssetCreateRequest(
         LocalDate acquiredAt,
 
         @Schema(description = "자산이 속한 메타 그룹 ID (보통 'itg-asset')", example = "itg-asset")
-        @NotBlank String pageGroupId
+        @NotBlank String pageGroupId,
+
+        @Schema(description = "자산 분류 코드 (asset_category.code, 옵션)", example = "HW_LAPTOP")
+        String categoryCode
 ) {}
