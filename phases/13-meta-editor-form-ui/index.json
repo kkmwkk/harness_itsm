@@ -21,7 +21,10 @@
     {
       "step": 2,
       "name": "form-field-editor",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-30T06:13:25+0900",
+      "summary": "폼 필드 GUI 편집 — /system/meta-editor/:metaId(.+) 라우트, MetaEditorDetailPage.vue(메타정보·[폼/그리드/액션/미리보기] 탭·DRAFT만 편집·dirty 시 onBeforeRouteLeave 가드), FormFieldEditor.vue(필드 추가/삭제/라벨·name·type·required·span·placeholder·helpText·maxLength·min·max·options 편집), useFormFieldEditor.ts 순수 로직(FIELD_TYPES 12종·createBlankField·duplicateNames·isValidFieldName·validateFormFields), 저장=dry-run 후 PUT /api/meta/{id}/body, FormFieldEditor.spec 단위 테스트.",
+      "completed_at": "2026-05-30T06:19:30+0900"
     },
     {
       "step": 3,
