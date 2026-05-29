@@ -21,7 +21,10 @@
     {
       "step": 2,
       "name": "ci-workflow",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-29T14:39:49+0900",
+      "summary": ".github/workflows/sonarqube.yml (PR/main push, JDK 21 + Gradle cache + postgres service + 스키마 자동 + ./gradlew test jacocoTestReport sonar) + docker-compose.sonar.yml (sonarqube:community + sonar-db postgres:16, named volumes, 9000 port) + docs/SONAR_CI_GUIDE.md (로컬 분석 + CI 시크릿).",
+      "completed_at": "2026-05-29T14:41:30+0900"
     },
     {
       "step": 3,
