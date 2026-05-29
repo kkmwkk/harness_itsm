@@ -12,19 +12,23 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Meta - 페이지 메타 관리",
-        description = "page_meta 의 조회·버전 전이(publish/archive/copy) API. 신규 메타 생성은 다음 phase 의 admin API 로 별도 제공.")
+        description = "page_meta 의 생성(DRAFT)·본문 편집·조회·버전 전이(publish/archive/copy) API. "
+                + "신규 생성·본문 편집은 No-code 편집기(M9)의 백엔드 기반이며 항상 DRAFT 로 시작한다.")
 @RestController
 @RequestMapping("/api/meta")
 @RequiredArgsConstructor
@@ -48,6 +52,51 @@ public class MetaController {
             @RequestBody PageMetaCreateRequest req
     ) {
         return ResponseEntity.ok(ApiResponse.ok(metaValidationService.validate(req)));
+    }
+
+    @Operation(
+            summary = "메타 신규 생성 (DRAFT)",
+            description = "신규 PageMeta 를 DRAFT 로 생성한다. 클라이언트가 어떤 metaStatus 를 보내든 항상 "
+                    + "DRAFT 로 강제한다(ADR-006). 저장 전 dry-run 과 동일한 형식 검증을 수행하며, "
+                    + "검증 실패 시 400, 동일 groupId·버전 중복 시 409. 화면 노출은 별도 publish 이후에만 가능."
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "DRAFT 생성 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "검증 실패 (META_VALIDATION_FAILED)"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "권한 부족"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "동일 groupId·버전 중복")
+    })
+    @PreAuthorize("hasAuthority('META_PUBLISH') or hasAuthority('META_EDIT') or hasAuthority('ROLE_ADMIN')")
+    @PostMapping("")
+    public ResponseEntity<ApiResponse<PageMetaResponse>> create(
+            @RequestBody PageMetaCreateRequest req
+    ) {
+        PageMetaResponse data = metaService.create(req);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.ok(data, "메타가 생성되었습니다."));
+    }
+
+    @Operation(
+            summary = "메타 본문(metaJson) 교체",
+            description = "DRAFT 메타의 metaJson 본문(api/grid/form/detail/actions)을 통째로 교체한다. "
+                    + "PUBLISHED·DEPRECATED·ARCHIVED 메타는 거부한다(편집은 DRAFT 만 — 새 DRAFT 복사 후 편집)."
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "본문 교체 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "DRAFT 상태가 아님"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "권한 부족"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "메타를 찾을 수 없음")
+    })
+    @PreAuthorize("hasAuthority('META_PUBLISH') or hasAuthority('META_EDIT') or hasAuthority('ROLE_ADMIN')")
+    @PutMapping("/{metaId}/body")
+    public ResponseEntity<ApiResponse<PageMetaResponse>> updateBody(
+            @Parameter(description = "본문을 교체할 DRAFT 메타 ID", example = "itg-ticket-v1-2")
+            @PathVariable String metaId,
+            @RequestBody Map<String, Object> body
+    ) {
+        PageMetaResponse data = metaService.updateBody(metaId, body);
+        return ResponseEntity.ok(ApiResponse.ok(data, "본문이 수정되었습니다."));
     }
 
     @Operation(

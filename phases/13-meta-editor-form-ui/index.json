@@ -2,11 +2,38 @@
   "project": "Polestar10 ITG v2",
   "phase": "13-meta-editor-form-ui",
   "steps": [
-    { "step": 0, "name": "meta-create-update-endpoints", "status": "pending" },
-    { "step": 1, "name": "meta-editor-list-page", "status": "pending" },
-    { "step": 2, "name": "form-field-editor", "status": "pending" },
-    { "step": 3, "name": "grid-column-editor", "status": "pending" },
-    { "step": 4, "name": "actions-and-publish-flow", "status": "pending" },
-    { "step": 5, "name": "e2e-no-code-form-editor", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "meta-create-update-endpoints",
+      "status": "completed",
+      "started_at": "2026-05-30T05:49:36+0900",
+      "summary": "POST /api/meta(DRAFT 강제 생성)·PUT /api/meta/{id}/body(DRAFT 본문 교체) endpoint 추가 — MetaService.create/updateBody, PageMeta.replaceBody 도메인 가드, META_EDIT 권한(@PreAuthorize) 신설, PageMetaCreateRequest 평탄화·metaJson 래퍼 양식 정규화(resolvedMetaJson)."
+    },
+    {
+      "step": 1,
+      "name": "meta-editor-list-page",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "form-field-editor",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "grid-column-editor",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "actions-and-publish-flow",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "e2e-no-code-form-editor",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-05-30T05:49:36+0900"
 }

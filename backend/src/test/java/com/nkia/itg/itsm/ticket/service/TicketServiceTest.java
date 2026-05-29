@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -102,7 +103,7 @@ class TicketServiceTest {
                 .status(TicketStatus.OPEN)
                 .build();
         when(ticketRepository.save(any(Ticket.class))).thenReturn(persisted);
-        when(requestTypeRepository.findById(any())).thenReturn(Optional.empty());
+        lenient().when(requestTypeRepository.findById(any())).thenReturn(Optional.empty());
 
         TicketCreateRequest req = new TicketCreateRequest(
                 "샘플 티켓 제목", null, Priority.MEDIUM, null, null, "INCIDENT");

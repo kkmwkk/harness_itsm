@@ -28,6 +28,7 @@ INSERT INTO permission (code, name, description) VALUES
   ('MENU_ADMIN',        '메뉴 관리',        '메뉴 트리 생성·수정·이동'),
   ('META_READ',         '메타 조회',        '페이지 메타 조회'),
   ('META_PUBLISH',      '메타 배포',        '페이지 메타 발행·전이'),
+  ('META_EDIT',         '메타 편집',        '페이지 메타 신규 생성·본문 편집(DRAFT)'),
   ('TICKET_READ',       '티켓 조회',        'ITSM 티켓 조회'),
   ('TICKET_CREATE',     '티켓 등록',        'ITSM 티켓 생성'),
   ('TICKET_APPROVE_L1', '티켓 1차 승인',    'ITSM 티켓 1차 승인'),

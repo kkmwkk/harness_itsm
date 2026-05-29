@@ -121,7 +121,7 @@ public class MetaValidationService {
     // ---------------------------------------------------------------- metaJson 본문
 
     private void validateMetaJson(PageMetaCreateRequest req, List<ValidationIssue> issues) {
-        Map<String, Object> meta = req.metaJson();
+        Map<String, Object> meta = req.resolvedMetaJson();
         if (meta == null || meta.isEmpty()) {
             issues.add(error("metaJson", "MISSING_META_JSON",
                     "metaJson 본문(api/grid/form)이 없습니다."));

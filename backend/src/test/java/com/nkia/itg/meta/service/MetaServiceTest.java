@@ -15,15 +15,19 @@ import com.nkia.itg.fixture.MetaFixture;
 import com.nkia.itg.meta.domain.MetaStatus;
 import com.nkia.itg.meta.domain.PackageType;
 import com.nkia.itg.meta.domain.SystemType;
+import com.nkia.itg.meta.dto.PageMetaCreateRequest;
 import com.nkia.itg.meta.dto.PageMetaResponse;
 import com.nkia.itg.meta.dto.PageMetaVersionResponse;
 import com.nkia.itg.meta.entity.PageMeta;
 import com.nkia.itg.meta.repository.MetaRepository;
+import com.nkia.itg.meta.service.MetaValidationService.ValidationResult;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -36,8 +40,93 @@ class MetaServiceTest {
     @Mock
     private MetaRepository metaRepository;
 
+    @Mock
+    private MetaValidationService metaValidationService;
+
     @InjectMocks
     private MetaService metaService;
+
+    private PageMetaCreateRequest createRequest(MetaStatus requestedStatus) {
+        return new PageMetaCreateRequest(
+                "itg-test-v1-1", "테스트",
+                SystemType.COMMON, PackageType.PACKAGE, "itg-test",
+                1, 1, requestedStatus,
+                Map.of("api", "/api/test",
+                        "grid", Map.of("columns", List.of()),
+                        "form", Map.of("layout", "two-column", "fields", List.of())));
+    }
+
+    @Test
+    @DisplayName("create — 클라이언트가 PUBLISHED 를 보내도 항상 DRAFT 로 강제 저장")
+    void create_metaStatus_DRAFT_강제() {
+        // given — 클라이언트는 PUBLISHED 를 요청하지만 무시되어야 한다
+        when(metaValidationService.validate(any(PageMetaCreateRequest.class)))
+                .thenReturn(new ValidationResult(true, List.of()));
+        when(metaRepository.save(any(PageMeta.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // when
+        PageMetaResponse response = metaService.create(createRequest(MetaStatus.PUBLISHED));
+
+        // then
+        assertThat(response.metaStatus()).isEqualTo(MetaStatus.DRAFT);
+        assertThat(response.id()).isEqualTo("itg-test-v1-1");
+
+        ArgumentCaptor<PageMeta> captor = ArgumentCaptor.forClass(PageMeta.class);
+        verify(metaRepository, times(1)).save(captor.capture());
+        assertThat(captor.getValue().getMetaStatus()).isEqualTo(MetaStatus.DRAFT);
+    }
+
+    @Test
+    @DisplayName("create — 검증 실패 시 META_VALIDATION_FAILED 400, 저장하지 않음")
+    void create_검증_실패_시_거부() {
+        // given
+        when(metaValidationService.validate(any(PageMetaCreateRequest.class)))
+                .thenReturn(new ValidationResult(false, List.of(
+                        new MetaValidationService.ValidationIssue(
+                                MetaValidationService.ValidationIssue.Severity.ERROR,
+                                "systemType", "INVALID_SYSTEM_TYPE", "systemType 오류"))));
+
+        // when & then
+        assertThatThrownBy(() -> metaService.create(createRequest(MetaStatus.DRAFT)))
+                .isInstanceOf(ITGException.class)
+                .satisfies(ex -> {
+                    ITGException itg = (ITGException) ex;
+                    assertThat(itg.getErrorCode()).isEqualTo("META_VALIDATION_FAILED");
+                    assertThat(itg.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+                });
+        verify(metaRepository, never()).save(any(PageMeta.class));
+    }
+
+    @Test
+    @DisplayName("updateBody — DRAFT 메타의 본문을 교체한다")
+    void updateBody_DRAFT_본문_교체() {
+        // given
+        PageMeta draft = MetaFixture.draft("itg-ticket", 1, 2);
+        when(metaRepository.findById("itg-ticket-v1-2")).thenReturn(Optional.of(draft));
+        when(metaRepository.save(any(PageMeta.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // when
+        PageMetaResponse response = metaService.updateBody(
+                "itg-ticket-v1-2", Map.of("api", "/api/changed"));
+
+        // then
+        assertThat(response.metaStatus()).isEqualTo(MetaStatus.DRAFT);
+        assertThat(response.metaJson()).containsEntry("api", "/api/changed");
+        verify(metaRepository, times(1)).save(draft);
+    }
+
+    @Test
+    @DisplayName("updateBody — DRAFT 가 아닌 메타는 IllegalStateException 으로 거부")
+    void updateBody_DRAFT_아닌_메타_거부() {
+        // given
+        PageMeta published = MetaFixture.published("itg-ticket", 1, 1);
+        when(metaRepository.findById("itg-ticket-v1-1")).thenReturn(Optional.of(published));
+
+        // when & then
+        assertThatThrownBy(() -> metaService.updateBody("itg-ticket-v1-1", Map.of("api", "/api/x")))
+                .isInstanceOf(IllegalStateException.class);
+        verify(metaRepository, never()).save(any(PageMeta.class));
+    }
 
     @Test
     @DisplayName("publish — 성공 시 기존 PUBLISHED 를 DEPRECATED 처리하고 본인은 PUBLISHED")

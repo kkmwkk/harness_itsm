@@ -5,9 +5,11 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
+import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -20,6 +22,7 @@ import com.nkia.itg.common.security.SecurityConfig;
 import com.nkia.itg.meta.domain.MetaStatus;
 import com.nkia.itg.meta.domain.PackageType;
 import com.nkia.itg.meta.domain.SystemType;
+import com.nkia.itg.meta.dto.PageMetaCreateRequest;
 import com.nkia.itg.meta.dto.PageMetaResponse;
 import com.nkia.itg.meta.dto.PageMetaVersionResponse;
 import com.nkia.itg.meta.service.MetaService;
@@ -34,6 +37,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -237,6 +241,81 @@ class MetaControllerTest {
                 .andExpect(jsonPath("$.data.metaStatus").value("ARCHIVED"));
 
         then(metaService).should().archive("itg-ticket-v1-2");
+    }
+
+    private static final String CREATE_BODY = """
+            {
+              "id": "itg-test-v1-1",
+              "title": "테스트",
+              "systemType": "COMMON",
+              "packageType": "PACKAGE",
+              "groupId": "itg-test",
+              "majorVersion": 1,
+              "minorVersion": 1,
+              "metaJson": { "api": "/api/test",
+                            "grid": { "columns": [] },
+                            "form": { "layout": "two-column", "fields": [] } }
+            }
+            """;
+
+    @Test
+    @DisplayName("POST /api/meta — META_EDIT 권한이면 201 과 DRAFT 응답")
+    @WithMockUser(authorities = {"META_EDIT"})
+    void POST_create_권한_있으면_201_DRAFT() throws Exception {
+        given(metaService.create(any(PageMetaCreateRequest.class)))
+                .willReturn(draftResponse("itg-test", 1, 1));
+
+        mockMvc.perform(post("/api/meta")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(CREATE_BODY))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("메타가 생성되었습니다."))
+                .andExpect(jsonPath("$.data.metaStatus").value("DRAFT"));
+
+        then(metaService).should().create(any(PageMetaCreateRequest.class));
+    }
+
+    @Test
+    @DisplayName("POST /api/meta — 권한 없으면 403, 생성 호출 안 함")
+    void POST_create_권한_없으면_403() throws Exception {
+        mockMvc.perform(post("/api/meta")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(CREATE_BODY))
+                .andExpect(status().isForbidden());
+
+        then(metaService).should(never()).create(any(PageMetaCreateRequest.class));
+    }
+
+    @Test
+    @DisplayName("PUT /api/meta/{metaId}/body — 권한 있으면 200, DRAFT 본문 교체")
+    @WithMockUser(authorities = {"META_EDIT"})
+    void PUT_updateBody_권한_있으면_200() throws Exception {
+        given(metaService.updateBody(eq("itg-test-v1-1"), any()))
+                .willReturn(draftResponse("itg-test", 1, 1));
+
+        mockMvc.perform(put("/api/meta/{metaId}/body", "itg-test-v1-1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"api\":\"/api/test\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("본문이 수정되었습니다."))
+                .andExpect(jsonPath("$.data.metaStatus").value("DRAFT"));
+    }
+
+    @Test
+    @DisplayName("PUT /api/meta/{metaId}/body — DRAFT 아니면 400 INVALID_REQUEST")
+    @WithMockUser(authorities = {"META_EDIT"})
+    void PUT_updateBody_DRAFT_아니면_400() throws Exception {
+        willThrow(new IllegalStateException("DRAFT 상태만 본문을 편집할 수 있습니다. 현재: PUBLISHED"))
+                .given(metaService).updateBody(eq("itg-test-v1-1"), any());
+
+        mockMvc.perform(put("/api/meta/{metaId}/body", "itg-test-v1-1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"api\":\"/api/test\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value("INVALID_REQUEST"));
     }
 
     @Test
