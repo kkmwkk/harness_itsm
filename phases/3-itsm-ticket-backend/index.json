@@ -7,7 +7,8 @@
       "name": "ticket-schema-and-entity",
       "status": "completed",
       "started_at": "2026-05-29T08:57:40+0900",
-      "summary": "sql/init/02_ticket.sql (ticket 테이블 + 인덱스 4종 + updated_at 트리거) + Enum 2종(Priority/TicketStatus) + Ticket Entity (@Enumerated.STRING, 도메인 메서드 changeStatus/changePriority/assign/updateContent, CLOSED 가드) + 단위 테스트 12 케이스. ddl-auto: validate 부팅 통과."
+      "summary": "sql/init/02_ticket.sql (ticket 테이블 + 인덱스 4종 + updated_at 트리거) + Enum 2종(Priority/TicketStatus) + Ticket Entity (@Enumerated.STRING, 도메인 메서드 changeStatus/changePriority/assign/updateContent, CLOSED 가드) + 단위 테스트 12 케이스. ddl-auto: validate 부팅 통과.",
+      "completed_at": "2026-05-29T09:02:19+0900"
     },
     {
       "step": 1,
