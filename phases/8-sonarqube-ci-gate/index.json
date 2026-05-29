@@ -29,7 +29,10 @@
     {
       "step": 3,
       "name": "quality-gate-and-report",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-29T14:41:46+0900",
+      "summary": "scripts/sonar_gate.py (measures.json 파싱 + CLAUDE.md §9 게이트 평가) + docs/QUALITY_GATE_REPORT.md. 로컬 SonarQube(community, docker-compose.sonar.yml) 실기동 → ./gradlew test jacocoTestReport sonar 실분석 → measures API 조회. 실측: coverage 78.2%(SERVICE 82.16%), 중복 0.0%, bugs 0, vulnerabilities 0, code_smells 52(maint A), security_hotspot 1건(CSRF 비활성화 검토 — 시크릿 아님). 게이트 PASS(SERVICE≥70%/중복≤3%/Blocker·Critical 0/시크릿 0). step 0~2 산출물(build.gradle plugins + SONAR_BASELINE + workflow yml + compose yml + GUIDE)과 함께 M6 마일스톤 산출물 정착 완료. PRD §9 전 마일스톤(M1~M6) 종료.",
+      "completed_at": "2026-05-29T14:45:00+0900"
     }
   ],
   "created_at": "2026-05-29T14:25:00+0900"
