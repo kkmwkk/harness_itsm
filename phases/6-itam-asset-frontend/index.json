@@ -7,7 +7,8 @@
       "name": "meta-version-override",
       "status": "completed",
       "started_at": "2026-05-29T10:53:12+0900",
-      "summary": "usePageMeta 확장(MetaIdent: group|metaId 두 모드, resolvePageMetaUrl 분리) + DynamicPage props.metaId 추가(groupId 와 동시 지정 시 metaId 우선, 둘 다 없으면 에러 카드). 단위 테스트 4 케이스. 기존 /itsm 등 회귀 없음."
+      "summary": "usePageMeta 확장(MetaIdent: group|metaId 두 모드, resolvePageMetaUrl 분리) + DynamicPage props.metaId 추가(groupId 와 동시 지정 시 metaId 우선, 둘 다 없으면 에러 카드). 단위 테스트 4 케이스. 기존 /itsm 등 회귀 없음.",
+      "completed_at": "2026-05-29T10:56:05+0900"
     },
     {
       "step": 1,
