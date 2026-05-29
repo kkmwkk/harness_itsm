@@ -16,7 +16,7 @@
       "status": "completed",
       "started_at": "2026-05-30T06:49:06+0900",
       "summary": "FormFieldEditor 에 VueDraggable(grip 핸들 전용·동일 리스트 reorder·200ms·ghost/chosen 시각 표시) 적용 + Alt+↑/↓ 키보드 순서 변경(reorder helper) + span 반/전체 폭 2버튼 토글(toggleSpan). 단위 테스트 2건 추가. type-check·lint(0)·build·test(145) 통과.",
-      "completed_at": "2026-05-30T06:55:30+0900"
+      "completed_at": "2026-05-30T06:55:47+0900"
     },
     {
       "step": 2,
