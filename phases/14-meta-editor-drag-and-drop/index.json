@@ -1,0 +1,10 @@
+{
+  "project": "Polestar10 ITG v2",
+  "phase": "14-meta-editor-drag-and-drop",
+  "steps": [
+    { "step": 0, "name": "draggable-dependency-and-policy", "status": "pending" },
+    { "step": 1, "name": "form-field-drag-sort-and-span", "status": "pending" },
+    { "step": 2, "name": "grid-column-drag-sort-and-resize", "status": "pending" },
+    { "step": 3, "name": "e2e-drag-meta-edit", "status": "pending" }
+  ]
+}

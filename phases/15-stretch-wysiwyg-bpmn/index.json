@@ -1,0 +1,9 @@
+{
+  "project": "Polestar10 ITG v2",
+  "phase": "15-stretch-wysiwyg-bpmn",
+  "steps": [
+    { "step": 0, "name": "wysiwyg-poc-meta-edit", "status": "pending" },
+    { "step": 1, "name": "bpmn-engine-evaluation", "status": "pending" },
+    { "step": 2, "name": "stretch-decision-report", "status": "pending" }
+  ]
+}

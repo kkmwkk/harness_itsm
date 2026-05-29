@@ -1,0 +1,12 @@
+{
+  "project": "Polestar10 ITG v2",
+  "phase": "13-meta-editor-form-ui",
+  "steps": [
+    { "step": 0, "name": "meta-create-update-endpoints", "status": "pending" },
+    { "step": 1, "name": "meta-editor-list-page", "status": "pending" },
+    { "step": 2, "name": "form-field-editor", "status": "pending" },
+    { "step": 3, "name": "grid-column-editor", "status": "pending" },
+    { "step": 4, "name": "actions-and-publish-flow", "status": "pending" },
+    { "step": 5, "name": "e2e-no-code-form-editor", "status": "pending" }
+  ]
+}
