@@ -5,12 +5,14 @@ import com.nkia.itg.meta.domain.MetaStatus;
 import com.nkia.itg.meta.domain.PackageType;
 import com.nkia.itg.meta.domain.SystemType;
 import com.nkia.itg.meta.dto.PageMetaCreateRequest;
+import com.nkia.itg.meta.dto.PageMetaGroupResponse;
 import com.nkia.itg.meta.dto.PageMetaResponse;
 import com.nkia.itg.meta.dto.PageMetaVersionResponse;
 import com.nkia.itg.meta.entity.PageMeta;
 import com.nkia.itg.meta.repository.MetaRepository;
 import com.nkia.itg.meta.service.MetaValidationService.ValidationIssue;
 import com.nkia.itg.meta.service.MetaValidationService.ValidationResult;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -92,6 +94,22 @@ public class MetaService {
     @Transactional(readOnly = true)
     public PageMetaResponse getById(String metaId) {
         return PageMetaResponse.from(loadOrThrow(metaId));
+    }
+
+    /**
+     * group_id 단위로 집계한 그룹 요약 목록을 반환한다(No-code 편집기 좌측 목록).
+     *
+     * <p>각 그룹은 최신 PUBLISHED 버전·DRAFT 존재 여부·버전 수로 요약된다.
+     * groupId 오름차순으로 정렬한다.
+     */
+    @Transactional(readOnly = true)
+    public List<PageMetaGroupResponse> getGroups() {
+        Map<String, List<PageMeta>> byGroup = metaRepository.findAll().stream()
+                .collect(Collectors.groupingBy(PageMeta::getGroupId));
+        return byGroup.values().stream()
+                .map(PageMetaGroupResponse::from)
+                .sorted(Comparator.comparing(PageMetaGroupResponse::groupId))
+                .toList();
     }
 
     @Transactional(readOnly = true)

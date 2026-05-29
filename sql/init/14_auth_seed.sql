@@ -130,7 +130,7 @@ INSERT INTO menu (id, code, parent_id, label, icon, sort_order, route, group_id,
   (10, 'SYSTEM_ROLES',  7,    '역할',         'ShieldIcon',          2, '/system/roles',     NULL,          'ROLE_ADMIN',   TRUE),
   (11, 'SYSTEM_MENUS',  7,    '메뉴',         'MenuIcon',            3, '/system/menus',     NULL,          'MENU_ADMIN',   TRUE),
   (12, 'SYSTEM_META',   7,    '메타 관리',    'FileJsonIcon',        4, '/system/meta',      NULL,          'META_READ',    TRUE),
-  (13, 'SYSTEM_META_ED',7,    '메타 편집기',  'PencilRulerIcon',     5, '/system/meta-editor',NULL,         'META_PUBLISH', TRUE)
+  (13, 'SYSTEM_META_ED',7,    '메타 편집기',  'PencilRulerIcon',     5, '/system/meta-editor',NULL,         'META_EDIT',    TRUE)
 ON CONFLICT (code) DO NOTHING;
 
 SELECT setval('menu_id_seq', GREATEST((SELECT MAX(id) FROM menu), 1));

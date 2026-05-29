@@ -4,6 +4,7 @@ import com.nkia.itg.common.response.ApiResponse;
 import com.nkia.itg.meta.domain.PackageType;
 import com.nkia.itg.meta.domain.SystemType;
 import com.nkia.itg.meta.dto.PageMetaCreateRequest;
+import com.nkia.itg.meta.dto.PageMetaGroupResponse;
 import com.nkia.itg.meta.dto.PageMetaResponse;
 import com.nkia.itg.meta.dto.PageMetaVersionResponse;
 import com.nkia.itg.meta.service.MetaService;
@@ -114,6 +115,21 @@ public class MetaController {
             @PathVariable String groupId
     ) {
         return ResponseEntity.ok(ApiResponse.ok(metaService.getActive(groupId)));
+    }
+
+    @Operation(
+            summary = "메타 그룹 요약 목록",
+            description = "group_id 단위로 집계한 목록을 반환한다. 각 그룹은 대표 타이틀·systemType·packageType·"
+                    + "최신 PUBLISHED 버전·DRAFT 존재 여부·버전 수로 요약된다. No-code 편집기(M9) 좌측 목록에 사용."
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공 (빈 리스트 가능)"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "권한 부족")
+    })
+    @PreAuthorize("hasAuthority('META_READ') or hasAuthority('META_EDIT') or hasAuthority('META_PUBLISH') or hasAuthority('ROLE_ADMIN')")
+    @GetMapping("/groups")
+    public ResponseEntity<ApiResponse<List<PageMetaGroupResponse>>> getGroups() {
+        return ResponseEntity.ok(ApiResponse.ok(metaService.getGroups()));
     }
 
     @Operation(

@@ -16,6 +16,7 @@ import com.nkia.itg.meta.domain.MetaStatus;
 import com.nkia.itg.meta.domain.PackageType;
 import com.nkia.itg.meta.domain.SystemType;
 import com.nkia.itg.meta.dto.PageMetaCreateRequest;
+import com.nkia.itg.meta.dto.PageMetaGroupResponse;
 import com.nkia.itg.meta.dto.PageMetaResponse;
 import com.nkia.itg.meta.dto.PageMetaVersionResponse;
 import com.nkia.itg.meta.entity.PageMeta;
@@ -328,6 +329,37 @@ class MetaServiceTest {
         assertThat(r2.metaStatus()).isEqualTo(MetaStatus.ARCHIVED);
         assertThat(r3.metaStatus()).isEqualTo(MetaStatus.ARCHIVED);
         verify(metaRepository, never()).deprecatePublished(anyString(), anyString());
+    }
+
+    @Test
+    @DisplayName("getGroups — group_id 단위 집계: 최신 PUBLISHED 버전·DRAFT 존재 여부·버전 수")
+    void getGroups_그룹_단위_집계() {
+        // given — itg-ticket: v1.1 ARCHIVED, v1.2 PUBLISHED, v1.3 DRAFT / itg-asset: v1.1 DRAFT 만
+        PageMeta ticketV11 = MetaFixture.archived("itg-ticket", 1, 1);
+        PageMeta ticketV12 = MetaFixture.published("itg-ticket", 1, 2);
+        PageMeta ticketV13 = MetaFixture.draft("itg-ticket", 1, 3);
+        PageMeta assetV11 = MetaFixture.draft("itg-asset", 1, 1);
+        when(metaRepository.findAll())
+                .thenReturn(List.of(ticketV13, ticketV11, ticketV12, assetV11));
+
+        // when
+        List<PageMetaGroupResponse> groups = metaService.getGroups();
+
+        // then — groupId 오름차순 정렬
+        assertThat(groups).extracting(PageMetaGroupResponse::groupId)
+                .containsExactly("itg-asset", "itg-ticket");
+
+        PageMetaGroupResponse asset = groups.get(0);
+        assertThat(asset.publishedId()).isNull();
+        assertThat(asset.publishedVersion()).isNull();
+        assertThat(asset.hasDraft()).isTrue();
+        assertThat(asset.versionCount()).isEqualTo(1);
+
+        PageMetaGroupResponse ticket = groups.get(1);
+        assertThat(ticket.publishedId()).isEqualTo("itg-ticket-v1-2");
+        assertThat(ticket.publishedVersion()).isEqualTo("v1.2");
+        assertThat(ticket.hasDraft()).isTrue();
+        assertThat(ticket.versionCount()).isEqualTo(3);
     }
 
     @Test
