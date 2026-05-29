@@ -2,11 +2,55 @@
   "project": "Polestar10 ITG v2",
   "phase": "13-meta-editor-form-ui",
   "steps": [
-    { "step": 0, "name": "meta-create-update-endpoints", "status": "pending" },
-    { "step": 1, "name": "meta-editor-list-page", "status": "pending" },
-    { "step": 2, "name": "form-field-editor", "status": "pending" },
-    { "step": 3, "name": "grid-column-editor", "status": "pending" },
-    { "step": 4, "name": "actions-and-publish-flow", "status": "pending" },
-    { "step": 5, "name": "e2e-no-code-form-editor", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "meta-create-update-endpoints",
+      "status": "completed",
+      "started_at": "2026-05-30T05:49:36+0900",
+      "summary": "POST /api/meta(DRAFT 강제 생성)·PUT /api/meta/{id}/body(DRAFT 본문 교체) endpoint 추가 — MetaService.create/updateBody, PageMeta.replaceBody 도메인 가드, META_EDIT 권한(@PreAuthorize) 신설, PageMetaCreateRequest 평탄화·metaJson 래퍼 양식 정규화(resolvedMetaJson).",
+      "completed_at": "2026-05-30T06:04:46+0900"
+    },
+    {
+      "step": 1,
+      "name": "meta-editor-list-page",
+      "status": "completed",
+      "started_at": "2026-05-30T06:04:46+0900",
+      "summary": "/system/meta-editor 진입점 — GET /api/meta/groups(group_id 단위 집계: 최신 PUBLISHED·DRAFT 여부·버전 수) 신규 endpoint + PageMetaGroupResponse DTO, MetaEditorPage.vue(좌: 그룹 DataTable, 우: 버전 이력 table + StatusBadge·편집(DRAFT만)/복사/발행/보관/미리보기), 신규 그룹 생성 다이얼로그(POST /api/meta 빈 DRAFT), DynamicPage 미리보기, RequirePermission META_EDIT 가드, 메뉴 시드 권한 META_PUBLISH→META_EDIT 정렬.",
+      "completed_at": "2026-05-30T06:13:25+0900"
+    },
+    {
+      "step": 2,
+      "name": "form-field-editor",
+      "status": "completed",
+      "started_at": "2026-05-30T06:13:25+0900",
+      "summary": "폼 필드 GUI 편집 — /system/meta-editor/:metaId(.+) 라우트, MetaEditorDetailPage.vue(메타정보·[폼/그리드/액션/미리보기] 탭·DRAFT만 편집·dirty 시 onBeforeRouteLeave 가드), FormFieldEditor.vue(필드 추가/삭제/라벨·name·type·required·span·placeholder·helpText·maxLength·min·max·options 편집), useFormFieldEditor.ts 순수 로직(FIELD_TYPES 12종·createBlankField·duplicateNames·isValidFieldName·validateFormFields), 저장=dry-run 후 PUT /api/meta/{id}/body, FormFieldEditor.spec 단위 테스트.",
+      "completed_at": "2026-05-30T06:19:40+0900"
+    },
+    {
+      "step": 3,
+      "name": "grid-column-editor",
+      "status": "completed",
+      "started_at": "2026-05-30T06:19:41+0900",
+      "summary": "그리드 컬럼 GUI 편집 — GridColumnEditor.vue(컬럼 추가/삭제·field·label·type(12종)·width·flex·pinned(none/left/right)·hideAt(none/sm/md) 편집 + inlineEdit/export 전역 토글 + status/priority 뱃지 렌더 안내), useGridColumnEditor.ts 순수 로직(createBlankColumn·duplicateFields·validateGridColumns(field 중복=ERROR, form.fields.name 미매칭=WARNING 비차단)·pinned/hideAt undefined↔none 변환), MetaEditorDetailPage 그리드 탭 통합(저장 시 form 과 동일 dry-run→PUT body 흐름, 컬럼 ERROR 시 저장 차단), GridColumnEditor.spec 단위 테스트.",
+      "completed_at": "2026-05-30T06:23:47+0900"
+    },
+    {
+      "step": 4,
+      "name": "actions-and-publish-flow",
+      "status": "completed",
+      "started_at": "2026-05-30T06:23:47+0900",
+      "summary": "액션 편집 + 미리보기 + 발행 흐름 — ActionEditor.vue(id·label·type(dialog-form/export/navigate/custom)·to(navigate) 추가/삭제, 외부 URL 새 탭 안내), useActionEditor.ts 순수 로직(ACTION_TYPES·createBlankAction·duplicateActionIds·validateActions·isExternalUrl), MetaPreview.vue(DynamicPage :meta-id+:rows=mockRows 렌더 + 등록 폼 DynamicForm 다이얼로그), useMetaPreview.ts buildMockRows(grid.columns→샘플 5건, number=n), MetaEditorDetailPage 통합(폼·그리드·액션 3탭 + 미리보기 사이드 패널 토글 + 발행 확인 다이얼로그(자동 DEPRECATE 안내)·새 버전 만들기(copy)·보관, dry-run 검증된 스냅샷에서만 canPublish 활성, 발행/복사 중 버튼 disable), ActionEditor.spec·MetaPreview.spec 단위 테스트.",
+      "completed_at": "2026-05-30T06:33:49+0900"
+    },
+    {
+      "step": 5,
+      "name": "e2e-no-code-form-editor",
+      "status": "completed",
+      "started_at": "2026-05-30T06:33:49+0900",
+      "summary": "비개발 사용자 e2e — frontend/e2e/meta-editor.spec.ts(11단계: admin 로그인→신규 그룹 생성(itg-test-meta-editor)→FormFieldEditor 필드 3개·GridColumnEditor 컬럼 2개·ActionEditor 액션 1개 GUI 편집→저장(dry-run+PUT body)→발행(PATCH)→/system/meta viewer PUBLISHED 노출→시각 baseline meta-editor-flow.png) + cURL active 검증, docs/META_EDITOR_REPORT.md. 실 브라우저 e2e 가 steps 1~4 결함 적발: 편집기 mutation 이 VueUse useFetch(immediate:false)를 execute() 없이 await 해 hang → MetaEditorPage·MetaEditorDetailPage 의 생성·dry-run·저장·발행·복사·보관 호출을 LoginPage 정석 패턴(await execute())으로 교정. vue-tsc 0건·Vitest 140 PASS 무회귀. 시드(itg-test-meta-editor-v1-1 PUBLISHED) 보존.",
+      "completed_at": "2026-05-30T06:46:22+0900"
+    }
+  ],
+  "created_at": "2026-05-30T05:49:36+0900",
+  "completed_at": "2026-05-30T06:46:23+0900"
 }

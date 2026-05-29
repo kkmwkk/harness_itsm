@@ -171,6 +171,33 @@ class PageMetaTest {
     }
 
     @Test
+    @DisplayName("replaceBody — DRAFT 의 본문을 통째로 교체한다")
+    void replaceBody_DRAFT_본문_교체() {
+        // given
+        PageMeta meta = sampleDraft();
+
+        // when
+        meta.replaceBody(Map.of("api", "/api/changed"));
+
+        // then
+        assertThat(meta.getMetaJson()).containsEntry("api", "/api/changed");
+        assertThat(meta.getMetaJson()).doesNotContainKey("title");
+    }
+
+    @Test
+    @DisplayName("replaceBody — DRAFT 가 아니면 예외")
+    void replaceBody_DRAFT_아니면_예외() {
+        // given
+        PageMeta meta = sampleDraft();
+        meta.publish();
+
+        // when & then
+        assertThatThrownBy(() -> meta.replaceBody(Map.of("api", "/api/x")))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("DRAFT");
+    }
+
+    @Test
     @DisplayName("versionLabel — v{major}.{minor} 포맷")
     void versionLabel_은_v_major_dot_minor_포맷() {
         // given

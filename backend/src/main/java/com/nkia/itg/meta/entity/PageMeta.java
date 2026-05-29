@@ -97,6 +97,20 @@ public class PageMeta {
         this.metaStatus = MetaStatus.ARCHIVED;
     }
 
+    /**
+     * metaJson 본문을 교체한다. DRAFT 상태에서만 허용한다(ADR-006).
+     *
+     * <p>PUBLISHED·DEPRECATED·ARCHIVED 메타의 본문을 직접 편집하면 화면 노출 중인 메타가
+     * 검토 없이 바뀌므로 거부한다. 편집이 필요하면 새 DRAFT 로 복사 후 편집한다.
+     */
+    public void replaceBody(Map<String, Object> body) {
+        if (this.metaStatus != MetaStatus.DRAFT) {
+            throw new IllegalStateException(
+                    "DRAFT 상태만 본문을 편집할 수 있습니다. 현재: " + this.metaStatus);
+        }
+        this.metaJson = body != null ? new HashMap<>(body) : new HashMap<>();
+    }
+
     public PageMeta copyAs(String newId, int newMinorVersion) {
         if (newMinorVersion < 1) {
             throw new IllegalArgumentException("minorVersion 은 1 이상이어야 합니다.");
