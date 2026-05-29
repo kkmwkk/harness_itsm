@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { usePageMeta } from '@/composables/usePageMeta';
+import { UI } from '@/lib/ui-messages';
 
 const route = useRoute();
 const router = useRouter();
@@ -57,13 +58,13 @@ function submit(): void {
           v-else-if="isFetching"
           class="text-sm text-foreground-muted"
         >
-          조회 중...
+          {{ UI.loading.meta }}
         </p>
         <p
           v-else-if="notPublished"
           class="text-sm text-warning"
         >
-          배포된 버전이 없습니다. DRAFT 만 있거나 그룹 자체가 존재하지 않습니다.
+          {{ UI.empty.metaNotPublished }}
         </p>
         <p
           v-else-if="error"

@@ -2,8 +2,31 @@
   "project": "Polestar10 ITG v2",
   "phase": "11-ux-baseline-and-playwright",
   "steps": [
-    { "step": 0, "name": "ui-messages-catalog", "status": "pending" },
-    { "step": 1, "name": "playwright-setup-and-specs", "status": "pending" },
-    { "step": 2, "name": "ci-integration-and-report", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "ui-messages-catalog",
+      "status": "completed",
+      "started_at": "2026-05-29T21:25:35+0900",
+      "summary": "lib/ui-messages.ts (UI.empty/error/loading/success 카탈로그 + ERROR_CODE_MAP 백엔드 13개 코드 매핑 + mapErrorCode fallback) + usePageMeta/usePageData/useDataMutation/lib/api.ts 의 error 가 카탈로그 매핑 + DynamicPage·LoginPage·MetaPage 적용. raw errorCode 화면 노출 차단(ADR-020).",
+      "completed_at": "2026-05-29T21:30:47+0900"
+    },
+    {
+      "step": 1,
+      "name": "playwright-setup-and-specs",
+      "status": "completed",
+      "started_at": "2026-05-29T21:30:47+0900",
+      "summary": "@playwright/test 도입 + playwright.config.ts (1440x900, 한국어 locale, maxDiffPixelRatio 2%) + e2e/fixtures/auth.ts (asAdmin/asUser fixture) + 5 spec 파일(home/itsm/itam/system/dialog, 8 test) + baseline 스크린샷 7개 생성·재실행 안정 확인 + package.json scripts(e2e/headed/update/report) + .gitignore (report/test-results). 실 브라우저 e2e가 LoginPage 잠복 버그(immediate:false useFetch를 execute() 없이 await → hang)를 적발하여 .execute() 추가로 수정 — ADR-019/F-009 효과 입증.",
+      "completed_at": "2026-05-29T21:44:14+0900"
+    },
+    {
+      "step": 2,
+      "name": "ci-integration-and-report",
+      "status": "completed",
+      "started_at": "2026-05-29T21:44:14+0900",
+      "summary": ".github/workflows/playwright.yml (backend bootRun + frontend preview + Playwright 시각 회귀 + 실패 시 artifact 업로드, sonarqube.yml 과 별도 파일/job) + docs/QA_REPORT.md (F-001~F-009 처리 결과 + Playwright spec 일람 + baseline 운영 규칙 + 한계) + docs/QA_GUIDE.md (baseline 갱신 절차) + CLAUDE.md pnpm e2e 명령 추가. step 1 이 e2e spec 을 vitest/eslint 에서 미분리해 발생한 회귀를 CI 통합 일환으로 수정(vitest exclude e2e/**, eslint ignore e2e+playwright.config). v2.1 UX 베이스라인·Playwright 시각 회귀 정착.",
+      "completed_at": "2026-05-29T21:49:25+0900"
+    }
+  ],
+  "created_at": "2026-05-29T21:25:35+0900",
+  "completed_at": "2026-05-29T21:49:25+0900"
 }

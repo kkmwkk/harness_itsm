@@ -8,3 +8,8 @@ dist-ssr
 .eslintcache
 .tsbuildinfo
 node_modules/.tmp
+
+# Playwright (baseline 스크린샷 e2e/*-snapshots 는 커밋 — 회귀 비교 기준)
+playwright-report/
+test-results/
+.playwright/

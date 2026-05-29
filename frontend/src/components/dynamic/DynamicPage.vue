@@ -14,6 +14,7 @@ import { usePageMeta, type MetaIdent } from '@/composables/usePageMeta';
 import { usePageData } from '@/composables/usePageData';
 import { useDataMutation } from '@/composables/useDataMutation';
 import { asPageMetaBody, MetaBodyShapeError } from '@/lib/meta-body';
+import { UI } from '@/lib/ui-messages';
 import DynamicGrid from './DynamicGrid.vue';
 import DynamicForm from './DynamicForm.vue';
 import type { PageMetaBody, ActionMeta } from '@/types/meta-body';
@@ -107,11 +108,11 @@ async function onFormSubmit(values: Record<string, unknown>): Promise<void> {
   if (!path) return;
   const result = await submitForm(path, values);
   if (result) {
-    toast.success(`${meta.value?.title ?? '항목'} 이(가) 생성되었습니다.`);
+    toast.success(UI.success.created(meta.value?.title ?? '항목'));
     dialogOpen.value = false;
     await reload();
   } else {
-    toast.error('생성에 실패했습니다.');
+    toast.error(UI.error.submit);
   }
 }
 </script>
@@ -147,26 +148,22 @@ async function onFormSubmit(values: Record<string, unknown>): Promise<void> {
       v-else-if="isMetaFetching"
       class="text-foreground-muted"
     >
-      조회 중...
+      {{ UI.loading.meta }}
     </p>
     <Card v-else-if="notPublished">
       <CardContent class="py-8 text-center space-y-2">
         <p class="text-base font-semibold">
-          아직 준비된 화면이 없습니다
-        </p>
-        <p class="text-sm text-foreground-muted">
-          이 모듈(<code class="font-mono">{{ groupId }}</code>)은 메타가 등록되지 않았거나
-          아직 배포되지 않은 상태입니다.
+          {{ UI.empty.metaNotPublished }}
         </p>
         <p class="text-xs text-foreground-subtle">
-          시스템 관리자에게 메타 등록·배포를 요청하거나, 메타 관리에서 DRAFT 를 PUBLISHED 로 전환하세요.
+          {{ UI.empty.metaNotPublishedHint }}
         </p>
       </CardContent>
     </Card>
     <Card v-else-if="metaError">
       <CardContent class="py-6 space-y-1">
         <p class="text-sm font-semibold text-danger">
-          메타를 불러올 수 없습니다
+          {{ UI.error.metaLoad }}
         </p>
         <p class="text-sm text-foreground-muted">
           {{ metaError }}
@@ -176,7 +173,7 @@ async function onFormSubmit(values: Record<string, unknown>): Promise<void> {
     <Card v-else-if="bodyError">
       <CardContent class="py-6">
         <p class="text-danger">
-          메타 본문이 손상되었습니다. {{ bodyError }}
+          {{ UI.error.metaShape }}
         </p>
       </CardContent>
     </Card>
@@ -193,7 +190,7 @@ async function onFormSubmit(values: Record<string, unknown>): Promise<void> {
         v-else-if="isDataFetching && !props.rows"
         class="text-foreground-muted"
       >
-        데이터 조회 중...
+        {{ UI.loading.data }}
       </p>
 
       <DynamicGrid

@@ -11,7 +11,11 @@
     "lint": "eslint . --max-warnings=0",
     "format": "prettier --write \"src/**/*.{ts,vue,css}\"",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "e2e": "playwright test",
+    "e2e:headed": "playwright test --headed",
+    "e2e:update": "playwright test --update-snapshots",
+    "e2e:report": "playwright show-report"
   },
   "dependencies": {
     "@lucide/vue": "^1.16.0",
@@ -35,6 +39,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/vite": "^4.3.0",
     "@tsconfig/node22": "^22.0.0",
     "@types/node": "^22.19.19",

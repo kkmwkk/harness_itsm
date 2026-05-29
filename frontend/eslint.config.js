@@ -9,6 +9,8 @@ export default ts.config(
       'eslint.config.js',
       'src/components/ui/**',
       'src/lib/utils.ts',
+      'e2e/**', // Playwright 전용 — 별도 tsconfig 미포함, lint 대상 외
+      'playwright.config.ts', // Playwright 전용 설정 — tsconfig.app/node 미포함
     ],
   },
   ...ts.configs.recommendedTypeChecked,
