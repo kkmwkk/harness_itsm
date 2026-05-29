@@ -49,6 +49,10 @@
       "dir": "9-auth-and-users",
       "status": "completed",
       "completed_at": "2026-05-29T20:14:12+0900"
+    },
+    {
+      "dir": "10-menu-and-routing",
+      "status": "pending"
     }
   ]
 }

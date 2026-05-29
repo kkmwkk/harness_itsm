@@ -1,0 +1,10 @@
+{
+  "project": "Polestar10 ITG v2",
+  "phase": "10-menu-and-routing",
+  "steps": [
+    { "step": 0, "name": "login-and-auth-store", "status": "pending" },
+    { "step": 1, "name": "menu-store-and-dynamic-sidebar", "status": "pending" },
+    { "step": 2, "name": "system-admin-pages", "status": "pending" },
+    { "step": 3, "name": "e2e-login-flow", "status": "pending" }
+  ]
+}
