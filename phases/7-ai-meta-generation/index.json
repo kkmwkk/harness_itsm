@@ -2,9 +2,28 @@
   "project": "Polestar10 ITG v2",
   "phase": "7-ai-meta-generation",
   "steps": [
-    { "step": 0, "name": "meta-generator-cli", "status": "pending" },
-    { "step": 1, "name": "meta-validator", "status": "pending" },
-    { "step": 2, "name": "prompt-templates-and-guide", "status": "pending" },
-    { "step": 3, "name": "e2e-generate-itg-change", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "meta-generator-cli",
+      "status": "completed",
+      "started_at": "2026-05-29T12:01:16+0900",
+      "summary": "scripts/generate_meta.py (OpenAPI JSON + DTO 이름 → PageMeta DRAFT JSON + 선택 --output 으로 INSERT SQL 생성, ARCHITECTURE §5 매핑표 + status/priority/enum/assigneeId 휴리스틱, 필수 인자 검증, metaStatus 항상 DRAFT 강제). 단위 테스트 14 케이스. 실 OpenAPI(TicketCreateRequest/TicketSummary) 로 itg-ticket-v1-9 생성 검증."
+    },
+    {
+      "step": 1,
+      "name": "meta-validator",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "prompt-templates-and-guide",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "e2e-generate-itg-change",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-05-29T12:01:16+0900"
 }
