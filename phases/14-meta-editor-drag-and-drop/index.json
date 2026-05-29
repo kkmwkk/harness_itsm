@@ -7,7 +7,8 @@
       "name": "draggable-dependency-and-policy",
       "status": "completed",
       "started_at": "2026-05-30T06:46:45+0900",
-      "summary": "vue-draggable-plus 0.6.1 도입 + 드래그 정책(grip 핸들 전용·동일 리스트 내 reorder) + 공통 helper src/lib/drag.ts(reorder, zod index 검증·원본 불변) + 단위 테스트 3건. type-check·lint·build·test(143) 통과."
+      "summary": "vue-draggable-plus 0.6.1 도입 + 드래그 정책(grip 핸들 전용·동일 리스트 내 reorder) + 공통 helper src/lib/drag.ts(reorder, zod index 검증·원본 불변) + 단위 테스트 3건. type-check·lint·build·test(143) 통과.",
+      "completed_at": "2026-05-30T06:49:06+0900"
     },
     {
       "step": 1,
