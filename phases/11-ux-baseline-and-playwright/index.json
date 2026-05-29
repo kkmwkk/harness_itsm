@@ -21,7 +21,10 @@
     {
       "step": 2,
       "name": "ci-integration-and-report",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-29T21:44:14+0900",
+      "summary": ".github/workflows/playwright.yml (backend bootRun + frontend preview + Playwright 시각 회귀 + 실패 시 artifact 업로드, sonarqube.yml 과 별도 파일/job) + docs/QA_REPORT.md (F-001~F-009 처리 결과 + Playwright spec 일람 + baseline 운영 규칙 + 한계) + docs/QA_GUIDE.md (baseline 갱신 절차) + CLAUDE.md pnpm e2e 명령 추가. step 1 이 e2e spec 을 vitest/eslint 에서 미분리해 발생한 회귀를 CI 통합 일환으로 수정(vitest exclude e2e/**, eslint ignore e2e+playwright.config). v2.1 UX 베이스라인·Playwright 시각 회귀 정착.",
+      "completed_at": "2026-05-29T21:49:00+0900"
     }
   ],
   "created_at": "2026-05-29T21:25:35+0900"

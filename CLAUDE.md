@@ -74,6 +74,7 @@ pnpm dev
 pnpm build
 pnpm test
 pnpm type-check    # vue-tsc
+pnpm e2e           # Playwright 시각 회귀
 
 # Swagger 산출물
 curl http://localhost:8080/v3/api-docs      -o itg-api-spec.json
