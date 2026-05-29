@@ -15,6 +15,13 @@ spring:
         jdbc:
           time_zone: Asia/Seoul
 
+app:
+  jwt:
+    # 로컬 개발용 고정 secret (32자 이상). 운영에서는 환경변수·시크릿 매니저로 교체.
+    secret:             "0123456789-itg-v2-jwt-secret-please-replace-in-prod"
+    access-ttl-minutes: 15
+    refresh-ttl-days:   7
+
 logging:
   level:
     org.hibernate.SQL: DEBUG

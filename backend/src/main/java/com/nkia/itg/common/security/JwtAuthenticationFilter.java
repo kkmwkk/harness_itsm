@@ -1,21 +1,66 @@
 package com.nkia.itg.common.security;
 
-import jakarta.servlet.Filter;
+import com.nkia.itg.auth.service.JwtService;
+import com.nkia.itg.common.exception.ITGException;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Stream;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
+/**
+ * 매 요청마다 Authorization: Bearer 토큰을 검증하고 SecurityContext 에 Authentication 을 주입한다.
+ * 토큰이 없거나 invalid 면 익명으로 그대로 진행하고, 보호 경로 차단은 SecurityConfig 가 담당한다
+ * (여기서 직접 401 을 던지지 않는다 — entry point 일원화).
+ */
 @Component
-public class JwtAuthenticationFilter implements Filter {
+@RequiredArgsConstructor
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    // TODO(phase-2): Authorization 헤더에서 Bearer 토큰을 추출하고 서명/만료를 검증한 뒤
-    //                SecurityContextHolder 에 Authentication 을 주입한다. 이번 phase 는 패스스루.
+    private final JwtService jwtService;
+
     @Override
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
-            throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
+            throws ServletException, IOException {
+        String token = extractBearer(req);
+        if (token != null) {
+            try {
+                Claims claims = jwtService.parse(token).getPayload();
+                if (jwtService.isAccess(claims)) {
+                    List<?> rawRoles = claims.get("roles", List.class);
+                    List<?> rawPerms = claims.get("perms", List.class);
+                    // roles·perms 를 모두 GrantedAuthority 로 승격 → @PreAuthorize 가
+                    // hasAuthority('ROLE_ADMIN')·hasAuthority('USER_READ') 둘 다로 검사 가능.
+                    List<GrantedAuthority> authorities = Stream.concat(
+                                    (rawRoles == null ? List.<Object>of() : rawRoles).stream(),
+                                    (rawPerms == null ? List.<Object>of() : rawPerms).stream())
+                            .map(String::valueOf)
+                            .map(a -> (GrantedAuthority) new SimpleGrantedAuthority(a))
+                            .toList();
+                    var auth = new UsernamePasswordAuthenticationToken(
+                            claims.getSubject(), null, authorities);
+                    auth.setDetails(claims);
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
+            } catch (ITGException ignore) {
+                // invalid 토큰 → 익명으로 진행. 보호 경로는 SecurityConfig 가 차단한다.
+            }
+        }
         chain.doFilter(req, res);
+    }
+
+    private String extractBearer(HttpServletRequest req) {
+        String h = req.getHeader("Authorization");
+        return (h != null && h.startsWith("Bearer ")) ? h.substring(7) : null;
     }
 }

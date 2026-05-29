@@ -11,8 +11,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nkia.itg.auth.service.JwtService;
 import com.nkia.itg.common.exception.GlobalExceptionHandler;
 import com.nkia.itg.common.exception.ITGException;
+import com.nkia.itg.common.security.JwtAuthenticationFilter;
 import com.nkia.itg.common.security.SecurityConfig;
 import com.nkia.itg.itam.asset.domain.AssetStatus;
 import com.nkia.itg.itam.asset.domain.AssetType;
@@ -42,14 +44,16 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
- * SecurityConfig 를 함께 import 하고 필터를 비활성화하지 않는다 — 요청이 컨트롤러까지
- * 도달해 정상 응답을 받는다는 것 자체가 /api/assets/** permitAll 회귀 검증이 된다.
+ * SecurityConfig 를 함께 import 하고 필터를 비활성화하지 않는다 — 인증된(@WithMockUser) 요청이
+ * 시큐리티 필터 체인을 통과해 컨트롤러까지 도달함을 검증한다 (JWT 인증 강화 후 회귀 검증).
  */
 @WebMvcTest(AssetController.class)
-@Import({GlobalExceptionHandler.class, SecurityConfig.class})
+@Import({GlobalExceptionHandler.class, SecurityConfig.class, JwtAuthenticationFilter.class})
+@WithMockUser
 class AssetControllerTest {
 
     @Autowired
@@ -60,6 +64,10 @@ class AssetControllerTest {
 
     @MockBean
     private AssetService assetService;
+
+    /** SecurityConfig 가 import 하는 JwtAuthenticationFilter 의 의존성 충족용. */
+    @MockBean
+    private JwtService jwtService;
 
     private AssetResponse sampleResponse(Long id, AssetStatus status, String assigneeId) {
         return new AssetResponse(

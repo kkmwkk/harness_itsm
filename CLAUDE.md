@@ -86,6 +86,10 @@ curl http://localhost:8080/v3/api-docs.yaml -o itg-api-spec.yaml
 - Spring Boot: <http://localhost:8080>
 - Swagger UI: <http://localhost:8080/swagger-ui.html>
 - Vue Dev: <http://localhost:5173>
+- 시드 사용자 (테스트용 — 운영 비밀번호 변경 필수):
+  - admin / admin-sample-1234 (ROLE_ADMIN)
+  - it-support / it-sample-1234 (ROLE_IT_SUPPORT)
+  - user-sample-1 / user-sample-1234 (ROLE_USER)
 
 ## 환경 변수 / 런타임
 - Java 21 (LTS) · Spring Boot 3.x · Gradle 8.x

@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.nkia.itg.auth.service.JwtService;
 import com.nkia.itg.common.config.SwaggerConfig;
 import com.nkia.itg.common.exception.GlobalExceptionHandler;
 import com.nkia.itg.common.security.JwtAuthenticationFilter;
@@ -17,11 +18,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(MetaController.class)
 @Import({SecurityConfig.class, GlobalExceptionHandler.class, SwaggerConfig.class,
         JwtAuthenticationFilter.class, MetaValidationService.class})
+@WithMockUser
 class MetaControllerDryRunTest {
 
     @Autowired
@@ -30,6 +33,10 @@ class MetaControllerDryRunTest {
     /** dry-run 은 MetaService 를 사용하지 않지만, 컨트롤러 의존성 충족을 위해 mock 으로 주입. */
     @MockBean
     private MetaService metaService;
+
+    /** SecurityConfig 가 import 하는 JwtAuthenticationFilter 의 의존성 충족용. */
+    @MockBean
+    private JwtService jwtService;
 
     @Test
     @DisplayName("POST /api/meta/dry-run — 정상(평탄화) 메타 200 valid=true")
