@@ -7,10 +7,12 @@ import RequirePermission from '@/components/common/RequirePermission.vue';
 import StatusBadge from '@/components/common/StatusBadge.vue';
 import DynamicForm from '@/components/dynamic/DynamicForm.vue';
 import FormFieldEditor from '@/components/editor/FormFieldEditor.vue';
+import GridColumnEditor from '@/components/editor/GridColumnEditor.vue';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useApiFetch } from '@/lib/api';
 import { hasBlockingIssues, validateFormFields } from '@/composables/useFormFieldEditor';
+import { hasBlockingColumnIssues, validateGridColumns } from '@/composables/useGridColumnEditor';
 import type { ApiEnvelope, PageMeta } from '@/types/meta';
 import type { PageMetaBody, FormMeta, GridMeta } from '@/types/meta-body';
 
@@ -82,8 +84,16 @@ function stripDraft(): PageMetaBody {
 }
 
 const fieldIssues = computed(() => validateFormFields(bodyDraft.form.fields));
+const formFieldNames = computed(() => bodyDraft.form.fields.map((f) => f.name));
+const columnIssues = computed(() =>
+  validateGridColumns(bodyDraft.grid.columns, formFieldNames.value),
+);
 const canSave = computed(
-  () => isDraft.value && !hasBlockingIssues(bodyDraft.form.fields) && !saving.value,
+  () =>
+    isDraft.value &&
+    !hasBlockingIssues(bodyDraft.form.fields) &&
+    !hasBlockingColumnIssues(bodyDraft.grid.columns, formFieldNames.value) &&
+    !saving.value,
 );
 
 async function loadMeta(): Promise<void> {
@@ -112,6 +122,10 @@ async function save(): Promise<void> {
   if (!meta.value || !isDraft.value) return;
   if (hasBlockingIssues(bodyDraft.form.fields)) {
     toast.error('필수 속성(name·라벨·타입)·중복 name 을 먼저 수정하세요.');
+    return;
+  }
+  if (hasBlockingColumnIssues(bodyDraft.grid.columns, formFieldNames.value)) {
+    toast.error('그리드 컬럼의 필수 속성(field·라벨·타입)·중복 field 를 먼저 수정하세요.');
     return;
   }
   saving.value = true;
@@ -292,14 +306,34 @@ const previewForm = computed<FormMeta>(() => bodyDraft.form);
           </ul>
         </div>
 
-        <!-- 그리드 편집 (step 3) -->
-        <Card v-else-if="tab === 'grid'">
-          <CardContent class="py-8 text-center">
-            <p class="text-sm text-foreground-muted">
-              그리드 컬럼 편집은 다음 단계에서 제공됩니다.
-            </p>
-          </CardContent>
-        </Card>
+        <!-- 그리드 편집 -->
+        <div v-else-if="tab === 'grid'">
+          <fieldset
+            :disabled="!isDraft"
+            class="space-y-3"
+            :class="!isDraft ? 'opacity-60' : ''"
+          >
+            <GridColumnEditor
+              v-model:columns="bodyDraft.grid.columns"
+              v-model:inline-edit="bodyDraft.grid.inlineEdit"
+              v-model:export-enabled="bodyDraft.grid.export"
+              :form-field-names="formFieldNames"
+            />
+          </fieldset>
+          <ul
+            v-if="columnIssues.length"
+            class="mt-3 space-y-1"
+          >
+            <li
+              v-for="(i, n) in columnIssues"
+              :key="n"
+              class="text-[12px]"
+              :class="i.level === 'ERROR' ? 'text-danger' : 'text-warning'"
+            >
+              [{{ i.level }}] {{ i.message }}
+            </li>
+          </ul>
+        </div>
 
         <!-- 액션 편집 (step 4) -->
         <Card v-else-if="tab === 'actions'">
