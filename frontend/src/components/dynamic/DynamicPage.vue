@@ -9,8 +9,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { toast } from 'vue-sonner';
 import { usePageMeta } from '@/composables/usePageMeta';
 import { usePageData } from '@/composables/usePageData';
+import { useDataMutation } from '@/composables/useDataMutation';
 import { asPageMetaBody, MetaBodyShapeError } from '@/lib/meta-body';
 import DynamicGrid from './DynamicGrid.vue';
 import DynamicForm from './DynamicForm.vue';
@@ -79,10 +81,24 @@ function onAction(a: ActionMeta): void {
   // navigate / export / custom 은 다음 phase 의 책임
 }
 
-function onFormSubmit(values: Record<string, unknown>): void {
-  // 본 phase 는 mock — POST 호출은 다음 phase 의 책임
-  console.warn('[DynamicPage] form submit (mock)', values);
-  dialogOpen.value = false;
+// 폼 submit → meta.api 로 실 POST (도메인-중립: ticket 전용 분기 없음, ADR-004).
+// 성공 시 그리드 reload + 성공 토스트 + 다이얼로그 닫힘, 실패 시 에러 토스트.
+const { submit: submitForm } = useDataMutation<
+  Record<string, unknown>,
+  Record<string, unknown>
+>();
+
+async function onFormSubmit(values: Record<string, unknown>): Promise<void> {
+  const path = body.value?.api;
+  if (!path) return;
+  const result = await submitForm(path, values);
+  if (result) {
+    toast.success(`${meta.value?.title ?? '항목'} 이(가) 생성되었습니다.`);
+    dialogOpen.value = false;
+    await reload();
+  } else {
+    toast.error('생성에 실패했습니다.');
+  }
 }
 </script>
 
