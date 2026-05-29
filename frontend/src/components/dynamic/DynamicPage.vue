@@ -151,7 +151,9 @@ async function onFormSubmit(values: Record<string, unknown>): Promise<void> {
     </p>
     <Card v-else-if="notPublished">
       <CardContent class="py-8 text-center space-y-2">
-        <p class="text-base font-semibold">아직 준비된 화면이 없습니다</p>
+        <p class="text-base font-semibold">
+          아직 준비된 화면이 없습니다
+        </p>
         <p class="text-sm text-foreground-muted">
           이 모듈(<code class="font-mono">{{ groupId }}</code>)은 메타가 등록되지 않았거나
           아직 배포되지 않은 상태입니다.
@@ -163,8 +165,12 @@ async function onFormSubmit(values: Record<string, unknown>): Promise<void> {
     </Card>
     <Card v-else-if="metaError">
       <CardContent class="py-6 space-y-1">
-        <p class="text-sm font-semibold text-danger">메타를 불러올 수 없습니다</p>
-        <p class="text-sm text-foreground-muted">{{ metaError }}</p>
+        <p class="text-sm font-semibold text-danger">
+          메타를 불러올 수 없습니다
+        </p>
+        <p class="text-sm text-foreground-muted">
+          {{ metaError }}
+        </p>
       </CardContent>
     </Card>
     <Card v-else-if="bodyError">
