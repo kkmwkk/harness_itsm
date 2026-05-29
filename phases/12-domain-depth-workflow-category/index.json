@@ -16,7 +16,7 @@
       "status": "completed",
       "started_at": "2026-05-29T22:01:03+0900",
       "summary": "12_itam_category.sql(asset_category 트리 + asset.category_code 확장 + asset_lifecycle_event) + AssetCategory 엔티티(moveTo 자기·자손 가드)·AssetCategoryService(create/update/move/deactivate/getTree, path Service 계산)·Repository·TreeNode DTO + AssetLifecycleEventType enum·AssetLifecycleEvent 엔티티·AssetLifecycleService + AssetService 확장(create categoryCode 검증, recordLifecycleEvent 위임) + 단위테스트 7건 추가, IT용 init SQL·ApplicationContextLoadTest mock 보강, 전체 build·test·local validate 기동 통과",
-      "completed_at": "2026-05-29T22:10:00+0900"
+      "completed_at": "2026-05-29T22:10:29+0900"
     },
     {
       "step": 2,
