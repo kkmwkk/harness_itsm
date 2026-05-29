@@ -32,7 +32,7 @@
       "status": "completed",
       "started_at": "2026-05-29T23:23:32+0900",
       "summary": "15_itsm_seed.sql(요청 유형 5종 + 워크플로우 정의 5종 steps JSONB + ROLE_TEAM_LEAD) + 16_request_type_metas.sql(요청 유형별 폼 메타 5종, requestTypeCode·workflowDefinitionCode 포함, 즉시 PUBLISHED) + 17_asset_categories.sql(자산 분류 트리 8노드, SW parent_code 'NULL' 문자열→실제 NULL 보정) + 18_category_metas.sql(분류별 폼 메타 5종, categoryCode 포함, helpText 가상샘플 RFC5737·SAMPLE-). AC 전체 통과: request_type=5·workflow_def=5·asset_category=8·seeded meta=10, 백엔드 부팅 후 10개 active 메타 모두 PUBLISHED 라우팅 확인.",
-      "completed_at": "2026-05-29T23:32:00+0900"
+      "completed_at": "2026-05-29T23:28:54+0900"
     },
     {
       "step": 4,
