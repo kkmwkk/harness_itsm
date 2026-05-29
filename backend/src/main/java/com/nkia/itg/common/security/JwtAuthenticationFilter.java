@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -37,9 +38,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Claims claims = jwtService.parse(token).getPayload();
                 if (jwtService.isAccess(claims)) {
                     List<?> rawRoles = claims.get("roles", List.class);
-                    List<GrantedAuthority> authorities = (rawRoles == null ? List.of() : rawRoles).stream()
+                    List<?> rawPerms = claims.get("perms", List.class);
+                    // roles·perms 를 모두 GrantedAuthority 로 승격 → @PreAuthorize 가
+                    // hasAuthority('ROLE_ADMIN')·hasAuthority('USER_READ') 둘 다로 검사 가능.
+                    List<GrantedAuthority> authorities = Stream.concat(
+                                    (rawRoles == null ? List.<Object>of() : rawRoles).stream(),
+                                    (rawPerms == null ? List.<Object>of() : rawPerms).stream())
                             .map(String::valueOf)
-                            .map(r -> (GrantedAuthority) new SimpleGrantedAuthority(r))
+                            .map(a -> (GrantedAuthority) new SimpleGrantedAuthority(a))
                             .toList();
                     var auth = new UsernamePasswordAuthenticationToken(
                             claims.getSubject(), null, authorities);

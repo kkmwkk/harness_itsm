@@ -42,6 +42,22 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.fail("INVALID_REQUEST", ex.getMessage()));
     }
 
+    /**
+     * 메서드 보안(@PreAuthorize) 거부 — 인증은 되었으나 권한이 부족한 경우.
+     * 필터 레벨 거부는 SecurityConfig 의 accessDeniedHandler 가 처리하지만,
+     * @PreAuthorize 거부는 컨트롤러 호출 시점에 던져지므로 여기서 동일 형태(403 FORBIDDEN)로 변환한다.
+     */
+    @ExceptionHandler({
+            org.springframework.security.authorization.AuthorizationDeniedException.class,
+            org.springframework.security.access.AccessDeniedException.class
+    })
+    public ResponseEntity<ApiResponse<Void>> handleAccessDenied(RuntimeException ex) {
+        log.warn("Access denied: {}", ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(ApiResponse.fail("FORBIDDEN", "권한이 부족합니다"));
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiResponse<Void>> handleDataIntegrity(DataIntegrityViolationException ex) {
         log.warn("Data integrity violation: {}", ex.getMessage());

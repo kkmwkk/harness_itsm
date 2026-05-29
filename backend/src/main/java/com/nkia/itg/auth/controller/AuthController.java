@@ -66,4 +66,17 @@ public class AuthController {
     public ResponseEntity<ApiResponse<MeResponse>> me(Authentication authentication) {
         return ResponseEntity.ok(ApiResponse.ok(authService.me(authentication.getName())));
     }
+
+    @Operation(
+            summary = "로그아웃",
+            description = "stateless JWT 이므로 서버는 토큰을 무효화하지 않는다. "
+                    + "클라이언트가 보관 중인 access·refresh 토큰을 폐기하면 된다."
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "로그아웃 처리")
+    })
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<Void>> logout() {
+        return ResponseEntity.ok(ApiResponse.ok(null, "로그아웃되었습니다."));
+    }
 }

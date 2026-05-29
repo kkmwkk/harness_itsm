@@ -50,6 +50,12 @@ public class MenuService {
         return MenuResponse.from(loadOrThrow(id));
     }
 
+    /** 관리자용 — 활성/비활성·권한 무관 전체 메뉴 평면 목록 (sort_order 무관, id 순). */
+    @Transactional(readOnly = true)
+    public List<MenuResponse> findAll() {
+        return menuRepository.findAll().stream().map(MenuResponse::from).toList();
+    }
+
     public MenuResponse update(Long id, MenuUpdateRequest req) {
         Menu menu = loadOrThrow(id);
         menu.update(req.label(), req.icon(), req.route(), req.groupId(), req.permissionCode());
