@@ -105,6 +105,17 @@ public class UserAccount {
         this.updatedAt = LocalDateTime.now();
     }
 
+    /** 프로필 필드(name/email/phone/departmentId) 수정. RETIRED 면 거부. */
+    public void updateProfile(String name, String email, String phone, Long departmentId) {
+        if (this.status == UserStatus.RETIRED) {
+            throw new IllegalStateException("RETIRED 사용자는 수정할 수 없습니다.");
+        }
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.departmentId = departmentId;
+    }
+
     /** ACTIVE → LOCKED. 이미 LOCKED 면 idempotent no-op. RETIRED 면 거부. */
     public void lock() {
         if (this.status == UserStatus.RETIRED) {

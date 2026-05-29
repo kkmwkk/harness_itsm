@@ -77,6 +77,12 @@ public class Role {
         this.updatedAt = LocalDateTime.now();
     }
 
+    /** 역할명·설명 수정 (코드는 불변). */
+    public void update(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
     /** 권한 부여 (Set 특성으로 중복 무시). */
     public void grant(Permission permission) {
         this.permissions.add(permission);

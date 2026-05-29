@@ -74,6 +74,24 @@ public class Department {
         this.updatedAt = LocalDateTime.now();
     }
 
+    /** 부서명 수정. */
+    public void rename(String name) {
+        this.name = name;
+    }
+
+    /**
+     * 트리 path 갱신 — 생성 직후 id 확정 시점과 move 시 자손 재계산에 쓴다.
+     * 트리 정합성(자기·자손 이동 금지)은 Service 가 보장한다.
+     */
+    public void assignPath(String path) {
+        this.path = path;
+    }
+
+    /** 상위 부서 재지정 (path 재계산은 Service 가 assignPath 로 별도 수행). */
+    public void relocate(Long newParentId) {
+        this.parentId = newParentId;
+    }
+
     public void assignManager(Long userId) {
         this.managerUserId = userId;
     }

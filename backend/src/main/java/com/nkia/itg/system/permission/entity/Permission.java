@@ -61,4 +61,10 @@ public class Permission {
     void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    /** 권한명·설명 수정 (코드는 불변). */
+    public void update(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }

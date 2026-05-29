@@ -21,7 +21,10 @@
     {
       "step": 2,
       "name": "user-dept-role-perm-crud",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-29T19:43:29+0900",
+      "summary": "UserRepository/Service (BCrypt + 검색 페이지·역할 할당) + DepartmentService (트리 path 자동·move 가드) + RoleService·PermissionService (CRUD + grant/revoke) + MenuService (getTreeFor 권한 필터·move) + DTO Record + SystemFixtures + Mockito 단위 테스트 ~30 케이스.",
+      "completed_at": "2026-05-29T19:54:30+0900"
     },
     {
       "step": 3,

@@ -87,6 +87,15 @@ public class Menu {
         this.updatedAt = LocalDateTime.now();
     }
 
+    /** 메뉴 표시 속성 수정 (코드·트리 위치는 불변 — 이동은 moveTo). */
+    public void update(String label, String icon, String route, String groupId, String permissionCode) {
+        this.label = label;
+        this.icon = icon;
+        this.route = route;
+        this.groupId = groupId;
+        this.permissionCode = permissionCode;
+    }
+
     /** 권한 코드 설정 (NULL 허용 — 누구나 노출로 전환). */
     public void setPermission(String permissionCode) {
         this.permissionCode = permissionCode;
