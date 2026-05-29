@@ -1,0 +1,6 @@
+INSERT INTO page_meta (id, title, system_type, package_type, group_id,
+                       major_version, minor_version, meta_status, meta_json)
+VALUES ('itg-change-v1-1', 'ITSM 변경 관리', 'ITSM', 'PACKAGE',
+        'itg-change', 1, 1, 'DRAFT',
+        '{"api": "/api/changes", "grid": {"columns": [{"field": "id", "label": "내부 ID", "type": "text"}, {"field": "ticketNo", "label": "표시용 티켓 번호", "type": "text"}, {"field": "title", "label": "제목", "type": "text"}, {"field": "priority", "label": "우선순위", "type": "priority"}, {"field": "status", "label": "상태", "type": "status"}, {"field": "assigneeId", "label": "담당자 ID", "type": "user-picker"}, {"field": "createdAt", "label": "생성 일시", "type": "date"}]}, "form": {"layout": "two-column", "fields": [{"name": "title", "label": "제목", "type": "text", "maxLength": 200}, {"name": "content", "label": "본문", "type": "text"}, {"name": "priority", "label": "우선순위", "type": "priority", "required": true, "options": [{"value": "LOW", "label": "LOW"}, {"value": "MEDIUM", "label": "MEDIUM"}, {"value": "HIGH", "label": "HIGH"}, {"value": "CRITICAL", "label": "CRITICAL"}]}, {"name": "category", "label": "분류", "type": "text"}, {"name": "assigneeId", "label": "담당자 ID", "type": "user-picker"}]}, "actions": [{"id": "create", "label": "등록", "type": "dialog-form"}]}'::jsonb)
+ON CONFLICT (id) DO NOTHING;
