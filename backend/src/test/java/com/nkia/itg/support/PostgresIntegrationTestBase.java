@@ -12,7 +12,8 @@ public abstract class PostgresIntegrationTestBase {
 
     // 운영과 동일하게 init 스크립트를 파일명 사전순으로 모두 적용한다.
     // (01_schema.sql → page_meta, 02_ticket.sql → ticket, 05_asset.sql → asset,
-    //  10_auth.sql → user_account/department/role/permission/menu + 매핑 테이블)
+    //  10_auth.sql → user_account/department/role/permission/menu + 매핑 테이블,
+    //  11_itsm_workflow.sql → ticket 확장 컬럼 + ticket_request_type/workflow_*)
     @Container
     static final PostgreSQLContainer<?> POSTGRES =
             new PostgreSQLContainer<>("postgres:16")
@@ -30,7 +31,10 @@ public abstract class PostgresIntegrationTestBase {
                             "/docker-entrypoint-initdb.d/05_asset.sql")
                     .withCopyFileToContainer(
                             MountableFile.forClasspathResource("init/10_auth.sql"),
-                            "/docker-entrypoint-initdb.d/10_auth.sql");
+                            "/docker-entrypoint-initdb.d/10_auth.sql")
+                    .withCopyFileToContainer(
+                            MountableFile.forClasspathResource("init/11_itsm_workflow.sql"),
+                            "/docker-entrypoint-initdb.d/11_itsm_workflow.sql");
 
     @DynamicPropertySource
     static void register(DynamicPropertyRegistry r) {

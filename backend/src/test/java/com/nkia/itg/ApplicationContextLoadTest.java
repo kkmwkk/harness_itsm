@@ -8,6 +8,9 @@ import com.nkia.itg.system.menu.repository.MenuRepository;
 import com.nkia.itg.system.permission.repository.PermissionRepository;
 import com.nkia.itg.system.role.repository.RoleRepository;
 import com.nkia.itg.system.user.repository.UserRepository;
+import com.nkia.itg.itsm.workflow.repository.WorkflowDefinitionRepository;
+import com.nkia.itg.itsm.workflow.repository.WorkflowInstanceRepository;
+import com.nkia.itg.itsm.workflow.repository.WorkflowInstanceStepRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
@@ -45,6 +48,15 @@ class ApplicationContextLoadTest {
 
     @MockitoBean
     private MenuRepository menuRepository;
+
+    @MockitoBean
+    private WorkflowDefinitionRepository workflowDefinitionRepository;
+
+    @MockitoBean
+    private WorkflowInstanceRepository workflowInstanceRepository;
+
+    @MockitoBean
+    private WorkflowInstanceStepRepository workflowInstanceStepRepository;
 
     @Test
     void contextLoads() {}
