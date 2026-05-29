@@ -32,6 +32,8 @@ interface Props {
   metaId?: string;
   /** props.rows 우선 (phase 2 호환) */
   rows?: unknown[];
+  /** 폼 submit 시 payload 에 병합할 기본값 (예: 자산 분류 categoryCode). 폼 입력값이 우선. */
+  submitDefaults?: Record<string, unknown>;
 }
 const props = defineProps<Props>();
 
@@ -106,7 +108,9 @@ const { submit: submitForm } = useDataMutation<
 async function onFormSubmit(values: Record<string, unknown>): Promise<void> {
   const path = body.value?.api;
   if (!path) return;
-  const result = await submitForm(path, values);
+  // 분류 등 컨텍스트 기본값을 먼저 깔고 폼 입력값으로 덮어쓴다(폼 우선).
+  const payload = { ...props.submitDefaults, ...values };
+  const result = await submitForm(path, payload);
   if (result) {
     toast.success(UI.success.created(meta.value?.title ?? '항목'));
     dialogOpen.value = false;

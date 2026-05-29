@@ -72,6 +72,22 @@ public class Ticket {
     @Column(name = "closed_at")
     private LocalDateTime closedAt;
 
+    /** 요청 유형 코드 (TicketRequestType.code soft FK). v2.1 도메인 깊이. */
+    @Column(name = "request_type_code", length = 40)
+    private String requestTypeCode;
+
+    /** 연결된 워크플로우 인스턴스 id (WorkflowInstance.id soft FK). v2.1. */
+    @Column(name = "workflow_instance_id")
+    private Long workflowInstanceId;
+
+    /** 요청자 사용자 id (User.id soft FK). assignee 와 별개. v2.1. */
+    @Column(name = "requester_user_id")
+    private Long requesterUserId;
+
+    /** 등록 당시 폼 메타 id (이력 복원 — ITAM 패턴 적용). v2.1. */
+    @Column(name = "page_meta_id_at_registration", length = 100)
+    private String pageMetaIdAtRegistration;
+
     @PrePersist
     void onCreate() {
         LocalDateTime now = LocalDateTime.now();
@@ -139,6 +155,18 @@ public class Ticket {
                 "CLOSED 티켓은 담당자 할당이 불가합니다.");
         }
         this.assigneeId = assigneeId;
+    }
+
+    /** 생성된 워크플로우 인스턴스 id 연결 (한 번만). */
+    public void linkWorkflowInstance(Long workflowInstanceId) {
+        this.workflowInstanceId = workflowInstanceId;
+    }
+
+    /** 워크플로우 종결 시 티켓을 CLOSED 로 전환 (이미 CLOSED 면 no-op). */
+    public void closeByWorkflow() {
+        if (this.status != TicketStatus.CLOSED) {
+            changeStatus(TicketStatus.CLOSED);
+        }
     }
 
     /** ticket_no 한 번만 부여 (이미 set 되어 있으면 IllegalStateException). */

@@ -1,15 +1,35 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { toast } from 'vue-sonner';
 import PageHeader from '@/components/layout/PageHeader.vue';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
 import { useApiFetch } from '@/lib/api';
 import { usePageMeta, type MetaIdent } from '@/composables/usePageMeta';
+import { useDataMutation } from '@/composables/useDataMutation';
 import { asPageMetaBody, MetaBodyShapeError } from '@/lib/meta-body';
+import { UI } from '@/lib/ui-messages';
 import DynamicForm from '@/components/dynamic/DynamicForm.vue';
 import type { ApiEnvelope, MetaStatus } from '@/types/meta';
 import type { PageMetaBody } from '@/types/meta-body';
+import type { LifecycleEvent, LifecycleEventType } from '@/types/asset-category';
 
 interface AssetResponse {
   id: number;
@@ -91,6 +111,121 @@ function statusColor(s: MetaStatus | undefined): string {
 // 본 phase 의 상세 폼은 이력 보기 의도(read-only). 저장(PATCH/PUT)은 별도 phase 의 ADR.
 function onSubmit(): void {
   // no-op — 이력 보기 모드는 저장 비활성
+}
+
+// ── 라이프사이클 이벤트 (PRD §4-3 · ARCHITECTURE §14-3) ──────────────────────
+const {
+  data: eventsEnv,
+  isFetching: isEventsLoading,
+  error: eventsError,
+  execute: reloadEvents,
+} = useApiFetch<ApiEnvelope<LifecycleEvent[]>>(
+  computed(() => `/api/assets/${assetId.value}/lifecycle-events`),
+  { refetch: true },
+).json<ApiEnvelope<LifecycleEvent[]>>();
+
+const events = computed<LifecycleEvent[]>(() => eventsEnv.value?.data ?? []);
+
+const EVENT_TYPES: { value: LifecycleEventType; label: string }[] = [
+  { value: 'ACQUIRED', label: '취득' },
+  { value: 'TRANSFERRED', label: '이관' },
+  { value: 'REPAIRED', label: '수리' },
+  { value: 'DISPOSED', label: '폐기' },
+  { value: 'RENEWED', label: '갱신' },
+];
+function eventTypeLabel(t: LifecycleEventType): string {
+  return EVENT_TYPES.find((e) => e.value === t)?.label ?? t;
+}
+
+/** 이벤트 타입별 권장 payload 필드 가이드 — raw textarea 대신 안내된 입력 제공(금지사항 반영). */
+interface PayloadFieldGuide {
+  key: string;
+  label: string;
+  placeholder?: string;
+}
+const RECOMMENDED_FIELDS: Record<LifecycleEventType, PayloadFieldGuide[]> = {
+  ACQUIRED: [
+    { key: 'vendor', label: '취득처', placeholder: 'SAMPLE-공급사' },
+    { key: 'amount', label: '취득 금액' },
+    { key: 'note', label: '비고' },
+  ],
+  TRANSFERRED: [
+    { key: 'fromLocation', label: '이관 전 위치', placeholder: 'SAMPLE-3층 IT실' },
+    { key: 'toLocation', label: '이관 후 위치', placeholder: 'SAMPLE-5층 영업팀' },
+    { key: 'toUserId', label: '인수자 사용자 ID' },
+  ],
+  REPAIRED: [
+    { key: 'vendor', label: '수리 업체', placeholder: 'SAMPLE-수리센터' },
+    { key: 'symptom', label: '증상' },
+    { key: 'cost', label: '수리 비용' },
+  ],
+  DISPOSED: [
+    { key: 'reason', label: '폐기 사유' },
+    { key: 'method', label: '폐기 방법', placeholder: '예: 자산 반납 / 매각' },
+  ],
+  RENEWED: [
+    { key: 'contractNo', label: '계약 번호', placeholder: 'SAMPLE-CONTRACT-0001' },
+    { key: 'expireDate', label: '갱신 만료일', placeholder: 'YYYY-MM-DD' },
+  ],
+};
+
+const eventDialogOpen = ref(false);
+const eventType = ref<LifecycleEventType>('TRANSFERRED');
+const byUserId = ref('');
+const payloadValues = ref<Record<string, string>>({});
+
+const recommendedFields = computed<PayloadFieldGuide[]>(
+  () => RECOMMENDED_FIELDS[eventType.value],
+);
+
+// 이벤트 타입 변경 시 입력값 초기화 — 이전 타입의 키가 payload 에 섞이지 않도록.
+watch(eventType, () => {
+  payloadValues.value = {};
+});
+
+function openEventDialog(): void {
+  eventType.value = 'TRANSFERRED';
+  byUserId.value = '';
+  payloadValues.value = {};
+  eventDialogOpen.value = true;
+}
+
+const { submit: submitEvent, isLoading: isEventSubmitting } = useDataMutation<
+  {
+    eventType: LifecycleEventType;
+    byUserId: number | null;
+    payload: Record<string, unknown> | null;
+  },
+  LifecycleEvent
+>();
+
+async function onRecordEvent(): Promise<void> {
+  const payload: Record<string, unknown> = {};
+  for (const f of recommendedFields.value) {
+    const v = payloadValues.value[f.key]?.trim();
+    if (v) payload[f.key] = v;
+  }
+  const idText = byUserId.value.trim();
+  const result = await submitEvent(`/api/assets/${assetId.value}/lifecycle-events`, {
+    eventType: eventType.value,
+    byUserId: idText ? Number(idText) : null,
+    payload: Object.keys(payload).length ? payload : null,
+  });
+  if (result) {
+    toast.success('이력 이벤트가 기록되었습니다.');
+    eventDialogOpen.value = false;
+    await reloadEvents();
+  } else {
+    toast.error(UI.error.submit);
+  }
+}
+
+// payload 객체를 "키: 값" 한 줄 요약으로 — 타임라인 표시용.
+function payloadSummary(p: Record<string, unknown> | null): string {
+  if (!p) return '-';
+  const entries = Object.entries(p);
+  if (entries.length === 0) return '-';
+  return entries.map(([k, v]) => `${k}: ${String(v)}`).join(', ');
 }
 </script>
 
@@ -208,5 +343,145 @@ function onSubmit(): void {
     >
       {{ metaError }}
     </p>
+
+    <!-- 라이프사이클 이벤트 타임라인 (취득·이관·수리·폐기·갱신) -->
+    <Card v-if="asset">
+      <CardHeader class="flex flex-row items-center justify-between space-y-0">
+        <CardTitle>이력 이벤트</CardTitle>
+        <Button
+          size="sm"
+          @click="openEventDialog"
+        >
+          이벤트 기록
+        </Button>
+      </CardHeader>
+      <CardContent>
+        <p
+          v-if="isEventsLoading && events.length === 0"
+          class="text-foreground-muted text-sm"
+        >
+          {{ UI.loading.data }}
+        </p>
+        <p
+          v-else-if="eventsError"
+          class="text-danger text-sm"
+        >
+          {{ eventsError.message ?? UI.error.dataLoad }}
+        </p>
+        <p
+          v-else-if="events.length === 0"
+          class="text-foreground-muted text-sm"
+        >
+          아직 기록된 이력 이벤트가 없습니다.
+        </p>
+        <ol
+          v-else
+          class="space-y-3"
+        >
+          <li
+            v-for="e in events"
+            :key="e.id"
+            class="flex gap-3 border-b border-border-subtle pb-3 last:border-b-0 last:pb-0"
+          >
+            <span
+              class="mt-0.5 inline-flex shrink-0 items-center rounded-pill bg-info/10 px-2.5 py-0.5 text-[12px] font-semibold text-info"
+            >
+              {{ eventTypeLabel(e.eventType) }}
+            </span>
+            <div class="min-w-0 text-[13px]">
+              <p class="text-foreground-muted">
+                <span class="font-mono">{{ e.eventDate }}</span>
+                <span
+                  v-if="e.byUserId"
+                  class="ml-2"
+                >· 처리자 {{ e.byUserId }}</span>
+              </p>
+              <p class="break-words text-foreground">
+                {{ payloadSummary(e.payload) }}
+              </p>
+            </div>
+          </li>
+        </ol>
+      </CardContent>
+    </Card>
+
+    <!-- 이벤트 기록 다이얼로그 — 타입별 권장 필드 가이드 노출 -->
+    <Dialog v-model:open="eventDialogOpen">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>이력 이벤트 기록</DialogTitle>
+        </DialogHeader>
+        <div class="space-y-4">
+          <div class="space-y-1.5">
+            <Label for="event-type">
+              이벤트 유형
+            </Label>
+            <Select
+              :model-value="eventType"
+              @update:model-value="(v) => (eventType = v as LifecycleEventType)"
+            >
+              <SelectTrigger id="event-type">
+                <SelectValue placeholder="유형 선택" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem
+                  v-for="t in EVENT_TYPES"
+                  :key="t.value"
+                  :value="t.value"
+                >
+                  {{ t.label }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div class="space-y-1.5">
+            <Label for="event-by-user">
+              처리자 사용자 ID (옵션)
+            </Label>
+            <Input
+              id="event-by-user"
+              v-model="byUserId"
+              type="number"
+              placeholder="예: 5"
+            />
+          </div>
+
+          <div class="space-y-3">
+            <p class="text-[12px] text-foreground-muted">
+              {{ eventTypeLabel(eventType) }} 권장 입력 항목 (입력한 값만 저장됩니다)
+            </p>
+            <div
+              v-for="f in recommendedFields"
+              :key="f.key"
+              class="space-y-1.5"
+            >
+              <Label :for="`payload-${f.key}`">
+                {{ f.label }}
+              </Label>
+              <Input
+                :id="`payload-${f.key}`"
+                v-model="payloadValues[f.key]"
+                :placeholder="f.placeholder"
+              />
+            </div>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button
+            variant="outline"
+            @click="eventDialogOpen = false"
+          >
+            취소
+          </Button>
+          <Button
+            :disabled="isEventSubmitting"
+            @click="onRecordEvent"
+          >
+            기록
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   </section>
 </template>

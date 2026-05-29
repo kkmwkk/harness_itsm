@@ -9,10 +9,15 @@ import com.nkia.itg.itam.asset.dto.AssetResponse;
 import com.nkia.itg.itam.asset.dto.AssetStatusChangeRequest;
 import com.nkia.itg.itam.asset.dto.AssetSummary;
 import com.nkia.itg.itam.asset.dto.AssetUpdateRequest;
+import com.nkia.itg.itam.asset.domain.AssetLifecycleEventType;
 import com.nkia.itg.itam.asset.entity.Asset;
+import com.nkia.itg.itam.asset.entity.AssetLifecycleEvent;
 import com.nkia.itg.itam.asset.repository.AssetRepository;
+import com.nkia.itg.itam.category.repository.AssetCategoryRepository;
 import com.nkia.itg.meta.dto.PageMetaResponse;
 import com.nkia.itg.meta.service.MetaService;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +34,8 @@ public class AssetService {
 
     private final AssetRepository assetRepository;
     private final MetaService metaService;
+    private final AssetCategoryRepository assetCategoryRepository;
+    private final AssetLifecycleService assetLifecycleService;
 
     /**
      * 신규 등록. 등록 시점의 PUBLISHED 메타 id 를 캡처하여 pageMetaIdAtRegistration 에 보존한다
@@ -37,6 +44,7 @@ public class AssetService {
      */
     public AssetResponse create(AssetCreateRequest req) {
         PageMetaResponse activeMeta = metaService.getActive(req.pageGroupId());
+        validateCategoryCode(req.categoryCode());
 
         Asset asset = Asset.builder()
                 .assetNo(null)
@@ -46,6 +54,7 @@ public class AssetService {
                 .model(req.model())
                 .serialNo(req.serialNo())
                 .category(req.category())
+                .categoryCode(req.categoryCode())
                 .assigneeId(req.assigneeId())
                 .location(req.location())
                 .acquiredAt(req.acquiredAt())
@@ -55,6 +64,32 @@ public class AssetService {
         Asset saved = assetRepository.save(asset);
         saved.assignAssetNo("AST-" + String.format("%05d", saved.getId()));
         return AssetResponse.from(saved);
+    }
+
+    /** categoryCode 가 주어지면 asset_category 에 존재하는지 검증한다 (null·blank 면 검증 생략). */
+    private void validateCategoryCode(String categoryCode) {
+        if (categoryCode != null && !categoryCode.isBlank()
+                && !assetCategoryRepository.existsById(categoryCode)) {
+            throw new ITGException("ASSET_CATEGORY_NOT_FOUND",
+                    "자산 분류를 찾을 수 없습니다: " + categoryCode, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
+     * 자산 이력 이벤트 기록 — AssetLifecycleService 위임. 자산 존재 검증 후 위임한다.
+     * event_type 은 {@link AssetLifecycleEventType} Enum 으로만 받는다 (String 하드코딩 금지).
+     */
+    public AssetLifecycleEvent recordLifecycleEvent(Long assetId, AssetLifecycleEventType eventType,
+                                                    Long byUserId, Map<String, Object> payload) {
+        loadOrThrow(assetId);
+        return assetLifecycleService.record(assetId, eventType, byUserId, payload);
+    }
+
+    /** 자산 이력 이벤트 목록 (이벤트 일자 내림차순). 자산 존재 검증 후 위임 조회. */
+    @Transactional(readOnly = true)
+    public List<AssetLifecycleEvent> listLifecycleEvents(Long assetId) {
+        loadOrThrow(assetId);
+        return assetLifecycleService.findByAsset(assetId);
     }
 
     @Transactional(readOnly = true)

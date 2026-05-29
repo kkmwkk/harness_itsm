@@ -61,7 +61,8 @@
     },
     {
       "dir": "12-domain-depth-workflow-category",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-05-29T23:49:37+0900"
     },
     {
       "dir": "13-meta-editor-form-ui",

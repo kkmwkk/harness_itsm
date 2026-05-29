@@ -64,6 +64,10 @@ public class Asset {
     @Column(name = "category", length = 40)
     private String category;
 
+    /** 자산 분류 코드 (FK → asset_category.code). 분류별 원장 메타 분기 키 (PRD §4-3). */
+    @Column(name = "category_code", length = 40)
+    private String categoryCode;
+
     @Column(name = "assignee_id", length = 60)
     private String assigneeId;
 

@@ -2,12 +2,63 @@
   "project": "Polestar10 ITG v2",
   "phase": "12-domain-depth-workflow-category",
   "steps": [
-    { "step": 0, "name": "workflow-schema-and-engine", "status": "pending" },
-    { "step": 1, "name": "asset-category-schema", "status": "pending" },
-    { "step": 2, "name": "workflow-and-category-controllers", "status": "pending" },
-    { "step": 3, "name": "request-type-meta-seeds", "status": "pending" },
-    { "step": 4, "name": "workflow-panel-frontend", "status": "pending" },
-    { "step": 5, "name": "asset-category-frontend", "status": "pending" },
-    { "step": 6, "name": "e2e-workflow-and-category", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "workflow-schema-and-engine",
+      "status": "completed",
+      "started_at": "2026-05-29T21:49:59+0900",
+      "summary": "11_itsm_workflow.sql(ticket 확장 컬럼 + ticket_request_type/workflow_definition/instance/instance_step) + TicketRequestType·WorkflowDefinition·WorkflowInstance·WorkflowInstanceStep 엔티티(전이 매트릭스는 advance/reject/complete/reopen 도메인 메서드) + WorkflowEngineService(start/executeAction/findOverdue, INVALID_WORKFLOW_ACTION 가드) + 워크플로우 단위테스트 18건, 전체 232+ 테스트·build·local validate 기동 통과",
+      "completed_at": "2026-05-29T22:01:03+0900"
+    },
+    {
+      "step": 1,
+      "name": "asset-category-schema",
+      "status": "completed",
+      "started_at": "2026-05-29T22:01:03+0900",
+      "summary": "12_itam_category.sql(asset_category 트리 + asset.category_code 확장 + asset_lifecycle_event) + AssetCategory 엔티티(moveTo 자기·자손 가드)·AssetCategoryService(create/update/move/deactivate/getTree, path Service 계산)·Repository·TreeNode DTO + AssetLifecycleEventType enum·AssetLifecycleEvent 엔티티·AssetLifecycleService + AssetService 확장(create categoryCode 검증, recordLifecycleEvent 위임) + 단위테스트 7건 추가, IT용 init SQL·ApplicationContextLoadTest mock 보강, 전체 build·test·local validate 기동 통과",
+      "completed_at": "2026-05-29T22:10:29+0900"
+    },
+    {
+      "step": 2,
+      "name": "workflow-and-category-controllers",
+      "status": "completed",
+      "started_at": "2026-05-29T22:10:29+0900",
+      "summary": "TicketRequestTypeController + WorkflowDefinitionController + WorkflowInstanceController + AssetCategoryController + Swagger 어노테이션 + @PreAuthorize 권한 가드 + @WebMvcTest. 산출물 commit cea51b4(feat) + f6c5654(chore) 정상. execute.py status 자동 갱신 메커니즘 미작동으로 수동 completed 복구.",
+      "completed_at": "2026-05-29T22:24:21+0900"
+    },
+    {
+      "step": 3,
+      "name": "request-type-meta-seeds",
+      "status": "completed",
+      "started_at": "2026-05-29T23:23:32+0900",
+      "summary": "15_itsm_seed.sql(요청 유형 5종 + 워크플로우 정의 5종 steps JSONB + ROLE_TEAM_LEAD) + 16_request_type_metas.sql(요청 유형별 폼 메타 5종, requestTypeCode·workflowDefinitionCode 포함, 즉시 PUBLISHED) + 17_asset_categories.sql(자산 분류 트리 8노드, SW parent_code 'NULL' 문자열→실제 NULL 보정) + 18_category_metas.sql(분류별 폼 메타 5종, categoryCode 포함, helpText 가상샘플 RFC5737·SAMPLE-). AC 전체 통과: request_type=5·workflow_def=5·asset_category=8·seeded meta=10, 백엔드 부팅 후 10개 active 메타 모두 PUBLISHED 라우팅 확인.",
+      "completed_at": "2026-05-29T23:28:54+0900"
+    },
+    {
+      "step": 4,
+      "name": "workflow-panel-frontend",
+      "status": "completed",
+      "started_at": "2026-05-29T23:28:54+0900",
+      "summary": "types/workflow.ts(StepAction·WorkflowStatus·WorkflowStep·WorkflowInstanceStepHistory·WorkflowInstanceView) + useWorkflow.ts(인스턴스 by-ticket + 정의 by-code 합쳐 view 구성, mapDefinitionStep snake→camel, availableActions 권한분기 순수함수, executeAction POST+reload) + WorkflowPanel.vue(stepper·현재단계 SLA·hasRole 매칭 액션버튼·comment(REJECT/REOPEN 사유 권장)·이력테이블·acted emit) + TicketDetailPage.vue(/itsm/:id, requestTypeCode→formMetaGroupId 메타 복원 + WorkflowPanel) + TicketNewPage.vue(/itsm/new/:requestType, requestTypeCode 주입 POST) + router itsm detailUrlTemplate·신규 2라우트 + useWorkflow.spec 13건. type-check·lint·build·test(79) 통과, dev 서버 /itsm·/itsm/1·/itsm/new/INCIDENT 모두 200.",
+      "completed_at": "2026-05-29T23:37:18+0900"
+    },
+    {
+      "step": 5,
+      "name": "asset-category-frontend",
+      "status": "completed",
+      "started_at": "2026-05-29T23:37:18+0900",
+      "summary": "types/asset-category.ts(AssetCategoryNode 재귀·LifecycleEvent) + useAssetCategory.ts(useAssetCategoryTree fetch+활성 가지치기, findByCode·filterActiveTree·treeNodeClass 순수함수) + AssetCategoryTree.vue(자기참조 재귀 렌더·depth 들여쓰기·treeNodeClass 강조) + IndexPage.vue(트리 사이드+DynamicPage 2컬럼, selectedCode→formMetaGroupId 메타 분기, 미선택 시 fetch 안내, categoryCode submitDefaults 자동첨부, 행클릭→/itam/:id) + DetailPage.vue 확장(라이프사이클 타임라인 + 이벤트 기록 다이얼로그, 타입별 권장 payload 필드 가이드) + DynamicPage submitDefaults 옵션 prop + router itam→IndexPage 교체 + useAssetCategory.spec 5건·AssetCategoryTree.spec 4건. type-check·lint·build·test(88) 통과, dev 서버 /itam·/itam/1 모두 200.",
+      "completed_at": "2026-05-29T23:45:20+0900"
+    },
+    {
+      "step": 6,
+      "name": "e2e-workflow-and-category",
+      "status": "completed",
+      "started_at": "2026-05-29T23:45:20+0900",
+      "summary": "M8 e2e cURL 15단계 전체 PASS — INCIDENT 티켓 생성→워크플로우 인스턴스 자동생성(step0 접수 RUNNING)→ROLE_USER step0 거부(400)→IT_SUPPORT 0/1/2 COMPLETE 단계전이→USER step3 CONFIRM→인스턴스 COMPLETED+Ticket CLOSED→CLOSED 가드(400), 요청유형별 폼분기(itg-ticket-incident vs itg-ticket-change), 자산분류 트리(HW/HW_LAPTOP/SW_LICENSE)+HW_LAPTOP 등록+등록메타 보존(itg-asset-hw-laptop-v1-1)+TRANSFERRED 라이프사이클 이벤트. 시나리오 예시의 steps[].name→실제 stepName 필드명 오타는 신규 티켓(TID=21) 재검증으로 PASS 확인(운영코드 무수정). backend/E2E_REPORT_PHASE12.md + openapi/itg-api-spec.json(57 paths) 갱신, 시드·e2e 데이터 보존. AC 6/6 통과.",
+      "completed_at": "2026-05-29T23:49:37+0900"
+    }
+  ],
+  "created_at": "2026-05-29T21:49:59+0900",
+  "completed_at": "2026-05-29T23:49:37+0900"
 }

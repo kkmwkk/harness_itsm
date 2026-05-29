@@ -39,7 +39,13 @@ public record TicketResponse(
         LocalDateTime updatedAt,
 
         @Schema(description = "종료 일시 (CLOSED 전이 시)", example = "2026-05-29T12:00:00")
-        LocalDateTime closedAt
+        LocalDateTime closedAt,
+
+        @Schema(description = "요청 유형 코드", example = "INCIDENT")
+        String requestTypeCode,
+
+        @Schema(description = "연결된 워크플로우 인스턴스 ID", example = "100")
+        Long workflowInstanceId
 ) {
     public static TicketResponse from(Ticket e) {
         return new TicketResponse(
@@ -53,7 +59,9 @@ public record TicketResponse(
                 e.getAssigneeId(),
                 e.getCreatedAt(),
                 e.getUpdatedAt(),
-                e.getClosedAt()
+                e.getClosedAt(),
+                e.getRequestTypeCode(),
+                e.getWorkflowInstanceId()
         );
     }
 }

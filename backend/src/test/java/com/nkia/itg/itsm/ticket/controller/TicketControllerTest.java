@@ -73,7 +73,9 @@ class TicketControllerTest {
                 assigneeId,
                 LocalDateTime.now(),
                 LocalDateTime.now(),
-                null
+                null,
+                "INCIDENT",
+                100L
         );
     }
 
@@ -81,7 +83,7 @@ class TicketControllerTest {
     @DisplayName("POST /api/tickets — 201 과 TicketResponse 반환")
     void POST_create_201_과_TicketResponse_반환() throws Exception {
         TicketCreateRequest req = new TicketCreateRequest(
-                "샘플 티켓 제목", "샘플 본문", Priority.MEDIUM, "BUG", "assignee-sample-1");
+                "샘플 티켓 제목", "샘플 본문", Priority.MEDIUM, "BUG", "assignee-sample-1", "INCIDENT");
         given(ticketService.create(any())).willReturn(sampleResponse(42L, TicketStatus.OPEN, Priority.MEDIUM, "assignee-sample-1"));
 
         mockMvc.perform(post("/api/tickets")
@@ -92,6 +94,8 @@ class TicketControllerTest {
                 .andExpect(jsonPath("$.data.id").value(42))
                 .andExpect(jsonPath("$.data.ticketNo").value("ITSM-00042"))
                 .andExpect(jsonPath("$.data.status").value("OPEN"))
+                .andExpect(jsonPath("$.data.requestTypeCode").value("INCIDENT"))
+                .andExpect(jsonPath("$.data.workflowInstanceId").value(100))
                 .andExpect(jsonPath("$.errorCode").doesNotExist());
 
         then(ticketService).should().create(any());
@@ -101,7 +105,7 @@ class TicketControllerTest {
     @DisplayName("POST /api/tickets — title 누락 시 400 VALIDATION_FAILED")
     void POST_create_title_누락_400_VALIDATION_FAILED() throws Exception {
         TicketCreateRequest req = new TicketCreateRequest(
-                "  ", "샘플 본문", Priority.MEDIUM, "BUG", "assignee-sample-1");
+                "  ", "샘플 본문", Priority.MEDIUM, "BUG", "assignee-sample-1", "INCIDENT");
 
         mockMvc.perform(post("/api/tickets")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -248,7 +252,7 @@ class TicketControllerTest {
         TicketResponse updated = new TicketResponse(
                 42L, "ITSM-00042", "수정된 샘플 제목", "수정된 샘플 본문",
                 Priority.MEDIUM, TicketStatus.OPEN, "REQ", "assignee-sample-1",
-                LocalDateTime.now(), LocalDateTime.now(), null);
+                LocalDateTime.now(), LocalDateTime.now(), null, "INCIDENT", 100L);
         given(ticketService.update(eq(42L), any())).willReturn(updated);
 
         mockMvc.perform(patch("/api/tickets/{id}", 42L)
