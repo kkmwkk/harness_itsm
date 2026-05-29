@@ -14,7 +14,8 @@
       "name": "asset-repository-and-service",
       "status": "completed",
       "started_at": "2026-05-29T10:36:00+0900",
-      "summary": "AssetRepository (findByAssetNo + search Page) + AssetService (create 시 MetaService.getActive 로 pageMetaIdAtRegistration 캡처 + getById/getByAssetNo/search/update/changeStatus/assign/getRegistrationMeta) + DTO Record 6종 + AssetFixture + Mockito 10 케이스. assetNo AST-{id5} 자동 부여(IDENTITY save dirty checking)."
+      "summary": "AssetRepository (findByAssetNo + search Page) + AssetService (create 시 MetaService.getActive 로 pageMetaIdAtRegistration 캡처 + getById/getByAssetNo/search/update/changeStatus/assign/getRegistrationMeta) + DTO Record 6종 + AssetFixture + Mockito 10 케이스. assetNo AST-{id5} 자동 부여(IDENTITY save dirty checking).",
+      "completed_at": "2026-05-29T10:40:11+0900"
     },
     {
       "step": 2,
