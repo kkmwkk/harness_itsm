@@ -32,7 +32,7 @@
       "status": "completed",
       "started_at": "2026-05-30T07:00:11+0900",
       "summary": "드래그 메타 편집 e2e(meta-editor-drag.spec.ts) — itg-test-meta-editor 시드 DRAFT 사본 생성 → grip 핸들로 필드 순서 변경(SortableJS 네이티브 DnD 는 Playwright 합성입력 불가 → 동일 reorder 경로인 핸들 키보드 Alt+↓ 사용) → 그리드 컬럼 width 200→150 인라인 편집 → 저장(dry-run)·발행 → viewer 본문에 새 순서[priority,content,title]·width150 반영 검증 + 시각 baseline(meta-editor-drag.png). 단독 실행 PASS. 보고서 작성. 적발: phase13 meta-editor.spec 가 step1 span(라디오→버튼) 변경으로 깨짐 + 공유시드 병렬 race(둘 다 본 step 범위 밖, 보고서에 권고 기록).",
-      "completed_at": "2026-05-30T07:20:00+0900"
+      "completed_at": "2026-05-30T07:24:06+0900"
     }
   ],
   "created_at": "2026-05-30T06:46:45+0900"
