@@ -32,7 +32,7 @@
       "status": "completed",
       "started_at": "2026-05-29T14:11:07+0900",
       "summary": "OpenAPI → generate_meta.py → dry-run → INSERT(DRAFT) → publish → /system/meta?groupId=itg-change 메타 viewer 노출의 5단계 파이프라인 e2e PASS. sql/init/_generated/itg-change-v1-1.sql + docs/META_GENERATION_REPORT.md. PRD §9 M5 마일스톤 완료 (Claude Code 자동 메타 생성 파이프라인 안정화). 백엔드 모듈은 별도 phase.",
-      "completed_at": "2026-05-29T14:15:00+0900"
+      "completed_at": "2026-05-29T14:14:53+0900"
     }
   ],
   "created_at": "2026-05-29T12:01:16+0900"
