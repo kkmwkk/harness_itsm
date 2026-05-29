@@ -24,7 +24,7 @@
       "status": "completed",
       "started_at": "2026-05-29T10:04:02+0900",
       "summary": "useDataMutation composable (POST 공통, isLoading/error/submit) + DynamicPage 의 onFormSubmit 실 POST 로 교체 (성공→reload+토스트, 실패→에러 토스트) + sonner 도입 + UI_GUIDE §5-8 규격 토스트 스타일 override.",
-      "completed_at": "2026-05-29T10:08:30+0900"
+      "completed_at": "2026-05-29T10:08:51+0900"
     },
     {
       "step": 3,
