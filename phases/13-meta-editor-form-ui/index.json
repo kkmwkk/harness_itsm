@@ -16,7 +16,7 @@
       "status": "completed",
       "started_at": "2026-05-30T06:04:46+0900",
       "summary": "/system/meta-editor 진입점 — GET /api/meta/groups(group_id 단위 집계: 최신 PUBLISHED·DRAFT 여부·버전 수) 신규 endpoint + PageMetaGroupResponse DTO, MetaEditorPage.vue(좌: 그룹 DataTable, 우: 버전 이력 table + StatusBadge·편집(DRAFT만)/복사/발행/보관/미리보기), 신규 그룹 생성 다이얼로그(POST /api/meta 빈 DRAFT), DynamicPage 미리보기, RequirePermission META_EDIT 가드, 메뉴 시드 권한 META_PUBLISH→META_EDIT 정렬.",
-      "completed_at": "2026-05-30T06:13:00+0900"
+      "completed_at": "2026-05-30T06:13:25+0900"
     },
     {
       "step": 2,
