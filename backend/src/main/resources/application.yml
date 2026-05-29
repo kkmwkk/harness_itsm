@@ -10,6 +10,14 @@ spring:
 server:
   port: 8080
 
+app:
+  jwt:
+    # 운영에서는 환경변수(APP_JWT_SECRET)·시크릿 매니저로 주입한다.
+    # yml 의 기본값은 로컬/테스트 편의용이며 소스 코드에는 하드코딩하지 않는다.
+    secret:             ${APP_JWT_SECRET:0123456789-itg-v2-jwt-secret-please-replace-in-prod}
+    access-ttl-minutes: 15
+    refresh-ttl-days:   7
+
 springdoc:
   api-docs:
     path: /v3/api-docs

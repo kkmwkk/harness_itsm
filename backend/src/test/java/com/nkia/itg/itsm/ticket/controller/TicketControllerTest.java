@@ -57,6 +57,10 @@ class TicketControllerTest {
     @MockBean
     private TicketService ticketService;
 
+    /** @Component 인 JwtAuthenticationFilter 가 슬라이스에 로드되므로 그 의존성(JwtService) 충족용. */
+    @MockBean
+    private com.nkia.itg.auth.service.JwtService jwtService;
+
     private TicketResponse sampleResponse(Long id, TicketStatus status, Priority priority, String assigneeId) {
         return new TicketResponse(
                 id,

@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.nkia.itg.common.config.SwaggerConfig;
 import com.nkia.itg.common.exception.GlobalExceptionHandler;
 import com.nkia.itg.common.exception.ITGException;
+import com.nkia.itg.auth.service.JwtService;
 import com.nkia.itg.common.security.JwtAuthenticationFilter;
 import com.nkia.itg.common.security.SecurityConfig;
 import com.nkia.itg.meta.domain.MetaStatus;
@@ -33,10 +34,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(MetaController.class)
 @Import({SecurityConfig.class, GlobalExceptionHandler.class, SwaggerConfig.class, JwtAuthenticationFilter.class})
+@WithMockUser
 class MetaControllerTest {
 
     @Autowired
@@ -47,6 +50,10 @@ class MetaControllerTest {
 
     @MockBean
     private MetaValidationService metaValidationService;
+
+    /** SecurityConfig 가 import 하는 JwtAuthenticationFilter 의 의존성 충족용 (인증은 @WithMockUser 로 대체). */
+    @MockBean
+    private JwtService jwtService;
 
     private PageMetaResponse publishedResponse(String groupId, int major, int minor) {
         return new PageMetaResponse(
