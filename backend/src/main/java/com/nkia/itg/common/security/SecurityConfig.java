@@ -28,6 +28,7 @@ public class SecurityConfig {
                         // 인증·인가는 별도 phase 에서 강화한다 (JWT 검증 + 권한 체크).
                         .requestMatchers("/api/meta/**").permitAll()
                         .requestMatchers("/api/tickets/**").permitAll()
+                        .requestMatchers("/api/assets/**").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();
