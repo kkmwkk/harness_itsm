@@ -7,7 +7,8 @@
       "name": "data-fetch-integration",
       "status": "completed",
       "started_at": "2026-05-29T09:49:45+0900",
-      "summary": "PageResponse<T> 타입 추가. usePageData composable (buildUrl 분리 + reactive URL + useApiFetch refetch + page/sort/filters setQuery + reload). DynamicPage props.rows 우선 + 미제공 시 meta.api 자동 fetch. /itsm 진입 시 백엔드 시드 5건 그리드 표시. 단위 테스트 5 케이스(buildUrl)."
+      "summary": "PageResponse<T> 타입 추가. usePageData composable (buildUrl 분리 + reactive URL + useApiFetch refetch + page/sort/filters setQuery + reload). DynamicPage props.rows 우선 + 미제공 시 meta.api 자동 fetch. /itsm 진입 시 백엔드 시드 5건 그리드 표시. 단위 테스트 5 케이스(buildUrl).",
+      "completed_at": "2026-05-29T09:52:26+0900"
     },
     {
       "step": 1,
