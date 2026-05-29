@@ -11,7 +11,7 @@ import org.testcontainers.utility.MountableFile;
 public abstract class PostgresIntegrationTestBase {
 
     // 운영과 동일하게 init 스크립트를 파일명 사전순으로 모두 적용한다.
-    // (01_schema.sql → page_meta, 02_ticket.sql → ticket)
+    // (01_schema.sql → page_meta, 02_ticket.sql → ticket, 05_asset.sql → asset)
     @Container
     static final PostgreSQLContainer<?> POSTGRES =
             new PostgreSQLContainer<>("postgres:16")
@@ -23,7 +23,10 @@ public abstract class PostgresIntegrationTestBase {
                             "/docker-entrypoint-initdb.d/01_schema.sql")
                     .withCopyFileToContainer(
                             MountableFile.forClasspathResource("init/02_ticket.sql"),
-                            "/docker-entrypoint-initdb.d/02_ticket.sql");
+                            "/docker-entrypoint-initdb.d/02_ticket.sql")
+                    .withCopyFileToContainer(
+                            MountableFile.forClasspathResource("init/05_asset.sql"),
+                            "/docker-entrypoint-initdb.d/05_asset.sql");
 
     @DynamicPropertySource
     static void register(DynamicPropertyRegistry r) {
