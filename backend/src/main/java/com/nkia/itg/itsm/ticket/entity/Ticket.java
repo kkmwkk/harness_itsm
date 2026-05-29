@@ -135,6 +135,14 @@ public class Ticket {
         this.assigneeId = assigneeId;
     }
 
+    /** ticket_no 한 번만 부여 (이미 set 되어 있으면 IllegalStateException). */
+    public void assignTicketNo(String ticketNo) {
+        if (this.ticketNo != null && !this.ticketNo.isBlank()) {
+            throw new IllegalStateException("ticket_no 는 이미 부여되었습니다: " + this.ticketNo);
+        }
+        this.ticketNo = ticketNo;
+    }
+
     public void updateContent(String title, String content, String category) {
         if (this.status == TicketStatus.CLOSED) {
             throw new IllegalStateException(
