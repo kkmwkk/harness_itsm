@@ -23,7 +23,7 @@
       "status": "completed",
       "started_at": "2026-05-29T10:40:11+0900",
       "summary": "AssetController 8 엔드포인트 (POST create / GET search·byId·byAssetNo / PATCH update·status·assign / GET registration-meta 이력 복원) + SecurityConfig 에 /api/assets/** permitAll 추가 + Swagger 어노테이션 + @WebMvcTest 12 케이스. /v3/api-docs 에 asset 경로 등록 확인.",
-      "completed_at": "2026-05-29T10:44:00+0900"
+      "completed_at": "2026-05-29T10:43:45+0900"
     },
     {
       "step": 3,
