@@ -37,7 +37,10 @@
     {
       "step": 4,
       "name": "e2e-with-admin-seed",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-29T20:04:11+0900",
+      "summary": "sql/init/14_auth_seed.sql (권한 13종·역할 3종 admin/IT support/user·사용자 3명·부서 3개·메뉴 트리 13노드 시드 with BCrypt 해시·멱등) + cURL 시나리오 15 단계 PASS — JWT 발급/검증/refresh, 401 AUTH_REQUIRED · 403 FORBIDDEN 한글 메시지, @PreAuthorize 권한 분기, /api/menu 권한 필터 트리, SelfCheck 본인 비번 변경, 기존 ticket/asset/meta 회귀 PASS. e2e 중 UserRepository.search 의 lower(bytea) DB 결함 발견·보정(cast(:kw as string)). CLAUDE.md 시드 사용자 정보 추가. M7 인증·사용자·부서·역할·권한·메뉴 완료.",
+      "completed_at": "2026-05-29T20:14:00+0900"
     }
   ],
   "created_at": "2026-05-29T19:26:15+0900"
