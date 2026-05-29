@@ -53,7 +53,10 @@
     {
       "step": 6,
       "name": "e2e-workflow-and-category",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-29T23:45:20+0900",
+      "summary": "M8 e2e cURL 15단계 전체 PASS — INCIDENT 티켓 생성→워크플로우 인스턴스 자동생성(step0 접수 RUNNING)→ROLE_USER step0 거부(400)→IT_SUPPORT 0/1/2 COMPLETE 단계전이→USER step3 CONFIRM→인스턴스 COMPLETED+Ticket CLOSED→CLOSED 가드(400), 요청유형별 폼분기(itg-ticket-incident vs itg-ticket-change), 자산분류 트리(HW/HW_LAPTOP/SW_LICENSE)+HW_LAPTOP 등록+등록메타 보존(itg-asset-hw-laptop-v1-1)+TRANSFERRED 라이프사이클 이벤트. 시나리오 예시의 steps[].name→실제 stepName 필드명 오타는 신규 티켓(TID=21) 재검증으로 PASS 확인(운영코드 무수정). backend/E2E_REPORT_PHASE12.md + openapi/itg-api-spec.json(57 paths) 갱신, 시드·e2e 데이터 보존. AC 6/6 통과.",
+      "completed_at": "2026-05-29T23:55:00+0900"
     }
   ],
   "created_at": "2026-05-29T21:49:59+0900"
