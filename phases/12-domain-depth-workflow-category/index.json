@@ -40,7 +40,7 @@
       "status": "completed",
       "started_at": "2026-05-29T23:28:54+0900",
       "summary": "types/workflow.ts(StepAction·WorkflowStatus·WorkflowStep·WorkflowInstanceStepHistory·WorkflowInstanceView) + useWorkflow.ts(인스턴스 by-ticket + 정의 by-code 합쳐 view 구성, mapDefinitionStep snake→camel, availableActions 권한분기 순수함수, executeAction POST+reload) + WorkflowPanel.vue(stepper·현재단계 SLA·hasRole 매칭 액션버튼·comment(REJECT/REOPEN 사유 권장)·이력테이블·acted emit) + TicketDetailPage.vue(/itsm/:id, requestTypeCode→formMetaGroupId 메타 복원 + WorkflowPanel) + TicketNewPage.vue(/itsm/new/:requestType, requestTypeCode 주입 POST) + router itsm detailUrlTemplate·신규 2라우트 + useWorkflow.spec 13건. type-check·lint·build·test(79) 통과, dev 서버 /itsm·/itsm/1·/itsm/new/INCIDENT 모두 200.",
-      "completed_at": "2026-05-29T23:38:00+0900"
+      "completed_at": "2026-05-29T23:37:18+0900"
     },
     {
       "step": 5,
