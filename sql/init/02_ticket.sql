@@ -7,7 +7,11 @@
 -- ticket : ITSM 티켓 (PRD §4 M3 대상)
 -- 컬럼:
 --   id           BIGSERIAL  PK
---   ticket_no    TEXT       UNIQUE 표시용 (예: 'ITSM-00001')
+--   ticket_no    TEXT       NULL · UNIQUE 표시용 (예: 'ITSM-00001').
+--                           IDENTITY 전략은 save() 시점에 INSERT 를 즉시 실행하므로
+--                           ticket_no 는 INSERT 시점에 한 트랜잭션 안에서 잠시 null
+--                           이며, dirty checking 으로 직후 update 된다. UNIQUE 제약은
+--                           NULL 허용이므로 동시성 충돌 없음.
 --   title        TEXT       NOT NULL
 --   content      TEXT       NULL
 --   priority     TEXT       NOT NULL CHECK (LOW/MEDIUM/HIGH/CRITICAL)
@@ -21,7 +25,7 @@
 -- ================================================================
 CREATE TABLE IF NOT EXISTS ticket (
   id           BIGSERIAL PRIMARY KEY,
-  ticket_no    VARCHAR(32)  NOT NULL,
+  ticket_no    VARCHAR(32),
   title        VARCHAR(200) NOT NULL,
   content      TEXT,
   priority     VARCHAR(10)  NOT NULL
@@ -55,3 +59,9 @@ CREATE TRIGGER trg_ticket_touch_updated_at
 BEFORE UPDATE ON ticket
 FOR EACH ROW
 EXECUTE FUNCTION fn_touch_updated_at();
+
+-- ============================================================================
+-- 기존 컨테이너 호환 (멱등): ticket_no NOT NULL 가 있던 스키마에 대해 제약 해제.
+-- 신규 컨테이너 (위 CREATE TABLE) 에서는 이미 NULL 허용이라 no-op.
+-- ============================================================================
+ALTER TABLE ticket ALTER COLUMN ticket_no DROP NOT NULL;

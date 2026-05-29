@@ -33,7 +33,13 @@ public class Ticket {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "ticket_no", length = 32, nullable = false)
+    /**
+     * 표시용 티켓 번호 (ITSM-{id5} 패턴). 컬럼은 nullable — IDENTITY 전략은 save() 시점에
+     * INSERT 를 즉시 실행하므로, INSERT 시점에는 잠시 null 인 채로 들어갔다가 같은 트랜잭션
+     * 안에서 assignTicketNo() 호출 + dirty checking 으로 update 된다. UNIQUE 제약은 NULL
+     * 허용. 트랜잭션 외부에서 관찰될 때는 항상 채워져 있다.
+     */
+    @Column(name = "ticket_no", length = 32)
     private String ticketNo;
 
     @Column(name = "title", length = 200, nullable = false)
