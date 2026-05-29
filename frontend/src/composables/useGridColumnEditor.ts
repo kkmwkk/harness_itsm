@@ -57,6 +57,23 @@ export function duplicateFields(columns: GridColumnMeta[]): string[] {
   return [...dup];
 }
 
+/**
+ * 컬럼 폭 모드 — flex 사용 여부 (phase 14 step 2).
+ * meta-body 주석대로 flex 가 지정되면 width 는 무시된다. 둘을 동시에 두지 않는다.
+ */
+export function usesFlex(col: GridColumnMeta): boolean {
+  return col.flex !== undefined && col.flex !== null;
+}
+/** flex(채움) 모드로 전환 — flex=1 지정, width 제거. */
+export function setFlexMode(col: GridColumnMeta): void {
+  delete col.width;
+  if (!usesFlex(col)) col.flex = 1;
+}
+/** px(고정 너비) 모드로 전환 — flex 제거(width 는 유지). */
+export function setWidthMode(col: GridColumnMeta): void {
+  delete col.flex;
+}
+
 /** pinned/hideAt 의 undefined ↔ 'none' 변환 헬퍼 (UI select 값과 메타 형태를 잇는다). */
 export function pinnedValue(col: GridColumnMeta): PinnedOption {
   return col.pinned ?? 'none';

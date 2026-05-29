@@ -7,7 +7,9 @@ import {
   needsOptions,
   validateFormFields,
   hasBlockingIssues,
+  toggleSpan,
 } from '@/composables/useFormFieldEditor';
+import { reorder } from '@/lib/drag';
 import type { FieldMeta } from '@/types/meta-body';
 
 /**
@@ -84,6 +86,29 @@ describe('duplicateNames — 중복 name 검증', () => {
       { name: '', label: 'B', type: 'text' },
     ];
     expect(duplicateNames(fields)).toEqual([]);
+  });
+});
+
+describe('toggleSpan — 폼 너비 1 ↔ 2 토글 (phase 14)', () => {
+  it('반 폭(1)·undefined 는 전체 폭(2)로, 전체 폭(2)은 반 폭(1)로 전환한다', () => {
+    expect(toggleSpan(1)).toBe(2);
+    expect(toggleSpan(undefined)).toBe(2);
+    expect(toggleSpan(2)).toBe(1);
+  });
+});
+
+describe('필드 순서 드래그(reorder) — phase 14', () => {
+  it('드래그 종료 시 oldIndex→newIndex 로 필드 순서를 바꾼 새 배열을 만든다', () => {
+    const fields: FieldMeta[] = [
+      { name: 'a', label: 'A', type: 'text' },
+      { name: 'b', label: 'B', type: 'text' },
+      { name: 'c', label: 'C', type: 'text' },
+    ];
+    // 0번('a')을 2번 위치로 드래그
+    const next = reorder(fields, 0, 2);
+    expect(next.map((f) => f.name)).toEqual(['b', 'c', 'a']);
+    // 원본 불변
+    expect(fields.map((f) => f.name)).toEqual(['a', 'b', 'c']);
   });
 });
 
