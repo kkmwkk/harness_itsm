@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { useMenuStore } from '@/stores/useMenuStore';
 import { useApiFetch } from '@/lib/api';
 import type { ApiEnvelope } from '@/types/meta';
 import type { MeResponse } from '@/types/auth';
@@ -57,6 +58,30 @@ const routes: RouteRecordRaw[] = [
         name: 'system-meta',
         component: () => import('@/pages/system/MetaPage.vue'),
         meta: { title: '시스템 / 메타 관리' },
+      },
+      {
+        path: 'system/users',
+        name: 'system-users',
+        component: () => import('@/pages/system/UserPage.vue'),
+        meta: { title: '사용자 관리' },
+      },
+      {
+        path: 'system/depts',
+        name: 'system-depts',
+        component: () => import('@/pages/system/DeptPage.vue'),
+        meta: { title: '부서 관리' },
+      },
+      {
+        path: 'system/roles',
+        name: 'system-roles',
+        component: () => import('@/pages/system/RolePage.vue'),
+        meta: { title: '역할 관리' },
+      },
+      {
+        path: 'system/menus',
+        name: 'system-menus',
+        component: () => import('@/pages/system/MenuPage.vue'),
+        meta: { title: '메뉴 관리' },
       },
     ],
   },
@@ -134,6 +159,11 @@ router.beforeEach(async (to) => {
     } catch {
       /* /me 실패 시 onFetchError 가 /login 리다이렉트 */
     }
+  }
+  // 로그인 직후·새로고침 복원 직후 1회만 메뉴 트리 로드 (네비게이션마다 재호출하지 않음).
+  const menu = useMenuStore();
+  if (menu.tree.length === 0 && !menu.isLoading) {
+    await menu.load();
   }
   return true;
 });

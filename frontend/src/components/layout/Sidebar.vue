@@ -1,33 +1,12 @@
 <script setup lang="ts">
-import type { FunctionalComponent } from 'vue';
-import {
-  LayoutDashboardIcon,
-  TicketCheckIcon,
-  BoxesIcon,
-  FolderKanbanIcon,
-  LayersIcon,
-  DatabaseIcon,
-} from '@lucide/vue';
+import { storeToRefs } from 'pinia';
+import { useMenuStore } from '@/stores/useMenuStore';
 import { useLayoutStore } from '@/stores/useLayoutStore';
+import MenuTreeNode from '@/components/layout/MenuTreeNode.vue';
 
-type NavItem = {
-  to: string;
-  label: string;
-  icon: FunctionalComponent;
-  /** 정확 매칭만 활성 처리 (예: "/" 가 모든 경로의 prefix 가 되는 문제 회피) */
-  exact?: boolean;
-};
-
-const navItems: NavItem[] = [
-  { to: '/', label: '대시보드', icon: LayoutDashboardIcon, exact: true },
-  { to: '/itsm', label: 'ITSM', icon: TicketCheckIcon },
-  { to: '/itam', label: 'ITAM', icon: BoxesIcon },
-  { to: '/pms', label: 'PMS', icon: FolderKanbanIcon },
-  { to: '/common', label: '공통', icon: LayersIcon },
-  { to: '/system/meta', label: '시스템 / 메타 관리', icon: DatabaseIcon },
-];
-
+const menuStore = useMenuStore();
 const layout = useLayoutStore();
+const { tree, isLoading } = storeToRefs(menuStore);
 </script>
 
 <template>
@@ -40,37 +19,19 @@ const layout = useLayoutStore();
       <span class="text-sm font-semibold tracking-tight text-foreground">메뉴</span>
     </div>
     <nav class="flex flex-col gap-1 p-3">
-      <RouterLink
-        v-for="item in navItems"
-        :key="item.to"
-        v-slot="{ href, navigate, isActive, isExactActive }"
-        :to="item.to"
-        custom
+      <p
+        v-if="isLoading"
+        class="px-2 text-xs text-foreground-muted"
       >
-        <a
-          :href="href"
-          :class="[
-            'flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors',
-            (item.exact ? isExactActive : isActive)
-              ? 'bg-surface-selected text-primary'
-              : 'text-foreground hover:bg-surface-hover',
-          ]"
-          :aria-current="(item.exact ? isExactActive : isActive) ? 'page' : undefined"
-          @click="
-            (e) => {
-              navigate(e);
-              layout.closeMobile();
-            }
-          "
-        >
-          <component
-            :is="item.icon"
-            class="h-4 w-4"
-            :stroke-width="1.5"
-          />
-          <span>{{ item.label }}</span>
-        </a>
-      </RouterLink>
+        메뉴 로드 중...
+      </p>
+      <template v-else>
+        <MenuTreeNode
+          v-for="node in tree"
+          :key="node.id"
+          :node="node"
+        />
+      </template>
     </nav>
   </aside>
 </template>

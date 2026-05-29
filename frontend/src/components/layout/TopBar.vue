@@ -5,9 +5,11 @@ import { MenuIcon, CircleUserIcon, LogOutIcon } from '@lucide/vue';
 import { storeToRefs } from 'pinia';
 import { useLayoutStore } from '@/stores/useLayoutStore';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { useMenuStore } from '@/stores/useMenuStore';
 
 const layout = useLayoutStore();
 const auth = useAuthStore();
+const menu = useMenuStore();
 const router = useRouter();
 const { user } = storeToRefs(auth);
 
@@ -15,6 +17,7 @@ const displayName = computed(() => user.value?.name ?? user.value?.username ?? '
 
 function onLogout() {
   auth.clearSession();
+  menu.clear();
   void router.push('/login');
 }
 </script>
