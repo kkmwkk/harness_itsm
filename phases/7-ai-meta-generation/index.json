@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "meta-validator",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-29T13:59:08+0900",
+      "summary": "MetaValidationService (ValidationResult/ValidationIssue/Severity) + 검증 규칙 — id 패턴/Enum 4종 강제 + groupId 영숫자-하이픈 + minor>=1 + metaJson(api 패턴, grid.columns, form.layout/fields type 12종, actions type) + WARNING(grid/form mismatch · actions empty · PUBLISHED 신규). POST /api/meta/dry-run (Swagger·ApiResponse 래퍼) + PageMetaCreateRequest DTO + scripts/validate_meta.sh wrapper. 단위 12 + Controller 2 케이스.",
+      "completed_at": "2026-05-29T14:07:00+0900"
     },
     {
       "step": 2,

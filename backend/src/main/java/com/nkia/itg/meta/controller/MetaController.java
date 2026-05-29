@@ -3,9 +3,11 @@ package com.nkia.itg.meta.controller;
 import com.nkia.itg.common.response.ApiResponse;
 import com.nkia.itg.meta.domain.PackageType;
 import com.nkia.itg.meta.domain.SystemType;
+import com.nkia.itg.meta.dto.PageMetaCreateRequest;
 import com.nkia.itg.meta.dto.PageMetaResponse;
 import com.nkia.itg.meta.dto.PageMetaVersionResponse;
 import com.nkia.itg.meta.service.MetaService;
+import com.nkia.itg.meta.service.MetaValidationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,6 +31,24 @@ import org.springframework.web.bind.annotation.RestController;
 public class MetaController {
 
     private final MetaService metaService;
+    private final MetaValidationService metaValidationService;
+
+    @Operation(
+            summary = "메타 검증(dry-run)",
+            description = "PageMeta 후보 JSON 의 형식·필수 필드·field type 호환을 사전 검증한다. "
+                    + "DB INSERT 는 일어나지 않는다. ERROR 가 1건이라도 있으면 valid=false. "
+                    + "WARNING 은 정보성이며 valid 판정에 영향을 주지 않는다."
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+                    description = "검증 수행 완료 (valid=true|false, issues 포함)")
+    })
+    @PostMapping("/dry-run")
+    public ResponseEntity<ApiResponse<MetaValidationService.ValidationResult>> dryRun(
+            @RequestBody PageMetaCreateRequest req
+    ) {
+        return ResponseEntity.ok(ApiResponse.ok(metaValidationService.validate(req)));
+    }
 
     @Operation(
             summary = "화면 노출용 메타 조회 (PUBLISHED 최신 버전)",

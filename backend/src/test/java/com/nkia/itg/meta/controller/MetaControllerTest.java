@@ -22,6 +22,7 @@ import com.nkia.itg.meta.domain.SystemType;
 import com.nkia.itg.meta.dto.PageMetaResponse;
 import com.nkia.itg.meta.dto.PageMetaVersionResponse;
 import com.nkia.itg.meta.service.MetaService;
+import com.nkia.itg.meta.service.MetaValidationService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,9 @@ class MetaControllerTest {
 
     @MockBean
     private MetaService metaService;
+
+    @MockBean
+    private MetaValidationService metaValidationService;
 
     private PageMetaResponse publishedResponse(String groupId, int major, int minor) {
         return new PageMetaResponse(
