@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "status-priority-badges",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-29T09:52:26+0900",
+      "summary": "StatusBadge·PriorityBadge (UI_GUIDE §5-5 pill rounded-full px-2.5 py-0.5 12px/600, 시맨틱 토큰 10% alpha) + lib/badges.ts spec 함수 분리(8 status + 4 priority 매핑, fallback 중립색). useGridColumns 가 type=status/priority 셀에 자동 매핑(DataTable cell h() + AG Grid cellRenderer). 단위 테스트 7 케이스 + dev 갤러리 /_dev/badges.",
+      "completed_at": "2026-05-29T10:03:40+0900"
     },
     {
       "step": 2,

@@ -78,6 +78,11 @@ const routes: RouteRecordRaw[] = [
     name: 'dev-dynamic-page',
     component: () => import('@/views/_dev/DynamicPageSampler.vue'),
   },
+  {
+    path: '/_dev/badges',
+    name: 'dev-badges',
+    component: () => import('@/views/_dev/BadgeGallery.vue'),
+  },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ];
 

@@ -1,7 +1,9 @@
-import { computed, type Ref } from 'vue';
+import { computed, h, type Ref } from 'vue';
 import type { ColumnDef } from '@tanstack/vue-table';
 import type { ColDef } from 'ag-grid-community';
 import type { GridMeta } from '@/types/meta-body';
+import StatusBadge from '@/components/common/StatusBadge.vue';
+import PriorityBadge from '@/components/common/PriorityBadge.vue';
 
 export type GridRenderer = 'data-table' | 'ag-grid';
 
@@ -24,6 +26,13 @@ export function toDataTableColumns<TData>(meta: GridMeta): ColumnDef<TData, unkn
     accessorKey: c.field,
     header: c.label,
     size: c.width,
+    // type=status/priority 셀은 뱃지로 렌더(메타-주도). 그 외는 문자열 그대로.
+    cell: ({ getValue }) => {
+      const v = getValue<string | number | boolean | null>();
+      if (c.type === 'status') return h(StatusBadge, { value: v as string });
+      if (c.type === 'priority') return h(PriorityBadge, { value: v as string });
+      return v == null ? '' : String(v);
+    },
     // pinned/flex/hideAt 등은 단순 매핑 — 상세 처리는 후속 phase
   }));
 }
@@ -37,6 +46,9 @@ export function toAgGridColDefs(meta: GridMeta): ColDef[] {
     if (c.width !== undefined) col.width = c.width;
     if (c.flex !== undefined) col.flex = c.flex;
     if (c.pinned !== undefined) col.pinned = c.pinned;
+    // type=status/priority 셀은 Vue 컴포넌트를 cellRenderer 로 직접 전달(AG Grid Vue3 자동 인식).
+    if (c.type === 'status') col.cellRenderer = StatusBadge;
+    if (c.type === 'priority') col.cellRenderer = PriorityBadge;
     return col;
   });
 }
