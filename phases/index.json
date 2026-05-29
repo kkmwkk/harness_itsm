@@ -44,6 +44,10 @@
       "dir": "8-sonarqube-ci-gate",
       "status": "completed",
       "completed_at": "2026-05-29T14:46:07+0900"
+    },
+    {
+      "dir": "9-auth-and-users",
+      "status": "pending"
     }
   ]
 }

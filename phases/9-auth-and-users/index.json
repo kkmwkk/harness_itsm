@@ -1,0 +1,11 @@
+{
+  "project": "Polestar10 ITG v2",
+  "phase": "9-auth-and-users",
+  "steps": [
+    { "step": 0, "name": "auth-schema-and-domain", "status": "pending" },
+    { "step": 1, "name": "auth-service-jwt", "status": "pending" },
+    { "step": 2, "name": "user-dept-role-perm-crud", "status": "pending" },
+    { "step": 3, "name": "controllers-and-permissions", "status": "pending" },
+    { "step": 4, "name": "e2e-with-admin-seed", "status": "pending" }
+  ]
+}
