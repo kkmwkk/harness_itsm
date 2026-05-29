@@ -8,6 +8,7 @@
       "status": "completed",
       "started_at": "2026-05-29T10:21:33+0900",
       "summary": "sql/init/05_asset.sql (asset 테이블 + page_meta_id_at_registration NOT NULL FK→page_meta + 인덱스 5종 + updated_at 트리거) + Enum 2종(AssetType/AssetStatus) + Asset Entity (asset_no nullable·@Enumerated.STRING·도메인 메서드 changeStatus 매트릭스 + RETIRED 가드 assign/updateAttributes/assignAssetNo) + 단위 테스트 11 케이스. ddl-auto: validate 부팅 통과."
+    },
     {
       "step": 1,
       "name": "asset-repository-and-service",
