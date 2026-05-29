@@ -150,17 +150,21 @@ async function onFormSubmit(values: Record<string, unknown>): Promise<void> {
       조회 중...
     </p>
     <Card v-else-if="notPublished">
-      <CardContent class="py-6">
-        <p class="text-warning">
-          배포된 메타가 없습니다 (groupId: {{ groupId }}).
+      <CardContent class="py-8 text-center space-y-2">
+        <p class="text-base font-semibold">아직 준비된 화면이 없습니다</p>
+        <p class="text-sm text-foreground-muted">
+          이 모듈(<code class="font-mono">{{ groupId }}</code>)은 메타가 등록되지 않았거나
+          아직 배포되지 않은 상태입니다.
+        </p>
+        <p class="text-xs text-foreground-subtle">
+          시스템 관리자에게 메타 등록·배포를 요청하거나, 메타 관리에서 DRAFT 를 PUBLISHED 로 전환하세요.
         </p>
       </CardContent>
     </Card>
     <Card v-else-if="metaError">
-      <CardContent class="py-6">
-        <p class="text-danger">
-          {{ metaError }}
-        </p>
+      <CardContent class="py-6 space-y-1">
+        <p class="text-sm font-semibold text-danger">메타를 불러올 수 없습니다</p>
+        <p class="text-sm text-foreground-muted">{{ metaError }}</p>
       </CardContent>
     </Card>
     <Card v-else-if="bodyError">

@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Tailwind v4 가 utility 를 생성하려면 사용처를 명시 스캔해야 함.
+   본 CSS 파일은 frontend/src/assets/styles/tokens.css → src 전체 스캔. */
+@source "../../**/*.{vue,ts,js,tsx,jsx,html}";
+
 @theme {
   /* ── 액센트 ── */
   --color-primary:            #0066cc;

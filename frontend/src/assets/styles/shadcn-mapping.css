@@ -1,3 +1,8 @@
+/* Tailwind v4 entry 로도 동작하도록 @import "tailwindcss" 를 박는다.
+   Tailwind 의 동일 utility 가 중복 출력되어도 정상(idempotent). 본 파일의
+   @theme inline / @source 가 인식되려면 entry 로 처리되어야 한다. */
+@import "tailwindcss";
+@source "../../**/*.{vue,ts,js,tsx,jsx,html}";
 
 @import "tw-animate-css";
 /*

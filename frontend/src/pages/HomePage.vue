@@ -21,6 +21,8 @@ type ModuleCard = {
   title: string;
   description: string;
   icon: FunctionalComponent;
+  /** PUBLISHED 메타가 시드되어 DynamicPage 가 즉시 동작하는 모듈. */
+  ready: boolean;
 };
 
 const modules: ModuleCard[] = [
@@ -29,30 +31,35 @@ const modules: ModuleCard[] = [
     title: 'ITSM',
     description: '티켓·변경·문제·SLA 워크플로우',
     icon: TicketCheckIcon,
+    ready: true,
   },
   {
     to: '/itam',
     title: 'ITAM',
     description: '자산원장·라이선스·계약 이력',
     icon: BoxesIcon,
+    ready: true,
   },
   {
     to: '/pms',
     title: 'PMS',
     description: '프로젝트·태스크·일정 관리',
     icon: FolderKanbanIcon,
+    ready: false,
   },
   {
     to: '/common',
     title: '공통',
     description: '코드 관리·공지·첨부',
     icon: LayersIcon,
+    ready: false,
   },
   {
     to: '/system/meta',
     title: '시스템 / 메타 관리',
     description: 'PageMeta 버전 그룹 관리',
     icon: DatabaseIcon,
+    ready: true,
   },
 ];
 </script>
@@ -89,8 +96,14 @@ const modules: ModuleCard[] = [
             </div>
           </CardHeader>
           <CardContent>
-            <p class="text-xs text-foreground-subtle">
-              다음 phase 에서 DynamicPage 가 메타에 따라 자동 생성한다.
+            <p
+              :class="[
+                'text-xs',
+                m.ready ? 'text-success' : 'text-foreground-subtle',
+              ]"
+            >
+              <span v-if="m.ready">● 메타 PUBLISHED — 화면 자동 생성 중</span>
+              <span v-else>○ 메타 미배포 — DRAFT 생성 후 publish 필요</span>
             </p>
           </CardContent>
         </Card>

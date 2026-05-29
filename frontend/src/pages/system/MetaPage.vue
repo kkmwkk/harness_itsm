@@ -26,7 +26,13 @@ function submit(): void {
     <PageHeader />
 
     <Card>
-      <CardHeader><CardTitle>화면 노출용 메타 조회</CardTitle></CardHeader>
+      <CardHeader>
+        <CardTitle>화면 노출용 메타 조회</CardTitle>
+        <p class="text-xs text-foreground-muted mt-1">
+          PageMeta 는 화면을 정의하는 JSON 메타이다. groupId(예: <code class="font-mono">itg-ticket</code>) 를
+          입력하면 현재 배포(PUBLISHED) 중인 최신 버전의 메타 본문을 볼 수 있다.
+        </p>
+      </CardHeader>
       <CardContent class="space-y-3">
         <form
           class="flex gap-2"
@@ -34,7 +40,7 @@ function submit(): void {
         >
           <Input
             v-model="draftId"
-            placeholder="예: itg-ticket"
+            placeholder="예: itg-ticket / itg-asset / itg-change"
           />
           <Button type="submit">
             조회
@@ -43,25 +49,25 @@ function submit(): void {
 
         <p
           v-if="!groupId"
-          class="text-foreground-muted"
+          class="text-sm text-foreground-muted"
         >
-          groupId 를 입력하라.
+          왼쪽 입력란에 groupId 를 적고 [조회] 를 누르세요.
         </p>
         <p
           v-else-if="isFetching"
-          class="text-foreground-muted"
+          class="text-sm text-foreground-muted"
         >
           조회 중...
         </p>
         <p
           v-else-if="notPublished"
-          class="text-warning"
+          class="text-sm text-warning"
         >
-          배포된 버전이 없습니다 (META_NOT_PUBLISHED).
+          배포된 버전이 없습니다. DRAFT 만 있거나 그룹 자체가 존재하지 않습니다.
         </p>
         <p
           v-else-if="error"
-          class="text-danger"
+          class="text-sm text-danger"
         >
           {{ error }}
         </p>

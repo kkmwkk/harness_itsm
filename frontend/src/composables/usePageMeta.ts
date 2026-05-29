@@ -60,12 +60,25 @@ export function usePageMeta(
 
   const notPublished = computed<boolean>(() => {
     if (metaIdMode.value) return false;
-    return statusCode.value === 404 && data.value?.errorCode === 'META_NOT_PUBLISHED';
+    if (statusCode.value !== 404) return false;
+    // envelope.errorCode 우선, 누락 시 error.message 의 토큰 검사 (방어적 매칭)
+    return (
+      data.value?.errorCode === 'META_NOT_PUBLISHED' ||
+      (error.value?.message?.includes('META_NOT_PUBLISHED') ?? false)
+    );
   });
 
   const errorMsg = computed<string | null>(() => {
     if (notPublished.value) return null;
-    if (error.value) return error.value.message ?? '메타 조회 실패';
+    if (error.value) {
+      // 백엔드 envelope 의 errorCode 가 있고 메시지가 코드를 포함하면 한글 메시지만 노출
+      const raw = error.value.message ?? '';
+      const code = data.value?.errorCode;
+      if (code && raw.startsWith(`${code}:`)) {
+        return raw.slice(code.length + 1).trim() || '메타 조회 실패';
+      }
+      return raw || '메타 조회 실패';
+    }
     return null;
   });
 

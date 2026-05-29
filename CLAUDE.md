@@ -1,6 +1,9 @@
-# 프로젝트: Polestar10 ITG v2 (POLESTAR-ITSM)
+# 프로젝트: Polestar10 ITG v2 (POLESTAR-ITSM) — v2.1
 
-JSON 메타 한 건만 추가하면 폼·그리드·목록·상세 화면이 전부 자동 생성되는 **No-code 플랫폼**. 신규 화면을 만들 때 Vue 파일을 새로 쓰지 않고 `page_meta` 레코드만 등록한다. ITSM·ITAM·PMS·COMMON·SYSTEM 다섯 모듈을 단일 메타 모델로 운영한다. 자세한 배경은 `docs/PRD.md`, 구조는 `docs/ARCHITECTURE.md`, 결정 이유는 `docs/ADR.md`, UI 토큰·컴포넌트 규칙은 `docs/UI_GUIDE.md` 참조.
+**비개발자가 WYSIWYG 로 화면을 만들고, 그 화면이 도메인 모델(요청 유형·자산 분류·워크플로우·역할) 위에서 동작하는 No-code 플랫폼.** 메타 한 건이 화면 한 개를 정의한다 (`page_meta` JSONB + 버전 그룹). 신규 모듈 추가 시 Vue 파일을 새로 쓰지 않고 `page_meta` 레코드만 등록. ITSM·ITAM·PMS·COMMON·SYSTEM 다섯 모듈을 단일 메타 모델로 운영. 자세한 배경은 `docs/PRD.md`, 구조는 `docs/ARCHITECTURE.md`, 결정 이유는 `docs/ADR.md`, UI 토큰·컴포넌트 규칙은 `docs/UI_GUIDE.md` 참조.
+
+**v2.0 (M1~M6) 완료** — 메타·동적 렌더링·ITSM 티켓·ITAM 자산·AI 메타 CLI·SonarQube CI.
+**v2.1 (M7~M11) 진행 중** — 인증·사용자/부서/역할/권한/메뉴, 도메인 깊이(요청 유형·자산 분류·워크플로우 MVP), No-code 편집기(폼 UI → 드래그 → WYSIWYG), UX 베이스라인 + Playwright 시각 회귀.
 
 ## 기술 스택
 - Frontend: Vue 3.5+ (Composition API + `<script setup lang="ts">` 전용) / Vite 6 / TypeScript 5 strict
