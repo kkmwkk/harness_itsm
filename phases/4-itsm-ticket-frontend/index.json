@@ -32,7 +32,7 @@
       "status": "completed",
       "started_at": "2026-05-29T10:08:51+0900",
       "summary": "E2E 시나리오 11+단계 PASS — /itsm 진입 시 itg-ticket-v1-1 메타 + 시드 5건 그리드 + status/priority 뱃지 + 등록 폼 submit → 백엔드 POST → 그리드 reload + 토스트. UI_GUIDE §5-5/§5-8 규격 검증. frontend/E2E_REPORT_PHASE4.md 작성. M3 마일스톤 완료 (백엔드 + 프런트 통합).",
-      "completed_at": "2026-05-29T10:12:00+0900"
+      "completed_at": "2026-05-29T10:13:15+0900"
     }
   ],
   "created_at": "2026-05-29T09:49:45+0900"
