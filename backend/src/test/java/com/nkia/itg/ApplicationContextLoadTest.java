@@ -1,5 +1,6 @@
 package com.nkia.itg;
 
+import com.nkia.itg.itam.asset.repository.AssetRepository;
 import com.nkia.itg.itsm.ticket.repository.TicketRepository;
 import com.nkia.itg.meta.repository.MetaRepository;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,9 @@ class ApplicationContextLoadTest {
 
     @MockitoBean
     private TicketRepository ticketRepository;
+
+    @MockitoBean
+    private AssetRepository assetRepository;
 
     @Test
     void contextLoads() {}
