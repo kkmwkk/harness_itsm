@@ -5,22 +5,32 @@ import { toast } from 'vue-sonner';
 import PageHeader from '@/components/layout/PageHeader.vue';
 import RequirePermission from '@/components/common/RequirePermission.vue';
 import StatusBadge from '@/components/common/StatusBadge.vue';
-import DynamicForm from '@/components/dynamic/DynamicForm.vue';
 import FormFieldEditor from '@/components/editor/FormFieldEditor.vue';
 import GridColumnEditor from '@/components/editor/GridColumnEditor.vue';
+import ActionEditor from '@/components/editor/ActionEditor.vue';
+import MetaPreview from '@/components/editor/MetaPreview.vue';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { useApiFetch } from '@/lib/api';
 import { hasBlockingIssues, validateFormFields } from '@/composables/useFormFieldEditor';
 import { hasBlockingColumnIssues, validateGridColumns } from '@/composables/useGridColumnEditor';
+import { hasBlockingActionIssues, validateActions } from '@/composables/useActionEditor';
 import type { ApiEnvelope, PageMeta } from '@/types/meta';
-import type { PageMetaBody, FormMeta, GridMeta } from '@/types/meta-body';
+import type { PageMetaBody, FormMeta, GridMeta, ActionMeta } from '@/types/meta-body';
 
 /**
  * 특정 메타(metaId) 편집 상세 — No-code 폼 편집기(ADR-016 1단계).
- * 본 step(2)은 [폼 편집] 탭(FormFieldEditor)만 구현하고, 그리드·액션 탭은 후속 step(3·4)이 채운다.
- * 모든 편집은 client bodyDraft 에서 일어나고, 저장은 dry-run 통과 후 PUT /api/meta/{id}/body.
- * DRAFT 메타만 편집 가능(ADR-006) — PUBLISHED 등은 복사 후 편집.
+ * 폼·그리드·액션 3개 탭을 client bodyDraft 에서 편집하고, 미리보기는 사이드 패널로 제공한다.
+ * 저장은 dry-run 통과 후 PUT /api/meta/{id}/body, 발행은 dry-run 검증된 상태에서만 PATCH publish.
+ * DRAFT 메타만 편집 가능(ADR-006) — PUBLISHED 등은 "새 버전 만들기"(복사) 후 편집.
  */
 const route = useRoute();
 const router = useRouter();
@@ -37,17 +47,20 @@ const bodyDraft = reactive<PageMetaBody>({
   api: '',
   grid: { columns: [] },
   form: { layout: 'two-column', fields: [] },
+  actions: [],
 });
 const originalSnapshot = ref('');
 
-type EditorTab = 'form' | 'grid' | 'actions' | 'preview';
+type EditorTab = 'form' | 'grid' | 'actions';
 const tab = ref<EditorTab>('form');
 const TABS: ReadonlyArray<{ key: EditorTab; label: string }> = [
   { key: 'form', label: '폼 편집' },
   { key: 'grid', label: '그리드 편집' },
   { key: 'actions', label: '액션 편집' },
-  { key: 'preview', label: '미리보기' },
 ];
+
+// 미리보기 사이드 패널 토글.
+const showPreview = ref(false);
 
 function normalizeBody(json: Record<string, unknown>): PageMetaBody {
   const api = typeof json.api === 'string' ? json.api : '';
@@ -62,7 +75,8 @@ function normalizeBody(json: Record<string, unknown>): PageMetaBody {
     layout: rawForm?.layout === 'single-column' ? 'single-column' : 'two-column',
     fields: Array.isArray(rawForm?.fields) ? rawForm.fields : [],
   };
-  const actions = Array.isArray(json.actions) ? json.actions : undefined;
+  // 편집 편의를 위해 actions 는 항상 배열로 정규화(없으면 빈 배열).
+  const actions = Array.isArray(json.actions) ? (json.actions as ActionMeta[]) : [];
   const detail = json.detail as PageMetaBody['detail'] | undefined;
   return { api, grid, form, detail, actions };
 }
@@ -72,8 +86,9 @@ function applyBody(body: PageMetaBody): void {
   bodyDraft.grid = body.grid;
   bodyDraft.form = body.form;
   bodyDraft.detail = body.detail;
-  bodyDraft.actions = body.actions;
-  originalSnapshot.value = JSON.stringify(body);
+  bodyDraft.actions = body.actions ?? [];
+  // dirty 비교는 항상 stripDraft 직렬화 기준 — key 순서를 draft 와 일치시킨다.
+  originalSnapshot.value = JSON.stringify(stripDraft());
 }
 
 const dirty = computed(() => JSON.stringify(stripDraft()) !== originalSnapshot.value);
@@ -88,12 +103,34 @@ const formFieldNames = computed(() => bodyDraft.form.fields.map((f) => f.name));
 const columnIssues = computed(() =>
   validateGridColumns(bodyDraft.grid.columns, formFieldNames.value),
 );
-const canSave = computed(
+const actionIssues = computed(() => validateActions(bodyDraft.actions ?? []));
+
+// ActionEditor v-model 용 — actions 를 항상 배열로 노출(PageMetaBody.actions 는 optional).
+const draftActions = computed<ActionMeta[]>({
+  get: () => bodyDraft.actions ?? [],
+  set: (v) => {
+    bodyDraft.actions = v;
+  },
+});
+
+const hasBlocking = computed(
+  () =>
+    hasBlockingIssues(bodyDraft.form.fields) ||
+    hasBlockingColumnIssues(bodyDraft.grid.columns, formFieldNames.value) ||
+    hasBlockingActionIssues(bodyDraft.actions ?? []),
+);
+
+const canSave = computed(() => isDraft.value && !hasBlocking.value && !saving.value);
+
+// 발행 게이트 — dry-run 검증을 통과한 스냅샷에서만 발행 가능(ADR-006·금지: dry-run 누락 발행 금지).
+const validatedSnapshot = ref<string | null>(null);
+const canPublish = computed(
   () =>
     isDraft.value &&
-    !hasBlockingIssues(bodyDraft.form.fields) &&
-    !hasBlockingColumnIssues(bodyDraft.grid.columns, formFieldNames.value) &&
-    !saving.value,
+    !dirty.value &&
+    !hasBlocking.value &&
+    validatedSnapshot.value === originalSnapshot.value &&
+    !publishing.value,
 );
 
 async function loadMeta(): Promise<void> {
@@ -111,54 +148,69 @@ async function loadMeta(): Promise<void> {
     }
     meta.value = data.value.data;
     applyBody(normalizeBody(meta.value.metaJson));
+    // 로드 직후 1회 dry-run — 무수정 유효 DRAFT 도 곧바로 발행 가능하도록 검증 스냅샷을 채운다.
+    if (isDraft.value && !hasBlocking.value) void runDryRun();
   } finally {
     loading.value = false;
   }
 }
 
 const saving = ref(false);
+const publishing = ref(false);
+const copying = ref(false);
+const archiving = ref(false);
+
+/**
+ * 현재 bodyDraft 를 dry-run 검증한다(DB 변경 없음). 통과하면 검증 스냅샷을 갱신한다.
+ * 발행 게이트(canPublish)·저장(save) 양쪽이 공유한다.
+ */
+async function runDryRun(): Promise<boolean> {
+  if (!meta.value) return false;
+  const snapshot = JSON.stringify(stripDraft());
+  const body = JSON.parse(snapshot) as PageMetaBody;
+  const dryRunPayload = {
+    id: meta.value.id,
+    title: meta.value.title,
+    systemType: meta.value.systemType,
+    packageType: meta.value.packageType,
+    groupId: meta.value.groupId,
+    majorVersion: meta.value.majorVersion,
+    minorVersion: meta.value.minorVersion,
+    metaStatus: 'DRAFT',
+    ...body,
+  };
+  const { data: dryData, error: dryError } = await useApiFetch('/api/meta/dry-run', {
+    immediate: false,
+    refetch: false,
+  })
+    .post(dryRunPayload)
+    .json<ApiEnvelope<{ valid: boolean; issues: Array<{ level: string; message: string }> }>>();
+  if (dryError.value) {
+    toast.error('검증 요청에 실패했습니다.');
+    return false;
+  }
+  const result = dryData.value?.data;
+  if (!result?.valid) {
+    const first = result?.issues?.find((i) => i.level === 'ERROR') ?? result?.issues?.[0];
+    toast.error(first ? `검증 실패: ${first.message}` : '검증에 실패했습니다.');
+    validatedSnapshot.value = null;
+    return false;
+  }
+  validatedSnapshot.value = snapshot;
+  return true;
+}
 
 async function save(): Promise<void> {
   if (!meta.value || !isDraft.value) return;
-  if (hasBlockingIssues(bodyDraft.form.fields)) {
-    toast.error('필수 속성(name·라벨·타입)·중복 name 을 먼저 수정하세요.');
-    return;
-  }
-  if (hasBlockingColumnIssues(bodyDraft.grid.columns, formFieldNames.value)) {
-    toast.error('그리드 컬럼의 필수 속성(field·라벨·타입)·중복 field 를 먼저 수정하세요.');
+  if (hasBlocking.value) {
+    toast.error('필수 속성(name/field·라벨·타입)·중복·액션 오류를 먼저 수정하세요.');
     return;
   }
   saving.value = true;
   try {
     const body = stripDraft();
-    // 1) dry-run — 분류 축 + 평탄화 본문으로 형식 검증(저장 전 필수).
-    const dryRunPayload = {
-      id: meta.value.id,
-      title: meta.value.title,
-      systemType: meta.value.systemType,
-      packageType: meta.value.packageType,
-      groupId: meta.value.groupId,
-      majorVersion: meta.value.majorVersion,
-      minorVersion: meta.value.minorVersion,
-      metaStatus: 'DRAFT',
-      ...body,
-    };
-    const { data: dryData, error: dryError } = await useApiFetch('/api/meta/dry-run', {
-      immediate: false,
-      refetch: false,
-    })
-      .post(dryRunPayload)
-      .json<ApiEnvelope<{ valid: boolean; issues: Array<{ level: string; message: string }> }>>();
-    if (dryError.value) {
-      toast.error('검증 요청에 실패했습니다.');
-      return;
-    }
-    const result = dryData.value?.data;
-    if (!result?.valid) {
-      const first = result?.issues?.find((i) => i.level === 'ERROR') ?? result?.issues?.[0];
-      toast.error(first ? `검증 실패: ${first.message}` : '검증에 실패했습니다.');
-      return;
-    }
+    // 1) dry-run — 형식 검증(저장 전 필수).
+    if (!(await runDryRun())) return;
     // 2) 본문 교체 — DRAFT 만 허용(백엔드 도메인 가드와 짝).
     const { error: putError } = await useApiFetch(
       `/api/meta/${encodeURIComponent(meta.value.id)}/body`,
@@ -172,8 +224,84 @@ async function save(): Promise<void> {
     }
     toast.success('저장되었습니다.');
     originalSnapshot.value = JSON.stringify(body);
+    validatedSnapshot.value = originalSnapshot.value;
   } finally {
     saving.value = false;
+  }
+}
+
+// ── 발행 흐름 ─────────────────────────────────────────────────
+const publishOpen = ref(false);
+
+function openPublish(): void {
+  if (!canPublish.value) return;
+  publishOpen.value = true;
+}
+
+async function doPublish(): Promise<void> {
+  if (!meta.value || !canPublish.value) return;
+  publishing.value = true;
+  try {
+    const { error } = await useApiFetch(
+      `/api/meta/${encodeURIComponent(meta.value.id)}/publish`,
+      { immediate: false, refetch: false },
+    )
+      .patch()
+      .json<ApiEnvelope<PageMeta>>();
+    if (error.value) {
+      toast.error('발행에 실패했습니다.');
+      return;
+    }
+    publishOpen.value = false;
+    toast.success('배포되었습니다. 기존 PUBLISHED 버전은 자동 보관(DEPRECATED)되었습니다.');
+    // 발행 후 상태가 바뀌므로 목록으로 이동(dirty 아님 → 가드 통과).
+    void router.push('/system/meta-editor');
+  } finally {
+    publishing.value = false;
+  }
+}
+
+// ── 복사(새 버전 만들기) ──────────────────────────────────────
+async function copyNewVersion(): Promise<void> {
+  if (!meta.value || copying.value) return;
+  copying.value = true;
+  try {
+    const { data, error } = await useApiFetch(
+      `/api/meta/${encodeURIComponent(meta.value.id)}/copy`,
+      { immediate: false, refetch: false },
+    )
+      .post()
+      .json<ApiEnvelope<PageMeta>>();
+    if (error.value || !data.value?.data) {
+      toast.error('새 버전 생성에 실패했습니다.');
+      return;
+    }
+    toast.success('새 DRAFT 버전이 생성되었습니다.');
+    void router.push(`/system/meta-editor/${encodeURIComponent(data.value.data.id)}`);
+  } finally {
+    copying.value = false;
+  }
+}
+
+// ── 보관 ──────────────────────────────────────────────────────
+async function archive(): Promise<void> {
+  if (!meta.value || archiving.value) return;
+  archiving.value = true;
+  try {
+    const { error } = await useApiFetch(
+      `/api/meta/${encodeURIComponent(meta.value.id)}/archive`,
+      { immediate: false, refetch: false },
+    )
+      .patch()
+      .json<ApiEnvelope<PageMeta>>();
+    if (error.value) {
+      toast.error('보관에 실패했습니다.');
+      return;
+    }
+    toast.success('보관 처리되었습니다.');
+    void router.push('/system/meta-editor');
+  } finally {
+    archiving.value = false;
   }
 }
 
@@ -190,9 +318,6 @@ onBeforeRouteLeave(() => {
 // metaId 가 바뀌면(같은 컴포넌트 재사용) 재로딩.
 watch(metaId, () => void loadMeta());
 onMounted(loadMeta);
-
-// 미리보기용 FormMeta — bodyDraft.form 을 그대로 사용(라이브 반영).
-const previewForm = computed<FormMeta>(() => bodyDraft.form);
 </script>
 
 <template>
@@ -213,18 +338,46 @@ const previewForm = computed<FormMeta>(() => bodyDraft.form);
     <section class="space-y-4">
       <PageHeader :title="meta ? meta.title : '메타 편집'">
         <template #actions>
-          <div class="flex gap-2">
+          <div class="flex flex-wrap gap-2">
             <Button
               variant="outline"
               @click="goBack"
             >
-              목록
+              ← 목록
+            </Button>
+            <Button
+              variant="ghost"
+              @click="showPreview = !showPreview"
+            >
+              {{ showPreview ? '미리보기 닫기' : '미리보기' }}
             </Button>
             <Button
               :disabled="!canSave"
               @click="save"
             >
               {{ saving ? '저장 중...' : '저장' }}
+            </Button>
+            <Button
+              variant="secondary"
+              :disabled="!canPublish"
+              @click="openPublish"
+            >
+              {{ publishing ? '발행 중...' : '발행' }}
+            </Button>
+            <Button
+              variant="outline"
+              :disabled="copying"
+              @click="copyNewVersion"
+            >
+              새 버전 만들기
+            </Button>
+            <Button
+              v-if="meta && meta.metaStatus !== 'ARCHIVED'"
+              variant="ghost"
+              :disabled="archiving"
+              @click="archive"
+            >
+              보관
             </Button>
           </div>
         </template>
@@ -264,105 +417,159 @@ const previewForm = computed<FormMeta>(() => bodyDraft.form);
           </CardContent>
         </Card>
 
-        <!-- 탭 -->
-        <div class="flex gap-1 border-b border-border">
-          <button
-            v-for="t in TABS"
-            :key="t.key"
-            type="button"
-            class="border-b-2 px-3 py-2 text-sm"
-            :class="
-              tab === t.key
-                ? 'border-primary font-semibold text-foreground'
-                : 'border-transparent text-foreground-muted hover:text-foreground'
-            "
-            @click="tab = t.key"
-          >
-            {{ t.label }}
-          </button>
-        </div>
+        <div
+          class="items-start gap-4"
+          :class="showPreview ? 'grid lg:grid-cols-2' : ''"
+        >
+          <!-- 편집 영역 (폼·그리드·액션 3개 탭) -->
+          <div class="min-w-0 space-y-3">
+            <!-- 탭 -->
+            <div class="flex gap-1 border-b border-border">
+              <button
+                v-for="t in TABS"
+                :key="t.key"
+                type="button"
+                class="border-b-2 px-3 py-2 text-sm"
+                :class="
+                  tab === t.key
+                    ? 'border-primary font-semibold text-foreground'
+                    : 'border-transparent text-foreground-muted hover:text-foreground'
+                "
+                @click="tab = t.key"
+              >
+                {{ t.label }}
+              </button>
+            </div>
 
-        <!-- 폼 편집 -->
-        <div v-if="tab === 'form'">
-          <fieldset
-            :disabled="!isDraft"
-            class="space-y-3"
-            :class="!isDraft ? 'opacity-60' : ''"
-          >
-            <FormFieldEditor v-model:fields="bodyDraft.form.fields" />
-          </fieldset>
-          <ul
-            v-if="fieldIssues.length"
-            class="mt-3 space-y-1"
-          >
-            <li
-              v-for="(i, n) in fieldIssues"
-              :key="n"
-              class="text-[12px]"
-              :class="i.level === 'ERROR' ? 'text-danger' : 'text-warning'"
-            >
-              [{{ i.level }}] {{ i.message }}
-            </li>
-          </ul>
-        </div>
+            <!-- 폼 편집 -->
+            <div v-if="tab === 'form'">
+              <fieldset
+                :disabled="!isDraft"
+                class="space-y-3"
+                :class="!isDraft ? 'opacity-60' : ''"
+              >
+                <FormFieldEditor v-model:fields="bodyDraft.form.fields" />
+              </fieldset>
+              <ul
+                v-if="fieldIssues.length"
+                class="mt-3 space-y-1"
+              >
+                <li
+                  v-for="(i, n) in fieldIssues"
+                  :key="n"
+                  class="text-[12px]"
+                  :class="i.level === 'ERROR' ? 'text-danger' : 'text-warning'"
+                >
+                  [{{ i.level }}] {{ i.message }}
+                </li>
+              </ul>
+            </div>
 
-        <!-- 그리드 편집 -->
-        <div v-else-if="tab === 'grid'">
-          <fieldset
-            :disabled="!isDraft"
-            class="space-y-3"
-            :class="!isDraft ? 'opacity-60' : ''"
-          >
-            <GridColumnEditor
-              v-model:columns="bodyDraft.grid.columns"
-              v-model:inline-edit="bodyDraft.grid.inlineEdit"
-              v-model:export-enabled="bodyDraft.grid.export"
-              :form-field-names="formFieldNames"
-            />
-          </fieldset>
-          <ul
-            v-if="columnIssues.length"
-            class="mt-3 space-y-1"
-          >
-            <li
-              v-for="(i, n) in columnIssues"
-              :key="n"
-              class="text-[12px]"
-              :class="i.level === 'ERROR' ? 'text-danger' : 'text-warning'"
-            >
-              [{{ i.level }}] {{ i.message }}
-            </li>
-          </ul>
-        </div>
+            <!-- 그리드 편집 -->
+            <div v-else-if="tab === 'grid'">
+              <fieldset
+                :disabled="!isDraft"
+                class="space-y-3"
+                :class="!isDraft ? 'opacity-60' : ''"
+              >
+                <GridColumnEditor
+                  v-model:columns="bodyDraft.grid.columns"
+                  v-model:inline-edit="bodyDraft.grid.inlineEdit"
+                  v-model:export-enabled="bodyDraft.grid.export"
+                  :form-field-names="formFieldNames"
+                />
+              </fieldset>
+              <ul
+                v-if="columnIssues.length"
+                class="mt-3 space-y-1"
+              >
+                <li
+                  v-for="(i, n) in columnIssues"
+                  :key="n"
+                  class="text-[12px]"
+                  :class="i.level === 'ERROR' ? 'text-danger' : 'text-warning'"
+                >
+                  [{{ i.level }}] {{ i.message }}
+                </li>
+              </ul>
+            </div>
 
-        <!-- 액션 편집 (step 4) -->
-        <Card v-else-if="tab === 'actions'">
-          <CardContent class="py-8 text-center">
-            <p class="text-sm text-foreground-muted">
-              액션·발행 흐름은 다음 단계에서 제공됩니다.
-            </p>
-          </CardContent>
-        </Card>
+            <!-- 액션 편집 -->
+            <div v-else-if="tab === 'actions'">
+              <fieldset
+                :disabled="!isDraft"
+                class="space-y-3"
+                :class="!isDraft ? 'opacity-60' : ''"
+              >
+                <ActionEditor v-model:actions="draftActions" />
+              </fieldset>
+              <ul
+                v-if="actionIssues.length"
+                class="mt-3 space-y-1"
+              >
+                <li
+                  v-for="(i, n) in actionIssues"
+                  :key="n"
+                  class="text-[12px]"
+                  :class="i.level === 'ERROR' ? 'text-danger' : 'text-warning'"
+                >
+                  [{{ i.level }}] {{ i.message }}
+                </li>
+              </ul>
+            </div>
 
-        <!-- 미리보기 -->
-        <Card v-else-if="tab === 'preview'">
-          <CardContent class="py-6">
-            <p class="mb-4 text-xs text-foreground-muted">
-              현재 편집 중인 폼의 라이브 미리보기 (저장 전 상태 반영)
-            </p>
-            <DynamicForm
-              v-if="previewForm.fields.length"
-              :meta="previewForm"
-            />
             <p
-              v-else
-              class="text-sm text-foreground-muted"
+              v-if="isDraft && !canPublish"
+              class="text-[12px] text-foreground-muted"
             >
-              표시할 필드가 없습니다.
+              발행하려면 먼저 저장(dry-run 검증)을 완료하세요. 변경 사항이 검증을 통과해야 발행할 수 있습니다.
             </p>
-          </CardContent>
-        </Card>
+          </div>
+
+          <!-- 미리보기 사이드 패널 -->
+          <Card
+            v-if="showPreview"
+            class="min-w-0"
+          >
+            <CardContent class="py-4">
+              <p class="mb-3 text-sm font-semibold">
+                미리보기
+              </p>
+              <MetaPreview
+                :meta-id="meta.id"
+                :body="bodyDraft"
+              />
+            </CardContent>
+          </Card>
+        </div>
       </template>
     </section>
+
+    <!-- 발행 확인 다이얼로그 -->
+    <Dialog v-model:open="publishOpen">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>이 버전을 발행할까요?</DialogTitle>
+          <DialogDescription>
+            발행하면 화면에 노출됩니다. 동일 그룹의 기존 PUBLISHED 버전은 자동으로
+            보관(DEPRECATED) 처리됩니다(ADR-006).
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button
+            variant="outline"
+            @click="publishOpen = false"
+          >
+            취소
+          </Button>
+          <Button
+            :disabled="publishing"
+            @click="doPublish"
+          >
+            {{ publishing ? '발행 중...' : '발행' }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   </RequirePermission>
 </template>
