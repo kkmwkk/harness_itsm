@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "bpmn-engine-evaluation",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-30T08:55:00+0900",
+      "summary": "BPMN/Camunda 도입 평가(실 통합 X) — docs/BPMN_EVAL_NOTES.md: 자체 엔진 코드 실측(applyTransition `+1` 선형·SLA findOverdue 조회까지·assignee 정적)으로 병렬분기·타이머 자동escalation·서브프로세스 3/3 표현 불가 확인. 결정기준상 능력 천장은 초과하나 ADR-017 실 수요 트리거(3건 누적·모델러 요구) 0건 미충족 → 권장: 보류 + 자체 모델 점진 확장(스케줄 escalation·조건분기 필드). Camunda7 통합 시뮬(~80MB·ACT_* 40여테이블·/engine-rest 래퍼 불일치)·선형→sequence flow 변환가능성 정리. ADR-017 에 M8 후 1차 평가 이력 한 줄+노트 참조 추가. AC 3/3 PASS.",
+      "completed_at": "2026-05-30T09:05:00+0900"
     },
     {
       "step": 2,
