@@ -48,7 +48,7 @@
       "status": "completed",
       "started_at": "2026-05-30T06:33:49+0900",
       "summary": "비개발 사용자 e2e — frontend/e2e/meta-editor.spec.ts(11단계: admin 로그인→신규 그룹 생성(itg-test-meta-editor)→FormFieldEditor 필드 3개·GridColumnEditor 컬럼 2개·ActionEditor 액션 1개 GUI 편집→저장(dry-run+PUT body)→발행(PATCH)→/system/meta viewer PUBLISHED 노출→시각 baseline meta-editor-flow.png) + cURL active 검증, docs/META_EDITOR_REPORT.md. 실 브라우저 e2e 가 steps 1~4 결함 적발: 편집기 mutation 이 VueUse useFetch(immediate:false)를 execute() 없이 await 해 hang → MetaEditorPage·MetaEditorDetailPage 의 생성·dry-run·저장·발행·복사·보관 호출을 LoginPage 정석 패턴(await execute())으로 교정. vue-tsc 0건·Vitest 140 PASS 무회귀. 시드(itg-test-meta-editor-v1-1 PUBLISHED) 보존.",
-      "completed_at": "2026-05-30T06:45:00+0900"
+      "completed_at": "2026-05-30T06:46:22+0900"
     }
   ],
   "created_at": "2026-05-30T05:49:36+0900"
