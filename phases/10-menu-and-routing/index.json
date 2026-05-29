@@ -8,7 +8,7 @@
       "status": "completed",
       "started_at": "2026-05-29T20:20:05+0900",
       "summary": "useAuthStore (Pinia setup, localStorage access/refresh + user/roles/permissions, hasRole/hasPermission) + lib/api.ts readToken 실 구현 + 401 자동 /login 리다이렉트 + LoginPage.vue (카드 + 폼 + 토스트) + 라우터 가드(meta.requiresAuth + /me 자동 호출) + TopBar 로그인 사용자 + 로그아웃. 단위 테스트 4 케이스(happy-dom). vitest happy-dom 의존 추가, eslint --fix 로 기존 DynamicPage 포맷 경고 동반 정리(lint 0).",
-      "completed_at": "2026-05-29T20:26:00+0900"
+      "completed_at": "2026-05-29T20:26:25+0900"
     },
     {
       "step": 1,
