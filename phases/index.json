@@ -27,7 +27,8 @@
     },
     {
       "dir": "5-itam-asset-backend",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-05-29T10:47:39+0900"
     }
   ]
 }
