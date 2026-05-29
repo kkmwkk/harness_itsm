@@ -16,7 +16,7 @@
       "status": "completed",
       "started_at": "2026-05-29T14:37:31+0900",
       "summary": "scripts/jacoco_summary.py (XML 파싱 + OVERALL/SERVICE/패키지별 line coverage 요약, 70% 게이트 평가) + scripts/test_jacoco_summary.py + backend/SONAR_BASELINE.md 작성. baseline: OVERALL 84.40%(460/545), SERVICE 82.16%(221/269) → 게이트 70% PASS. 미커버 후속 후보(MetaValidationService negative 분기·각 Service not-found 예외 경로) 식별.",
-      "completed_at": "2026-05-29T14:40:00+0900"
+      "completed_at": "2026-05-29T14:39:49+0900"
     },
     {
       "step": 2,
