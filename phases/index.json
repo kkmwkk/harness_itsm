@@ -42,7 +42,8 @@
     },
     {
       "dir": "8-sonarqube-ci-gate",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-05-29T14:46:07+0900"
     }
   ]
 }

@@ -2,9 +2,39 @@
   "project": "Polestar10 ITG v2",
   "phase": "8-sonarqube-ci-gate",
   "steps": [
-    { "step": 0, "name": "gradle-sonar-plugin", "status": "pending" },
-    { "step": 1, "name": "coverage-baseline", "status": "pending" },
-    { "step": 2, "name": "ci-workflow", "status": "pending" },
-    { "step": 3, "name": "quality-gate-and-report", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "gradle-sonar-plugin",
+      "status": "completed",
+      "started_at": "2026-05-29T14:25:00+0900",
+      "summary": "backend/build.gradle 에 jacoco(0.8.12) + org.sonarqube(5.1) 플러그인 + JaCoCo XML/HTML 리포트(test finalizedBy) + sonar.properties(sourceEncoding/coverage.jacoco.xmlReportPaths/exclusions: Application·package-info·dto·_generated). .env.sonar.example + .gitignore .env.sonar. ./gradlew clean test jacocoTestReport 통과 + JaCoCo XML/HTML 리포트 생성 확인. 서버 없이 sonar 실행 시 호스트 연결 실패로 명시적 종료.",
+      "completed_at": "2026-05-29T14:37:31+0900"
+    },
+    {
+      "step": 1,
+      "name": "coverage-baseline",
+      "status": "completed",
+      "started_at": "2026-05-29T14:37:31+0900",
+      "summary": "scripts/jacoco_summary.py (XML 파싱 + OVERALL/SERVICE/패키지별 line coverage 요약, 70% 게이트 평가) + scripts/test_jacoco_summary.py + backend/SONAR_BASELINE.md 작성. baseline: OVERALL 84.40%(460/545), SERVICE 82.16%(221/269) → 게이트 70% PASS. 미커버 후속 후보(MetaValidationService negative 분기·각 Service not-found 예외 경로) 식별.",
+      "completed_at": "2026-05-29T14:39:49+0900"
+    },
+    {
+      "step": 2,
+      "name": "ci-workflow",
+      "status": "completed",
+      "started_at": "2026-05-29T14:39:49+0900",
+      "summary": ".github/workflows/sonarqube.yml (PR/main push, JDK 21 + Gradle cache + postgres service + 스키마 자동 + ./gradlew test jacocoTestReport sonar) + docker-compose.sonar.yml (sonarqube:community + sonar-db postgres:16, named volumes, 9000 port) + docs/SONAR_CI_GUIDE.md (로컬 분석 + CI 시크릿).",
+      "completed_at": "2026-05-29T14:41:46+0900"
+    },
+    {
+      "step": 3,
+      "name": "quality-gate-and-report",
+      "status": "completed",
+      "started_at": "2026-05-29T14:41:46+0900",
+      "summary": "scripts/sonar_gate.py (measures.json 파싱 + CLAUDE.md §9 게이트 평가) + docs/QUALITY_GATE_REPORT.md. 로컬 SonarQube(community, docker-compose.sonar.yml) 실기동 → ./gradlew test jacocoTestReport sonar 실분석 → measures API 조회. 실측: coverage 78.2%(SERVICE 82.16%), 중복 0.0%, bugs 0, vulnerabilities 0, code_smells 52(maint A), security_hotspot 1건(CSRF 비활성화 검토 — 시크릿 아님). 게이트 PASS(SERVICE≥70%/중복≤3%/Blocker·Critical 0/시크릿 0). step 0~2 산출물(build.gradle plugins + SONAR_BASELINE + workflow yml + compose yml + GUIDE)과 함께 M6 마일스톤 산출물 정착 완료. PRD §9 전 마일스톤(M1~M6) 종료.",
+      "completed_at": "2026-05-29T14:46:07+0900"
+    }
+  ],
+  "created_at": "2026-05-29T14:25:00+0900",
+  "completed_at": "2026-05-29T14:46:07+0900"
 }
