@@ -24,7 +24,7 @@
       "status": "completed",
       "started_at": "2026-05-29T09:06:37+0900",
       "summary": "TicketController 8 엔드포인트 (POST create / GET search·byId·byTicketNo / PATCH update·status·priority·assign) + PageResponse<T> 공통 응답 + @Operation·@Parameter·@ApiResponses 어노테이션 + 가상 샘플 example + @WebMvcTest 12 케이스. /v3/api-docs 에 ticket 경로 등록 확인.",
-      "completed_at": "2026-05-29T09:12:00+0900"
+      "completed_at": "2026-05-29T09:11:45+0900"
     },
     {
       "step": 3,
