@@ -13,10 +13,11 @@
     {
       "step": 1,
       "name": "ticket-repository-and-service",
-      "status": "completed",
+      "status": "error",
       "started_at": "2026-05-29T09:02:19+0900",
       "summary": "TicketRepository (findByTicketNo + search Page) + TicketService (create/getById/getByTicketNo/search/update/changeStatus/changePriority/assign) + DTO Record 6종(Request 5 + Response/Summary) + Ticket#assignTicketNo 추가 + TicketFixture + Mockito 단위 테스트 14 케이스. ticket_no 는 save 후 ITSM-{id5} 부여 + dirty checking. 모든 상태 가드는 Entity 도메인 메서드 위임.",
-      "completed_at": "2026-05-29T09:06:36+0900"
+      "completed_at": "2026-05-29T09:06:36+0900",
+      "error_message": "step 3 e2e 에서 결함 발견 — TicketService.create() 가 실제 DB 에서 409(DATA_INTEGRITY)로 실패. 근본 원인: Ticket 엔티티 @GeneratedValue(GenerationType.IDENTITY)(BIGSERIAL) + ticket_no NOT NULL 조합에서 create() 는 ticketNo(null) 로 save() 후 assignTicketNo('ITSM-{id5}') 하는 'save 후 dirty checking' 방식인데, IDENTITY 전략은 생성 id 취득을 위해 save() 시점에 즉시 INSERT 를 실행하므로 ticket_no=null 인 채로 NOT NULL 제약 위반. step 1 단위 테스트는 ticketRepository.save() 를 Mockito 목으로 대체해 실제 INSERT 를 타지 않아 결함을 놓침. 수정 방향(택1): (a) INSERT 전에 ticket_no 를 미리 생성·set 후 persist (별도 시퀀스/UUID 기반 번호 생성), (b) ticket_no 컬럼을 nullable 로 두고 save→flush→update 2단계 + @PrePersist 회피, (c) id 생성 전략을 SEQUENCE 로 바꿔 save 가 즉시 INSERT 하지 않게 한 뒤 dirty 반영. 운영 코드 수정은 step 0~1 범위이므로 step 3 에서 손대지 않음."
     },
     {
       "step": 2,
@@ -29,7 +30,9 @@
     {
       "step": 3,
       "name": "e2e-with-itg-ticket-meta",
-      "status": "pending"
+      "status": "blocked",
+      "started_at": "2026-05-29T09:25:57+0900",
+      "blocked_reason": "E2E 시나리오 §3 step 6(신규 티켓 생성, ITSM-{id5}) 이 실제 DB 에서 409 DATA_INTEGRITY 로 실패하여 step 7~12 진행 불가. 원인은 운영 코드 결함(step 1): Ticket 엔티티가 @GeneratedValue(GenerationType.IDENTITY) + ticket_no NOT NULL 인데 TicketService.create() 는 ticketNo(null) 로 save() 후 assignTicketNo 하는 방식이라, IDENTITY 가 강제하는 save() 즉시 INSERT 시 ticket_no=null 로 NOT NULL 위반(에러 본문: 'null value in column \"ticket_no\" ... violates not-null constraint'). step 1 단위테스트가 save() 를 Mockito 목으로 대체해 놓쳤음. 진행 결과: §3 step 2~5(health/메타 active itg-ticket-v1-1/시드 5건 목록/status=OPEN 필터)는 PASS, step 6 부터 FAIL. 본 step 은 시드·시나리오·보고서 전용이고 운영 코드 수정 금지이므로 중단. 조치: step 1(ticket-repository-and-service)을 error 로 되돌려 create()/ticket_no 부여 로직을 재구현 후 step 3 재시도 필요. 시드(itg-ticket-v1-1 메타 + ITSM-SAMPLE-001~005)는 보존됨."
     }
   ],
   "created_at": "2026-05-29T08:57:40+0900"
