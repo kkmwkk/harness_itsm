@@ -29,12 +29,14 @@ async function onSubmit() {
   if (!username.value || !password.value || isSubmitting.value) return;
   isSubmitting.value = true;
   try {
-    const { data, statusCode } = await useApiFetch('/api/auth/login', {
+    const { execute, data, statusCode } = useApiFetch('/api/auth/login', {
       immediate: false,
       refetch: false,
     })
       .post({ username: username.value, password: password.value })
       .json<ApiEnvelope<TokenResponse>>();
+    // immediate:false 이므로 명시적으로 실행해야 요청이 나간다 (execute 없이 await 하면 hang).
+    await execute();
 
     if (statusCode.value && statusCode.value >= 400) {
       toast.error(mapErrorCode(data.value?.errorCode ?? 'LOGIN_FAILED'));

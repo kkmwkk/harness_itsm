@@ -13,8 +13,10 @@
     {
       "step": 1,
       "name": "playwright-setup-and-specs",
-      "status": "pending",
-      "started_at": "2026-05-29T21:30:47+0900"
+      "status": "completed",
+      "started_at": "2026-05-29T21:30:47+0900",
+      "summary": "@playwright/test 도입 + playwright.config.ts (1440x900, 한국어 locale, maxDiffPixelRatio 2%) + e2e/fixtures/auth.ts (asAdmin/asUser fixture) + 5 spec 파일(home/itsm/itam/system/dialog, 8 test) + baseline 스크린샷 7개 생성·재실행 안정 확인 + package.json scripts(e2e/headed/update/report) + .gitignore (report/test-results). 실 브라우저 e2e가 LoginPage 잠복 버그(immediate:false useFetch를 execute() 없이 await → hang)를 적발하여 .execute() 추가로 수정 — ADR-019/F-009 효과 입증.",
+      "completed_at": "2026-05-29T21:45:00+0900"
     },
     {
       "step": 2,
