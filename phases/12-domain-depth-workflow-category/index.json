@@ -45,7 +45,10 @@
     {
       "step": 5,
       "name": "asset-category-frontend",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-29T23:37:18+0900",
+      "summary": "types/asset-category.ts(AssetCategoryNode 재귀·LifecycleEvent) + useAssetCategory.ts(useAssetCategoryTree fetch+활성 가지치기, findByCode·filterActiveTree·treeNodeClass 순수함수) + AssetCategoryTree.vue(자기참조 재귀 렌더·depth 들여쓰기·treeNodeClass 강조) + IndexPage.vue(트리 사이드+DynamicPage 2컬럼, selectedCode→formMetaGroupId 메타 분기, 미선택 시 fetch 안내, categoryCode submitDefaults 자동첨부, 행클릭→/itam/:id) + DetailPage.vue 확장(라이프사이클 타임라인 + 이벤트 기록 다이얼로그, 타입별 권장 payload 필드 가이드) + DynamicPage submitDefaults 옵션 prop + router itam→IndexPage 교체 + useAssetCategory.spec 5건·AssetCategoryTree.spec 4건. type-check·lint·build·test(88) 통과, dev 서버 /itam·/itam/1 모두 200.",
+      "completed_at": "2026-05-29T23:45:00+0900"
     },
     {
       "step": 6,

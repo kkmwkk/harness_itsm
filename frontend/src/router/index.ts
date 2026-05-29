@@ -44,8 +44,8 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'itam',
         name: 'itam',
-        component: () => import('@/pages/_DynamicRoute.vue'),
-        meta: { title: 'ITAM', groupId: 'itg-asset', detailUrlTemplate: '/itam/{id}' },
+        component: () => import('@/pages/itam/IndexPage.vue'),
+        meta: { title: 'ITAM' },
       },
       {
         path: 'itam/:id(\\d+)',
