@@ -7,7 +7,8 @@
       "name": "wysiwyg-poc-meta-edit",
       "status": "completed",
       "started_at": "2026-05-30T08:49:07+0900",
-      "summary": "WYSIWYG PoC — WysiwygPreview.vue(좌측 기존 편집기 패널 재사용 + 우측 실 미리보기·편집모드 토글: 폼 라벨·그리드 헤더 라벨/width 인플레이스 편집 + 삭제) + useWysiwygPreview 순수 헬퍼(setFieldLabel/removeFieldAt/setColumnLabel/setColumnWidth/removeColumnAt, 불변) + /system/meta-editor/:metaId/wysiwyg 라우트 + 단위 테스트. type-check·lint·build·test(160) PASS."
+      "summary": "WYSIWYG PoC — WysiwygPreview.vue(좌측 기존 편집기 패널 재사용 + 우측 실 미리보기·편집모드 토글: 폼 라벨·그리드 헤더 라벨/width 인플레이스 편집 + 삭제) + useWysiwygPreview 순수 헬퍼(setFieldLabel/removeFieldAt/setColumnLabel/setColumnWidth/removeColumnAt, 불변) + /system/meta-editor/:metaId/wysiwyg 라우트 + 단위 테스트. type-check·lint·build·test(160) PASS.",
+      "completed_at": "2026-05-30T08:55:00+0900"
     },
     {
       "step": 1,
