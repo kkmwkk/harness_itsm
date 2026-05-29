@@ -16,7 +16,7 @@
       "status": "completed",
       "started_at": "2026-05-29T19:33:28+0900",
       "summary": "JwtService(HS256·access 15m/refresh 7d·sub/uid/roles/perms claim) + AuthService(login/refresh/me + BCrypt 비밀번호 검증 + lastLoginAt + LOGIN_FAILED 통합 메시지) + JwtAuthenticationFilter 실 검증 + SecurityConfig 정식(/auth/login/refresh·swagger·actuator 만 permitAll, 나머지 authenticated, 401/403 한글 JSON 응답) + DTO Record + application.yml app.jwt.* + 단위 테스트(JwtService 6 + AuthService 8 + Filter 3). 기존 @WebMvcTest 회귀(@MockBean JwtService + @WithMockUser) 보정, 전체 169+ 테스트 통과.",
-      "completed_at": "2026-05-29T19:43:00+0900"
+      "completed_at": "2026-05-29T19:43:29+0900"
     },
     {
       "step": 2,
