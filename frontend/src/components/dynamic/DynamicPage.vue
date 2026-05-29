@@ -34,6 +34,9 @@ interface Props {
 }
 const props = defineProps<Props>();
 
+// 그리드 행 클릭을 부모(라우트 래퍼)로 전파 — 상세 라우팅은 meta-driven 으로 부모가 결정(ADR-004).
+const emit = defineEmits<{ 'row-click': [row: unknown] }>();
+
 // 둘 다 제공되면 metaId 우선(이력 복원이 더 명시적 의도). 둘 다 없으면 식별자 미정.
 const ident = computed<MetaIdent | null>(() => {
   if (props.metaId) return { metaId: props.metaId };
@@ -186,6 +189,7 @@ async function onFormSubmit(values: Record<string, unknown>): Promise<void> {
       <DynamicGrid
         :meta="body.grid"
         :rows="rows"
+        @row-click="(r) => emit('row-click', r)"
       />
 
       <Dialog v-model:open="dialogOpen">

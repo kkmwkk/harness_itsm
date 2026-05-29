@@ -6,7 +6,10 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useApiFetch } from '@/lib/api';
 import { usePageMeta, type MetaIdent } from '@/composables/usePageMeta';
-import type { ApiEnvelope } from '@/types/meta';
+import { asPageMetaBody, MetaBodyShapeError } from '@/lib/meta-body';
+import DynamicForm from '@/components/dynamic/DynamicForm.vue';
+import type { ApiEnvelope, MetaStatus } from '@/types/meta';
+import type { PageMetaBody } from '@/types/meta-body';
 
 interface AssetResponse {
   id: number;
@@ -42,15 +45,53 @@ const {
 
 const asset = computed<AssetResponse | null>(() => assetEnv.value?.data ?? null);
 
-// 2) 등록 시점 메타 fetch (metaId override 사용 — step 0 의 metaId 모드)
-//    asset 이 로드된 뒤에 metaId 결정
+// 2) 등록 시점 메타 fetch (metaId override 모드 — step 0). 현재 PUBLISHED 와 다를 수 있다.
 const metaIdAtReg = computed(() => asset.value?.pageMetaIdAtRegistration ?? '');
 const ident = computed<MetaIdent>(() => ({ metaId: metaIdAtReg.value }));
 const { meta: registrationMeta, error: metaError } = usePageMeta(ident);
 
-const metaJsonPreview = computed<string>(() =>
-  registrationMeta.value ? JSON.stringify(registrationMeta.value.metaJson, null, 2) : '',
-);
+// 3) 메타 본문 강타입 좁히기 — 실패 시 폼을 깨지 않고 null 처리.
+const body = computed<PageMetaBody | null>(() => {
+  const m = registrationMeta.value;
+  if (!m) return null;
+  try {
+    return asPageMetaBody(m.id, m.metaJson);
+  } catch (e) {
+    if (e instanceof MetaBodyShapeError) return null;
+    throw e;
+  }
+});
+
+// 4) 폼 초기값 — 자산의 속성을 폼 field name 으로 매핑하여 prefil.
+const initialValues = computed<Record<string, unknown>>(() => {
+  const a = asset.value;
+  if (!a) return {};
+  return {
+    name: a.name,
+    assetType: a.assetType,
+    category: a.category,
+    model: a.model,
+    serialNo: a.serialNo,
+    assigneeId: a.assigneeId,
+    location: a.location,
+    acquiredAt: a.acquiredAt,
+    pageGroupId: 'itg-asset',
+  };
+});
+
+// 메타 버전 라벨 색 — UI_GUIDE §5-5 시맨틱 토큰만 사용.
+function statusColor(s: MetaStatus | undefined): string {
+  if (s === 'PUBLISHED') return 'text-success';
+  if (s === 'DRAFT') return 'text-warning';
+  if (s === 'DEPRECATED') return 'text-neutral';
+  if (s === 'ARCHIVED') return 'text-foreground-subtle';
+  return 'text-foreground-muted';
+}
+
+// 본 phase 의 상세 폼은 이력 보기 의도(read-only). 저장(PATCH/PUT)은 별도 phase 의 ADR.
+function onSubmit(): void {
+  // no-op — 이력 보기 모드는 저장 비활성
+}
 </script>
 
 <template>
@@ -126,28 +167,38 @@ const metaJsonPreview = computed<string>(() =>
           <dt class="text-foreground-muted">
             등록 메타
           </dt>
-          <dd class="font-mono text-[12px]">
-            {{ asset.pageMetaIdAtRegistration }}
+          <dd>
+            <span class="font-mono text-[12px]">{{ asset.pageMetaIdAtRegistration }}</span>
+            <span
+              v-if="registrationMeta"
+              :class="['ml-2 text-[12px]', statusColor(registrationMeta.metaStatus)]"
+            >
+              v{{ registrationMeta.majorVersion }}.{{ registrationMeta.minorVersion }}
+              · {{ registrationMeta.metaStatus }}
+            </span>
           </dd>
         </dl>
       </CardContent>
     </Card>
 
-    <!-- 등록 메타 카드: 어떤 상태든 표시 (step 2 에서 폼 복원으로 발전) -->
-    <Card v-if="registrationMeta">
+    <!-- 등록 시점 메타의 form.fields 로 폼 화면 복원 (M4 핵심 — 현재 PUBLISHED 와 다를 수 있음) -->
+    <Card v-if="body && asset">
       <CardHeader>
         <CardTitle>
-          등록 메타 — {{ registrationMeta.title }}
-          <span class="text-[12px] font-normal text-foreground-muted">
-            v{{ registrationMeta.majorVersion }}.{{ registrationMeta.minorVersion }}
-            · {{ registrationMeta.metaStatus }}
+          폼 화면 복원 — {{ registrationMeta?.title }}
+          <span class="ml-2 text-[12px] font-normal text-foreground-muted">
+            (등록 시점 메타로 렌더링)
           </span>
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <pre
-          class="overflow-auto rounded-md bg-surface-muted p-3 font-mono text-[12px]"
-        >{{ metaJsonPreview }}</pre>
+        <!-- 이력 보기 의도: submit 은 no-op (저장은 별도 phase 의 ADR) -->
+        <DynamicForm
+          :meta="body.form"
+          :initial-values="initialValues"
+          @submit="onSubmit"
+          @cancel="router.push('/itam')"
+        />
       </CardContent>
     </Card>
 
