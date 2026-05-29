@@ -179,12 +179,18 @@ async function runDryRun(): Promise<boolean> {
     metaStatus: 'DRAFT',
     ...body,
   };
-  const { data: dryData, error: dryError } = await useApiFetch('/api/meta/dry-run', {
+  const {
+    execute: execDryRun,
+    data: dryData,
+    error: dryError,
+  } = useApiFetch('/api/meta/dry-run', {
     immediate: false,
     refetch: false,
   })
     .post(dryRunPayload)
     .json<ApiEnvelope<{ valid: boolean; issues: Array<{ level: string; message: string }> }>>();
+  // immediate:false 이므로 명시적으로 실행해야 요청이 나간다 (execute 없이 await 하면 hang).
+  await execDryRun();
   if (dryError.value) {
     toast.error('검증 요청에 실패했습니다.');
     return false;
@@ -212,12 +218,14 @@ async function save(): Promise<void> {
     // 1) dry-run — 형식 검증(저장 전 필수).
     if (!(await runDryRun())) return;
     // 2) 본문 교체 — DRAFT 만 허용(백엔드 도메인 가드와 짝).
-    const { error: putError } = await useApiFetch(
+    const { execute: execPut, error: putError } = useApiFetch(
       `/api/meta/${encodeURIComponent(meta.value.id)}/body`,
       { immediate: false, refetch: false },
     )
       .put(body)
       .json<ApiEnvelope<PageMeta>>();
+    // immediate:false 이므로 명시적으로 실행해야 요청이 나간다 (execute 없이 await 하면 hang).
+    await execPut();
     if (putError.value) {
       toast.error('저장에 실패했습니다.');
       return;
@@ -242,12 +250,14 @@ async function doPublish(): Promise<void> {
   if (!meta.value || !canPublish.value) return;
   publishing.value = true;
   try {
-    const { error } = await useApiFetch(
+    const { execute, error } = useApiFetch(
       `/api/meta/${encodeURIComponent(meta.value.id)}/publish`,
       { immediate: false, refetch: false },
     )
       .patch()
       .json<ApiEnvelope<PageMeta>>();
+    // immediate:false 이므로 명시적으로 실행해야 요청이 나간다 (execute 없이 await 하면 hang).
+    await execute();
     if (error.value) {
       toast.error('발행에 실패했습니다.');
       return;
@@ -266,12 +276,14 @@ async function copyNewVersion(): Promise<void> {
   if (!meta.value || copying.value) return;
   copying.value = true;
   try {
-    const { data, error } = await useApiFetch(
+    const { execute, data, error } = useApiFetch(
       `/api/meta/${encodeURIComponent(meta.value.id)}/copy`,
       { immediate: false, refetch: false },
     )
       .post()
       .json<ApiEnvelope<PageMeta>>();
+    // immediate:false 이므로 명시적으로 실행해야 요청이 나간다 (execute 없이 await 하면 hang).
+    await execute();
     if (error.value || !data.value?.data) {
       toast.error('새 버전 생성에 실패했습니다.');
       return;
@@ -288,12 +300,14 @@ async function archive(): Promise<void> {
   if (!meta.value || archiving.value) return;
   archiving.value = true;
   try {
-    const { error } = await useApiFetch(
+    const { execute, error } = useApiFetch(
       `/api/meta/${encodeURIComponent(meta.value.id)}/archive`,
       { immediate: false, refetch: false },
     )
       .patch()
       .json<ApiEnvelope<PageMeta>>();
+    // immediate:false 이므로 명시적으로 실행해야 요청이 나간다 (execute 없이 await 하면 hang).
+    await execute();
     if (error.value) {
       toast.error('보관에 실패했습니다.');
       return;

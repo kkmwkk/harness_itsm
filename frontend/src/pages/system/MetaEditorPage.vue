@@ -135,12 +135,14 @@ function editDraft(v: PageMetaVersion): void {
 }
 
 async function copyVersion(v: PageMetaVersion): Promise<void> {
-  const { error } = await useApiFetch(
+  const { execute, error } = useApiFetch(
     `/api/meta/${encodeURIComponent(v.id)}/copy`,
     { immediate: false, refetch: false },
   )
     .post()
     .json<ApiEnvelope<PageMeta>>();
+  // immediate:false 이므로 명시적으로 실행해야 요청이 나간다 (execute 없이 await 하면 hang).
+  await execute();
   if (error.value) {
     toast.error('복사에 실패했습니다.');
     return;
@@ -150,12 +152,14 @@ async function copyVersion(v: PageMetaVersion): Promise<void> {
 }
 
 async function publishVersion(v: PageMetaVersion): Promise<void> {
-  const { error } = await useApiFetch(
+  const { execute, error } = useApiFetch(
     `/api/meta/${encodeURIComponent(v.id)}/publish`,
     { immediate: false, refetch: false },
   )
     .patch()
     .json<ApiEnvelope<PageMeta>>();
+  // immediate:false 이므로 명시적으로 실행해야 요청이 나간다 (execute 없이 await 하면 hang).
+  await execute();
   if (error.value) {
     toast.error('발행에 실패했습니다.');
     return;
@@ -165,12 +169,14 @@ async function publishVersion(v: PageMetaVersion): Promise<void> {
 }
 
 async function archiveVersion(v: PageMetaVersion): Promise<void> {
-  const { error } = await useApiFetch(
+  const { execute, error } = useApiFetch(
     `/api/meta/${encodeURIComponent(v.id)}/archive`,
     { immediate: false, refetch: false },
   )
     .patch()
     .json<ApiEnvelope<PageMeta>>();
+  // immediate:false 이므로 명시적으로 실행해야 요청이 나간다 (execute 없이 await 하면 hang).
+  await execute();
   if (error.value) {
     toast.error('보관에 실패했습니다.');
     return;
@@ -249,12 +255,14 @@ async function submitCreate(): Promise<void> {
       form: { layout: 'two-column', fields: [] },
     },
   };
-  const { error } = await useApiFetch('/api/meta', {
+  const { execute, error } = useApiFetch('/api/meta', {
     immediate: false,
     refetch: false,
   })
     .post(payload)
     .json<ApiEnvelope<PageMeta>>();
+  // immediate:false 이므로 명시적으로 실행해야 요청이 나간다 (execute 없이 await 하면 hang).
+  await execute();
   if (error.value) {
     toast.error('메타 그룹 생성에 실패했습니다.');
     return;
