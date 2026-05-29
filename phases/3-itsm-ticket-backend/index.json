@@ -29,7 +29,9 @@
     {
       "step": 3,
       "name": "e2e-with-itg-ticket-meta",
-      "status": "pending"
+      "status": "blocked",
+      "started_at": "2026-05-29T09:11:45+0900",
+      "blocked_reason": "운영 코드 결함(인증)으로 e2e 시나리오 차단. SecurityConfig(com.nkia.itg.common.security.SecurityConfig)의 permitAll 목록이 /swagger-ui/**, /v3/api-docs/**, /actuator/health, /api/meta/** 만 허용하고 나머지는 .anyRequest().authenticated() 이다. /api/tickets/** 가 허용 목록에 없어 인증 없는 §3 e2e 시나리오(4~12단계 plain curl)가 전 구간 403 을 반환한다. 또한 이 SecurityFilterChain 은 httpBasic·formLogin 을 활성화하지 않았고 JWT 로그인 엔드포인트도 아직 없어 인증 자체가 불가능하다(검증: GET /api/meta/active/itg-ticket=200, GET /api/tickets=403). step 3 은 운영 코드(Config) 수정 금지·인증 결함 시 blocked 규칙이므로 여기서 패치하지 않는다. 조치: step 0(SecurityConfig)으로 되돌려 phase-0 의 /api/meta/** permitAll 및 '다음 phase 에서 인증 강화' 주석과 일관되게 /api/tickets/** 를 permitAll 에 추가(또는 JWT 인증 도입)한 뒤 step 3 재실행 필요. 이미 완료된 산출물: sql/init/03_itg_ticket_meta.sql(itg-ticket-v1-1 PUBLISHED 시드, DB 적용·검증 완료), sql/init/04_sample_tickets.sql(ITSM-SAMPLE-001~005 5건, DB 적용·검증 완료). 시드는 다음 phase 가 사용하므로 보존(미삭제)."
     }
   ],
   "created_at": "2026-05-29T08:57:40+0900"
