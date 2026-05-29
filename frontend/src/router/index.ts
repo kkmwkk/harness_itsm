@@ -21,7 +21,13 @@ const routes: RouteRecordRaw[] = [
         path: 'itam',
         name: 'itam',
         component: () => import('@/pages/_DynamicRoute.vue'),
-        meta: { title: 'ITAM', groupId: 'itg-asset' },
+        meta: { title: 'ITAM', groupId: 'itg-asset', detailUrlTemplate: '/itam/{id}' },
+      },
+      {
+        path: 'itam/:id(\\d+)',
+        name: 'itam-detail',
+        component: () => import('@/pages/itam/DetailPage.vue'),
+        meta: { title: '자산 상세' },
       },
       {
         path: 'pms',

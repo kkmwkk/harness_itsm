@@ -2,10 +2,20 @@ import { computed, toValue, type MaybeRefOrGetter, type Ref } from 'vue';
 import { useApiFetch } from '@/lib/api';
 import type { ApiEnvelope, PageMeta } from '@/types/meta';
 
+/**
+ * 메타 조회 식별자 — 두 모드 중 하나.
+ * - `{ groupId }` : PUBLISHED 최신 1건 (화면 노출용, 버전 라우팅 / 404 → notPublished)
+ * - `{ metaId }`  : 특정 버전 단건 (어떤 metaStatus 든 반환, 이력 복원용 / 404 → error)
+ */
+export type MetaIdent = { groupId: string } | { metaId: string };
+
 export interface UsePageMetaResult {
-  /** PUBLISHED 최신 메타. PUBLISHED 가 없으면 null. */
+  /** 조회된 메타. 없으면 null. */
   meta: Ref<PageMeta | null>;
-  /** PUBLISHED 가 없는 경우(404 + META_NOT_PUBLISHED) true */
+  /**
+   * group 모드에서 PUBLISHED 가 없는 경우(404 + META_NOT_PUBLISHED) true.
+   * metaId 모드는 명시적 버전 지정이므로 항상 false.
+   */
   notPublished: Ref<boolean>;
   /** 기타 에러 메시지 */
   error: Ref<string | null>;
@@ -15,12 +25,32 @@ export interface UsePageMetaResult {
 }
 
 /**
- * 화면 노출용 메타 조회 단일 진입점 — GET /api/meta/active/{groupId}.
- * groupId 가 비어 있으면 요청하지 않는다(immediate:false 대신 빈 값일 때 호출 회피).
- * DRAFT 메타는 백엔드 버전 라우팅에서 차단되므로 절대 반환되지 않는다(클라이언트 사이드 안전망).
+ * 식별자 → 조회 URL 결정. string 단축은 groupId(active) 로 해석(기존 호환).
+ * encodeURIComponent 로 한글·슬래시 등을 안전하게 escape 한다.
  */
-export function usePageMeta(groupId: MaybeRefOrGetter<string>): UsePageMetaResult {
-  const url = computed(() => `/api/meta/active/${encodeURIComponent(toValue(groupId))}`);
+export function resolvePageMetaUrl(ident: MetaIdent | string): string {
+  if (typeof ident === 'string') return `/api/meta/active/${encodeURIComponent(ident)}`;
+  if ('metaId' in ident) return `/api/meta/${encodeURIComponent(ident.metaId)}`;
+  return `/api/meta/active/${encodeURIComponent(ident.groupId)}`;
+}
+
+/** metaId(단건) 모드인지 판별 — notPublished 의미 분기에 사용. */
+export function isMetaIdMode(ident: MetaIdent | string): boolean {
+  return typeof ident !== 'string' && 'metaId' in ident;
+}
+
+/**
+ * 메타 조회 단일 진입점 (ADR-004 · ADR-006).
+ * - string | { groupId } → GET /api/meta/active/{groupId} (PUBLISHED 최신, DRAFT 차단)
+ * - { metaId }           → GET /api/meta/{metaId}         (어떤 상태든, 이력 복원)
+ * 식별자는 reactive(MaybeRefOrGetter) 로 받아 라우트 파라미터 변경에 자연스럽게 반응한다.
+ */
+export function usePageMeta(
+  ident: MaybeRefOrGetter<MetaIdent | string>,
+): UsePageMetaResult {
+  const resolved = computed(() => toValue(ident));
+  const url = computed(() => resolvePageMetaUrl(resolved.value));
+  const metaIdMode = computed(() => isMetaIdMode(resolved.value));
 
   const { data, statusCode, error, isFetching, execute } = useApiFetch(url, {
     refetch: true,
@@ -28,9 +58,10 @@ export function usePageMeta(groupId: MaybeRefOrGetter<string>): UsePageMetaResul
 
   const meta = computed<PageMeta | null>(() => data.value?.data ?? null);
 
-  const notPublished = computed<boolean>(
-    () => statusCode.value === 404 && data.value?.errorCode === 'META_NOT_PUBLISHED',
-  );
+  const notPublished = computed<boolean>(() => {
+    if (metaIdMode.value) return false;
+    return statusCode.value === 404 && data.value?.errorCode === 'META_NOT_PUBLISHED';
+  });
 
   const errorMsg = computed<string | null>(() => {
     if (notPublished.value) return null;

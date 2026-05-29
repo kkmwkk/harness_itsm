@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { toast } from 'vue-sonner';
-import { usePageMeta } from '@/composables/usePageMeta';
+import { usePageMeta, type MetaIdent } from '@/composables/usePageMeta';
 import { usePageData } from '@/composables/usePageData';
 import { useDataMutation } from '@/composables/useDataMutation';
 import { asPageMetaBody, MetaBodyShapeError } from '@/lib/meta-body';
@@ -20,23 +20,37 @@ import type { PageMetaBody, ActionMeta } from '@/types/meta-body';
 
 /**
  * 메타 한 건으로 화면 전체를 자동 구성하는 No-code 진입 컴포넌트 (ADR-004).
- * usePageMeta(PUBLISHED 최신) → asPageMetaBody(강타입 좁히기) → DynamicGrid + DynamicForm(dialog).
+ * usePageMeta(group PUBLISHED 최신 | metaId 특정 버전) → asPageMetaBody(강타입 좁히기) → DynamicGrid + DynamicForm(dialog).
  * `rows` 가 주어지면 그것을 그리드 데이터로 사용(phase 2 DynamicPageSampler 호환 경로),
  * 미제공이면 usePageData 가 meta.api 로 PageResponse<T> 를 자동 fetch(페이지·정렬·필터 setQuery).
  */
 interface Props {
-  groupId: string;
+  /** 그룹 기반 — PUBLISHED 최신 메타 사용 */
+  groupId?: string;
+  /** 메타 ID 직접 — 특정 버전 메타 사용 (이력 복원, ADR-006) */
+  metaId?: string;
+  /** props.rows 우선 (phase 2 호환) */
   rows?: unknown[];
 }
 const props = defineProps<Props>();
 
-const groupRef = computed(() => props.groupId);
+// 그리드 행 클릭을 부모(라우트 래퍼)로 전파 — 상세 라우팅은 meta-driven 으로 부모가 결정(ADR-004).
+const emit = defineEmits<{ 'row-click': [row: unknown] }>();
+
+// 둘 다 제공되면 metaId 우선(이력 복원이 더 명시적 의도). 둘 다 없으면 식별자 미정.
+const ident = computed<MetaIdent | null>(() => {
+  if (props.metaId) return { metaId: props.metaId };
+  if (props.groupId) return { groupId: props.groupId };
+  return null;
+});
+const hasIdent = computed(() => ident.value !== null);
+
 const {
   meta,
   notPublished,
   error: metaError,
   isFetching: isMetaFetching,
-} = usePageMeta(groupRef);
+} = usePageMeta(computed(() => ident.value ?? { groupId: '' }));
 
 // 메타 본문 강타입 좁히기 — 실패 시 페이지를 깨지 않고 명시 에러 카드만 노출.
 const body = ref<PageMetaBody | null>(null);
@@ -122,8 +136,15 @@ async function onFormSubmit(values: Record<string, unknown>): Promise<void> {
       </template>
     </PageHeader>
 
+    <Card v-if="!hasIdent">
+      <CardContent class="py-6">
+        <p class="text-danger">
+          groupId 또는 metaId 가 필요합니다.
+        </p>
+      </CardContent>
+    </Card>
     <p
-      v-if="isMetaFetching"
+      v-else-if="isMetaFetching"
       class="text-foreground-muted"
     >
       조회 중...
@@ -168,6 +189,7 @@ async function onFormSubmit(values: Record<string, unknown>): Promise<void> {
       <DynamicGrid
         :meta="body.grid"
         :rows="rows"
+        @row-click="(r) => emit('row-click', r)"
       />
 
       <Dialog v-model:open="dialogOpen">

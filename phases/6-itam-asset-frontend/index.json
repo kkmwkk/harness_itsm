@@ -2,9 +2,39 @@
   "project": "Polestar10 ITG v2",
   "phase": "6-itam-asset-frontend",
   "steps": [
-    { "step": 0, "name": "meta-version-override", "status": "pending" },
-    { "step": 1, "name": "asset-detail-page", "status": "pending" },
-    { "step": 2, "name": "history-restore-binding", "status": "pending" },
-    { "step": 3, "name": "e2e-with-meta-rotation", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "meta-version-override",
+      "status": "completed",
+      "started_at": "2026-05-29T10:53:12+0900",
+      "summary": "usePageMeta 확장(MetaIdent: group|metaId 두 모드, resolvePageMetaUrl 분리) + DynamicPage props.metaId 추가(groupId 와 동시 지정 시 metaId 우선, 둘 다 없으면 에러 카드). 단위 테스트 4 케이스. 기존 /itsm 등 회귀 없음.",
+      "completed_at": "2026-05-29T10:56:05+0900"
+    },
+    {
+      "step": 1,
+      "name": "asset-detail-page",
+      "status": "completed",
+      "started_at": "2026-05-29T10:56:06+0900",
+      "summary": "pages/itam/DetailPage.vue (자산 단건 useApiFetch + usePageMeta metaId 모드로 등록 메타 fetch + dl 형태 속성 표시 + 메타 JSON 미리보기) + router /itam/:id(\\d+) 라우트. 백엔드 단건 200, 미존재 자산도 SPA 200(에러 카드).",
+      "completed_at": "2026-05-29T10:59:11+0900"
+    },
+    {
+      "step": 2,
+      "name": "history-restore-binding",
+      "status": "completed",
+      "started_at": "2026-05-29T10:59:11+0900",
+      "summary": "DetailPage 에 DynamicForm 통합(등록 메타 asPageMetaBody 좁힘 + initialValues 로 자산 속성 prefil + 메타 버전·status 라벨). router itam.meta.detailUrlTemplate='/itam/{id}' + DynamicPage row-click emit + _DynamicRoute 의 row-click 핸들러가 detailUrlTemplate replace → router.push (도메인-중립, ADR-004 정합). 상세 폼은 read-only 의도(저장은 별도 phase).",
+      "completed_at": "2026-05-29T11:02:17+0900"
+    },
+    {
+      "step": 3,
+      "name": "e2e-with-meta-rotation",
+      "status": "completed",
+      "started_at": "2026-05-29T11:02:17+0900",
+      "summary": "백엔드 + 프런트 동시 부팅 + 메타 회전(v1-1 DEPRECATED·v1-2 PUBLISHED) 상태에서 자산 이력 복원 e2e 시나리오 PASS — 시드 자산(AST-SAMPLE-*) 의 /registration-meta 는 v1-1 보존, 신규 자산은 v1-2 로 등록. /itam/:id 상세 페이지가 DynamicForm 으로 등록 메타에 따라 화면 복원(v1.1·DEPRECATED / v1.2·PUBLISHED 버전 라벨). frontend/E2E_REPORT_PHASE6.md 작성. PRD §5-2 활용 사례·M4 마일스톤 완료.",
+      "completed_at": "2026-05-29T11:55:14+0900"
+    }
+  ],
+  "created_at": "2026-05-29T10:53:12+0900",
+  "completed_at": "2026-05-29T11:55:14+0900"
 }
