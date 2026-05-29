@@ -1,0 +1,33 @@
+/*
+ * 토스트 스타일 — UI_GUIDE §5-8 규격으로 vue-sonner 기본 스타일을 override.
+ * - 우측 상단 stack (App.vue 의 <Toaster position="top-right" />)
+ * - 본문 14px / 400, 서피스 배경 + 무채색 보더
+ * - 좌측 시맨틱 4px 보더로 카테고리 식별 (성공=success, 에러=danger)
+ * - Overlay shadow (UI_GUIDE §8), blur 장식은 사용하지 않음
+ */
+[data-sonner-toast] {
+  font-size: 14px;
+  font-weight: 400;
+  background-color: var(--color-surface);
+  color: var(--color-foreground);
+  border: 1px solid var(--color-border);
+  border-left-width: 4px;
+  border-left-color: var(--color-neutral);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+[data-sonner-toast][data-type='success'] {
+  border-left-color: var(--color-success);
+}
+
+[data-sonner-toast][data-type='error'] {
+  border-left-color: var(--color-danger);
+}
+
+[data-sonner-toast][data-type='warning'] {
+  border-left-color: var(--color-warning);
+}
+
+[data-sonner-toast][data-type='info'] {
+  border-left-color: var(--color-info);
+}

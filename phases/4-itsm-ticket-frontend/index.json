@@ -2,9 +2,39 @@
   "project": "Polestar10 ITG v2",
   "phase": "4-itsm-ticket-frontend",
   "steps": [
-    { "step": 0, "name": "data-fetch-integration", "status": "pending" },
-    { "step": 1, "name": "status-priority-badges", "status": "pending" },
-    { "step": 2, "name": "form-submit-integration", "status": "pending" },
-    { "step": 3, "name": "e2e-itsm-ticket-frontend", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "data-fetch-integration",
+      "status": "completed",
+      "started_at": "2026-05-29T09:49:45+0900",
+      "summary": "PageResponse<T> 타입 추가. usePageData composable (buildUrl 분리 + reactive URL + useApiFetch refetch + page/sort/filters setQuery + reload). DynamicPage props.rows 우선 + 미제공 시 meta.api 자동 fetch. /itsm 진입 시 백엔드 시드 5건 그리드 표시. 단위 테스트 5 케이스(buildUrl).",
+      "completed_at": "2026-05-29T09:52:26+0900"
+    },
+    {
+      "step": 1,
+      "name": "status-priority-badges",
+      "status": "completed",
+      "started_at": "2026-05-29T09:52:26+0900",
+      "summary": "StatusBadge·PriorityBadge (UI_GUIDE §5-5 pill rounded-full px-2.5 py-0.5 12px/600, 시맨틱 토큰 10% alpha) + lib/badges.ts spec 함수 분리(8 status + 4 priority 매핑, fallback 중립색). useGridColumns 가 type=status/priority 셀에 자동 매핑(DataTable cell h() + AG Grid cellRenderer). 단위 테스트 7 케이스 + dev 갤러리 /_dev/badges.",
+      "completed_at": "2026-05-29T10:04:02+0900"
+    },
+    {
+      "step": 2,
+      "name": "form-submit-integration",
+      "status": "completed",
+      "started_at": "2026-05-29T10:04:02+0900",
+      "summary": "useDataMutation composable (POST 공통, isLoading/error/submit) + DynamicPage 의 onFormSubmit 실 POST 로 교체 (성공→reload+토스트, 실패→에러 토스트) + sonner 도입 + UI_GUIDE §5-8 규격 토스트 스타일 override.",
+      "completed_at": "2026-05-29T10:08:51+0900"
+    },
+    {
+      "step": 3,
+      "name": "e2e-itsm-ticket-frontend",
+      "status": "completed",
+      "started_at": "2026-05-29T10:08:51+0900",
+      "summary": "E2E 시나리오 11+단계 PASS — /itsm 진입 시 itg-ticket-v1-1 메타 + 시드 5건 그리드 + status/priority 뱃지 + 등록 폼 submit → 백엔드 POST → 그리드 reload + 토스트. UI_GUIDE §5-5/§5-8 규격 검증. frontend/E2E_REPORT_PHASE4.md 작성. M3 마일스톤 완료 (백엔드 + 프런트 통합).",
+      "completed_at": "2026-05-29T10:13:15+0900"
+    }
+  ],
+  "created_at": "2026-05-29T09:49:45+0900",
+  "completed_at": "2026-05-29T10:13:15+0900"
 }
