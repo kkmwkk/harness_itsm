@@ -7,7 +7,8 @@
       "name": "meta-create-update-endpoints",
       "status": "completed",
       "started_at": "2026-05-30T05:49:36+0900",
-      "summary": "POST /api/meta(DRAFT 강제 생성)·PUT /api/meta/{id}/body(DRAFT 본문 교체) endpoint 추가 — MetaService.create/updateBody, PageMeta.replaceBody 도메인 가드, META_EDIT 권한(@PreAuthorize) 신설, PageMetaCreateRequest 평탄화·metaJson 래퍼 양식 정규화(resolvedMetaJson)."
+      "summary": "POST /api/meta(DRAFT 강제 생성)·PUT /api/meta/{id}/body(DRAFT 본문 교체) endpoint 추가 — MetaService.create/updateBody, PageMeta.replaceBody 도메인 가드, META_EDIT 권한(@PreAuthorize) 신설, PageMetaCreateRequest 평탄화·metaJson 래퍼 양식 정규화(resolvedMetaJson).",
+      "completed_at": "2026-05-30T06:04:46+0900"
     },
     {
       "step": 1,
