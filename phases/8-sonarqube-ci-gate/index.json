@@ -7,7 +7,8 @@
       "name": "gradle-sonar-plugin",
       "status": "completed",
       "started_at": "2026-05-29T14:25:00+0900",
-      "summary": "backend/build.gradle 에 jacoco(0.8.12) + org.sonarqube(5.1) 플러그인 + JaCoCo XML/HTML 리포트(test finalizedBy) + sonar.properties(sourceEncoding/coverage.jacoco.xmlReportPaths/exclusions: Application·package-info·dto·_generated). .env.sonar.example + .gitignore .env.sonar. ./gradlew clean test jacocoTestReport 통과 + JaCoCo XML/HTML 리포트 생성 확인. 서버 없이 sonar 실행 시 호스트 연결 실패로 명시적 종료."
+      "summary": "backend/build.gradle 에 jacoco(0.8.12) + org.sonarqube(5.1) 플러그인 + JaCoCo XML/HTML 리포트(test finalizedBy) + sonar.properties(sourceEncoding/coverage.jacoco.xmlReportPaths/exclusions: Application·package-info·dto·_generated). .env.sonar.example + .gitignore .env.sonar. ./gradlew clean test jacocoTestReport 통과 + JaCoCo XML/HTML 리포트 생성 확인. 서버 없이 sonar 실행 시 호스트 연결 실패로 명시적 종료.",
+      "completed_at": "2026-05-29T14:37:31+0900"
     },
     {
       "step": 1,
