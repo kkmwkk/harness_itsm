@@ -78,6 +78,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '시스템 / 메타 편집기' },
       },
       {
+        path: 'system/meta-editor/:metaId/wysiwyg',
+        name: 'system-meta-editor-wysiwyg',
+        component: () => import('@/components/editor/WysiwygPreview.vue'),
+        meta: { title: '시스템 / 메타 편집 (WYSIWYG)' },
+      },
+      {
         path: 'system/meta-editor/:metaId(.+)',
         name: 'system-meta-editor-detail',
         component: () => import('@/pages/system/MetaEditorDetailPage.vue'),
