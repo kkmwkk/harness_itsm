@@ -2,6 +2,8 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.0'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'jacoco'
+    id 'org.sonarqube' version '5.1.0.4882'
 }
 
 group = 'com.nkia.itg'
@@ -55,13 +57,57 @@ dependencies {
     testRuntimeOnly   'org.junit.platform:junit-platform-launcher'
 }
 
+jacoco {
+    toolVersion = '0.8.12'
+}
+
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy tasks.named('jacocoTestReport')
     // Testcontainers/docker-java 의 기본 API 버전(1.43)이 Docker Desktop 4.50+ 의 리다이렉트 응답(BadRequest 400)을 트리거한다.
     // docker-java 가 인식하는 시스템 프로퍼티(api.version)와 환경변수(DOCKER_API_VERSION) 양쪽에 1.44 를 명시.
     systemProperty 'api.version', System.getenv('DOCKER_API_VERSION') ?: '1.44'
     environment 'DOCKER_API_VERSION', System.getenv('DOCKER_API_VERSION') ?: '1.44'
     if (System.getenv('DOCKER_HOST')) {
         environment 'DOCKER_HOST', System.getenv('DOCKER_HOST')
+    }
+}
+
+tasks.jacocoTestReport {
+    dependsOn tasks.named('test')
+    reports {
+        xml.required  = true                                     // SonarQube 입력
+        html.required = true                                     // 로컬 확인용
+        csv.required  = false
+    }
+    afterEvaluate {
+        classDirectories.setFrom(
+            files(classDirectories.files.collect {
+                fileTree(dir: it, exclude: [
+                    'com/nkia/itg/Application*',
+                    'com/nkia/itg/**/package-info*',
+                    'com/nkia/itg/**/dto/**',                    // Record DTO 자동 생성 부분
+                ])
+            })
+        )
+    }
+}
+
+sonar {
+    properties {
+        property 'sonar.projectKey',  System.getenv('SONAR_PROJECT_KEY') ?: 'polestar-itg-v2'
+        property 'sonar.projectName', 'Polestar10 ITG v2'
+        property 'sonar.host.url',    System.getenv('SONAR_HOST_URL') ?: 'http://localhost:9000'
+        property 'sonar.token',       System.getenv('SONAR_TOKEN')    ?: ''
+        property 'sonar.sourceEncoding', 'UTF-8'
+        // 커버리지 리포트 경로
+        property 'sonar.coverage.jacoco.xmlReportPaths',
+                 layout.buildDirectory.dir('reports/jacoco/test/jacocoTestReport.xml').get().asFile
+        // 분석 제외 — 단순 DTO·Application·생성 파일
+        property 'sonar.exclusions',
+                 '**/Application.java,**/package-info.java,**/dto/**,**/_generated/**'
+        // 커버리지 제외
+        property 'sonar.coverage.exclusions',
+                 '**/Application.java,**/package-info.java,**/dto/**,**/config/**'
     }
 }
