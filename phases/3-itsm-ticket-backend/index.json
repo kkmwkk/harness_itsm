@@ -2,9 +2,39 @@
   "project": "Polestar10 ITG v2",
   "phase": "3-itsm-ticket-backend",
   "steps": [
-    { "step": 0, "name": "ticket-schema-and-entity", "status": "pending" },
-    { "step": 1, "name": "ticket-repository-and-service", "status": "pending" },
-    { "step": 2, "name": "ticket-controller-and-swagger", "status": "pending" },
-    { "step": 3, "name": "e2e-with-itg-ticket-meta", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "ticket-schema-and-entity",
+      "status": "completed",
+      "started_at": "2026-05-29T08:57:40+0900",
+      "summary": "sql/init/02_ticket.sql (ticket 테이블 + 인덱스 4종 + updated_at 트리거) + Enum 2종(Priority/TicketStatus) + Ticket Entity (@Enumerated.STRING, 도메인 메서드 changeStatus/changePriority/assign/updateContent, CLOSED 가드) + 단위 테스트 12 케이스. ddl-auto: validate 부팅 통과.",
+      "completed_at": "2026-05-29T09:02:19+0900"
+    },
+    {
+      "step": 1,
+      "name": "ticket-repository-and-service",
+      "status": "completed",
+      "started_at": "2026-05-29T09:02:19+0900",
+      "summary": "TicketRepository (findByTicketNo + search Page) + TicketService (create/getById/getByTicketNo/search/update/changeStatus/changePriority/assign) + DTO Record 6종(Request 5 + Response/Summary) + Ticket#assignTicketNo 추가 + TicketFixture + Mockito 단위 테스트 14 케이스. ticket_no 는 save 후 ITSM-{id5} 부여 + dirty checking. 모든 상태 가드는 Entity 도메인 메서드 위임. [hotfix 8d636a2: ticket_no NOT NULL 제거 — IDENTITY save 즉시 INSERT 호환]",
+      "completed_at": "2026-05-29T09:06:36+0900"
+    },
+    {
+      "step": 2,
+      "name": "ticket-controller-and-swagger",
+      "status": "completed",
+      "started_at": "2026-05-29T09:06:37+0900",
+      "summary": "TicketController 8 엔드포인트 (POST create / GET search·byId·byTicketNo / PATCH update·status·priority·assign) + PageResponse<T> 공통 응답 + @Operation·@Parameter·@ApiResponses 어노테이션 + 가상 샘플 example + @WebMvcTest 12 케이스. /v3/api-docs 에 ticket 경로 등록 확인.",
+      "completed_at": "2026-05-29T09:11:45+0900"
+    },
+    {
+      "step": 3,
+      "name": "e2e-with-itg-ticket-meta",
+      "status": "completed",
+      "started_at": "2026-05-29T09:36:00+0900",
+      "summary": "sql/init/03_itg_ticket_meta.sql (itg-ticket-v1-1 PUBLISHED, ITSM/PACKAGE, grid 6컬럼 + form 6필드 + create dialog-form) + 04_sample_tickets.sql (5건, OPEN/IN_PROGRESS/RESOLVED/CLOSED 혼합). E2E 시나리오 14 단계 PASS — 상태 매트릭스(OPEN→IN_PROGRESS→CLOSED, IN_PROGRESS→OPEN 거부) + CLOSED 가드(update/priority/assign 400) + ticket_no ITSM-{id5} 자동 부여 + OpenAPI 산출 갱신. backend/E2E_REPORT_PHASE3.md 작성. M3 백엔드 완료. 시드 유지(다음 phase frontend 통합 사용).",
+      "completed_at": "2026-05-29T09:39:37+0900"
+    }
+  ],
+  "created_at": "2026-05-29T08:57:40+0900",
+  "completed_at": "2026-05-29T09:39:37+0900"
 }

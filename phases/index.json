@@ -17,7 +17,8 @@
     },
     {
       "dir": "3-itsm-ticket-backend",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-05-29T09:39:37+0900"
     }
   ]
 }

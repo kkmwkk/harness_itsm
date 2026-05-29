@@ -12,10 +12,102 @@ servers:
 security:
 - bearerAuth: []
 tags:
+- name: ITSM Ticket — 티켓 관리
+  description: ITSM 티켓 접수·조회·상태 전이 API. 물리 삭제는 제공하지 않으며 close 로 종료한다.
 - name: Meta - 페이지 메타 관리
   description: page_meta 의 조회·버전 전이(publish/archive/copy) API. 신규 메타 생성은 다음 phase
     의 admin API 로 별도 제공.
 paths:
+  /api/tickets:
+    get:
+      tags:
+      - ITSM Ticket — 티켓 관리
+      summary: 티켓 목록 검색 (페이지)
+      description: 상태·우선순위·담당자 ID 로 필터링한 티켓 목록을 생성일 내림차순으로 페이지 반환. 모든 필터는 선택값이며 미지정
+        시 전체 대상.
+      operationId: search
+      parameters:
+      - name: status
+        in: query
+        description: 상태
+        required: false
+        schema:
+          type: string
+          enum:
+          - OPEN
+          - IN_PROGRESS
+          - RESOLVED
+          - CLOSED
+        example: OPEN
+      - name: priority
+        in: query
+        description: 우선순위
+        required: false
+        schema:
+          type: string
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+          - CRITICAL
+        example: HIGH
+      - name: assigneeId
+        in: query
+        description: 담당자 ID
+        required: false
+        schema:
+          type: string
+        example: assignee-sample-1
+      - name: page
+        in: query
+        description: 페이지 번호 (0부터)
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+        example: 0
+      - name: size
+        in: query
+        description: 페이지 크기
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 20
+        example: 20
+      responses:
+        "200":
+          description: 조회 성공 (빈 페이지 가능)
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageResponseTicketSummary"
+    post:
+      tags:
+      - ITSM Ticket — 티켓 관리
+      summary: 티켓 신규 접수
+      description: "신규 티켓을 생성한다. 상태는 OPEN 으로 시작하고 ticketNo(ITSM-{id5}) 가 자동 부여된다."
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketCreateRequest"
+        required: true
+      responses:
+        "201":
+          description: 접수 성공
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseTicketResponse"
+        "400":
+          description: 검증 실패
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseTicketResponse"
   /api/meta/{metaId}/copy:
     post:
       tags:
@@ -45,6 +137,199 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ApiResponsePageMetaResponse"
+  /api/tickets/{id}:
+    get:
+      tags:
+      - ITSM Ticket — 티켓 관리
+      summary: 티켓 단건 조회 (내부 ID)
+      description: 내부 PK 로 티켓 1건을 조회한다.
+      operationId: getById
+      parameters:
+      - name: id
+        in: path
+        description: 티켓 PK
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 42
+      responses:
+        "200":
+          description: 조회 성공
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseTicketResponse"
+        "404":
+          description: 티켓 없음
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseTicketResponse"
+    patch:
+      tags:
+      - ITSM Ticket — 티켓 관리
+      summary: 티켓 본문 부분 수정
+      description: 제목·본문·분류만 수정한다. 우선순위·상태·담당자는 별도 엔드포인트로 처리. CLOSED 티켓은 수정 불가.
+      operationId: update
+      parameters:
+      - name: id
+        in: path
+        description: 티켓 PK
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 42
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketUpdateRequest"
+        required: true
+      responses:
+        "200":
+          description: 수정 성공
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseTicketResponse"
+        "400":
+          description: CLOSED 티켓 수정 불가 또는 검증 실패
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseTicketResponse"
+        "404":
+          description: 티켓 없음
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseTicketResponse"
+  /api/tickets/{id}/status:
+    patch:
+      tags:
+      - ITSM Ticket — 티켓 관리
+      summary: 티켓 상태 전이
+      description: "허용 전이: OPEN→IN_PROGRESS/RESOLVED/CLOSED, IN_PROGRESS→RESOLVED/CLOSED,\
+        \ RESOLVED→CLOSED/IN_PROGRESS(재오픈), CLOSED→불가."
+      operationId: changeStatus
+      parameters:
+      - name: id
+        in: path
+        description: 티켓 PK
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 42
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketStatusChangeRequest"
+        required: true
+      responses:
+        "200":
+          description: 전이 성공
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseTicketResponse"
+        "400":
+          description: 허용되지 않은 전이
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseTicketResponse"
+        "404":
+          description: 티켓 없음
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseTicketResponse"
+  /api/tickets/{id}/priority:
+    patch:
+      tags:
+      - ITSM Ticket — 티켓 관리
+      summary: 티켓 우선순위 변경
+      description: 우선순위(LOW/MEDIUM/HIGH/CRITICAL) 를 변경한다. CLOSED 티켓은 변경 불가.
+      operationId: changePriority
+      parameters:
+      - name: id
+        in: path
+        description: 티켓 PK
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 42
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketPriorityChangeRequest"
+        required: true
+      responses:
+        "200":
+          description: 변경 성공
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseTicketResponse"
+        "400":
+          description: CLOSED 티켓 변경 불가
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseTicketResponse"
+        "404":
+          description: 티켓 없음
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseTicketResponse"
+  /api/tickets/{id}/assign:
+    patch:
+      tags:
+      - ITSM Ticket — 티켓 관리
+      summary: 티켓 담당자 변경/해제
+      description: 담당자 ID 를 변경하거나 null/blank 로 해제한다. CLOSED 티켓은 변경 불가.
+      operationId: assign
+      parameters:
+      - name: id
+        in: path
+        description: 티켓 PK
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 42
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketAssignRequest"
+        required: true
+      responses:
+        "200":
+          description: 변경 성공
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseTicketResponse"
+        "400":
+          description: CLOSED 티켓 변경 불가
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseTicketResponse"
+        "404":
+          description: 티켓 없음
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseTicketResponse"
   /api/meta/{metaId}/publish:
     patch:
       tags:
@@ -108,13 +393,41 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ApiResponsePageMetaResponse"
+  /api/tickets/by-no/{ticketNo}:
+    get:
+      tags:
+      - ITSM Ticket — 티켓 관리
+      summary: 티켓 단건 조회 (티켓 번호)
+      description: "표시용 티켓 번호(ITSM-{id5}) 로 티켓 1건을 조회한다."
+      operationId: getByTicketNo
+      parameters:
+      - name: ticketNo
+        in: path
+        description: 표시용 티켓 번호
+        required: true
+        schema:
+          type: string
+        example: ITSM-00042
+      responses:
+        "200":
+          description: 조회 성공
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseTicketResponse"
+        "404":
+          description: 티켓 없음
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseTicketResponse"
   /api/meta/{metaId}:
     get:
       tags:
       - Meta - 페이지 메타 관리
       summary: 특정 버전 단건 조회
       description: metaId 로 특정 버전 1건을 조회. 자산 등록 당시 메타 복원 등 이력 추적에 사용.
-      operationId: getById
+      operationId: getById_1
       parameters:
       - name: metaId
         in: path
@@ -302,6 +615,112 @@ paths:
                 $ref: "#/components/schemas/ApiResponsePageMetaResponse"
 components:
   schemas:
+    TicketCreateRequest:
+      type: object
+      description: 티켓 신규 생성 요청
+      properties:
+        title:
+          type: string
+          description: 제목
+          example: 샘플 티켓 제목
+          maxLength: 200
+          minLength: 0
+        content:
+          type: string
+          description: 본문
+          example: 샘플 본문
+        priority:
+          type: string
+          description: 우선순위
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+          - CRITICAL
+          example: MEDIUM
+        category:
+          type: string
+          description: 분류
+          example: BUG
+        assigneeId:
+          type: string
+          description: 담당자 ID
+          example: assignee-sample-1
+      required:
+      - priority
+    ApiResponseTicketResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/TicketResponse"
+        message:
+          type: string
+        errorCode:
+          type: string
+    TicketResponse:
+      type: object
+      description: 티켓 응답 DTO (단건 조회·생성·수정 결과)
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 내부 ID
+          example: 1
+        ticketNo:
+          type: string
+          description: 표시용 티켓 번호
+          example: ITSM-00001
+        title:
+          type: string
+          description: 제목
+          example: 샘플 티켓 제목
+        content:
+          type: string
+          description: 본문
+          example: 샘플 본문
+        priority:
+          type: string
+          description: 우선순위
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+          - CRITICAL
+          example: MEDIUM
+        status:
+          type: string
+          description: 상태
+          enum:
+          - OPEN
+          - IN_PROGRESS
+          - RESOLVED
+          - CLOSED
+          example: OPEN
+        category:
+          type: string
+          description: 분류
+          example: BUG
+        assigneeId:
+          type: string
+          description: 담당자 ID
+          example: assignee-sample-1
+        createdAt:
+          type: string
+          format: date-time
+          description: 생성 일시
+          example: 2026-05-29T10:15:30
+        updatedAt:
+          type: string
+          format: date-time
+          description: 수정 일시
+          example: 2026-05-29T11:20:45
+        closedAt:
+          type: string
+          format: date-time
+          description: 종료 일시 (CLOSED 전이 시)
+          example: 2026-05-29T12:00:00
     ApiResponsePageMetaResponse:
       type: object
       properties:
@@ -390,6 +809,136 @@ components:
           format: date-time
           description: 수정 일시
           example: 2026-05-28T11:20:45
+    TicketUpdateRequest:
+      type: object
+      description: 티켓 본문 부분 수정 요청 (priority/status/assignee 는 별도 엔드포인트)
+      properties:
+        title:
+          type: string
+          description: 제목
+          example: 수정된 샘플 제목
+          maxLength: 200
+          minLength: 0
+        content:
+          type: string
+          description: 본문
+          example: 수정된 샘플 본문
+        category:
+          type: string
+          description: 분류
+          example: REQ
+    TicketStatusChangeRequest:
+      type: object
+      description: 티켓 상태 전이 요청
+      properties:
+        next:
+          type: string
+          description: 전이할 상태
+          enum:
+          - OPEN
+          - IN_PROGRESS
+          - RESOLVED
+          - CLOSED
+          example: IN_PROGRESS
+      required:
+      - next
+    TicketPriorityChangeRequest:
+      type: object
+      description: 티켓 우선순위 변경 요청
+      properties:
+        next:
+          type: string
+          description: 변경할 우선순위
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+          - CRITICAL
+          example: HIGH
+      required:
+      - next
+    TicketAssignRequest:
+      type: object
+      description: 티켓 담당자 변경 요청 (null/blank 는 담당자 해제)
+      properties:
+        assigneeId:
+          type: string
+          description: 담당자 ID (null/blank 허용 — 해제)
+          example: assignee-sample-2
+    ApiResponsePageResponseTicketSummary:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/PageResponseTicketSummary"
+        message:
+          type: string
+        errorCode:
+          type: string
+    PageResponseTicketSummary:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/TicketSummary"
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        number:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+    TicketSummary:
+      type: object
+      description: 티켓 목록용 경량 DTO (content 제외)
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 내부 ID
+          example: 1
+        ticketNo:
+          type: string
+          description: 표시용 티켓 번호
+          example: ITSM-00001
+        title:
+          type: string
+          description: 제목
+          example: 샘플 티켓 제목
+        priority:
+          type: string
+          description: 우선순위
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+          - CRITICAL
+          example: MEDIUM
+        status:
+          type: string
+          description: 상태
+          enum:
+          - OPEN
+          - IN_PROGRESS
+          - RESOLVED
+          - CLOSED
+          example: OPEN
+        assigneeId:
+          type: string
+          description: 담당자 ID
+          example: assignee-sample-1
+        createdAt:
+          type: string
+          format: date-time
+          description: 생성 일시
+          example: 2026-05-29T10:15:30
     ApiResponseListPageMetaResponse:
       type: object
       properties:
