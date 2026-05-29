@@ -1,0 +1,10 @@
+{
+  "project": "Polestar10 ITG v2",
+  "phase": "4-itsm-ticket-frontend",
+  "steps": [
+    { "step": 0, "name": "data-fetch-integration", "status": "pending" },
+    { "step": 1, "name": "status-priority-badges", "status": "pending" },
+    { "step": 2, "name": "form-submit-integration", "status": "pending" },
+    { "step": 3, "name": "e2e-itsm-ticket-frontend", "status": "pending" }
+  ]
+}
