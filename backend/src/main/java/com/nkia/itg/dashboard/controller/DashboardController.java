@@ -12,13 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Dashboard — 운영 대시보드",
         description = "현재 로그인 사용자 기준으로 티켓·자산·워크플로우 데이터를 집계한 요약 API.")
 @RestController
-@RequestMapping("/api/dashboard")
 @RequiredArgsConstructor
 public class DashboardController {
 
@@ -34,7 +32,7 @@ public class DashboardController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "인증 필요")
     })
-    @GetMapping("/summary")
+    @GetMapping("/api/dashboard/summary")
     public ResponseEntity<ApiResponse<DashboardSummary>> summary(Authentication authentication) {
         String username = authentication == null ? null : authentication.getName();
         Set<String> roles = authentication == null

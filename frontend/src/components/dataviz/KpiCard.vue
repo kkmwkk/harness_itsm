@@ -1,7 +1,8 @@
 <script setup lang="ts">
 /**
  * KPI 카드 — 큰 숫자(36px/700 tabular-nums) + 라벨 + 우측 스파크라인 + 하단 변화량.
- * 카드는 Hairline + 12px radius, 그림자 없음(UI_GUIDE §5-3). module prop 으로 스파크라인 색 자동.
+ * 카드는 Hairline + 12px radius + shadow-card(UI_GUIDE §6 elevation). module prop 으로
+ * 스파크라인 색과 좌측 4px 액센트 보더(모듈 식별, UI_GUIDE §3-2)를 자동 적용한다.
  */
 import { computed } from 'vue';
 import type { SystemType } from '@/types/meta';
@@ -30,7 +31,12 @@ const visual = computed(() => (props.module ? moduleVisual(props.module) : null)
 </script>
 
 <template>
-  <div class="rounded-lg border border-border bg-surface p-5">
+  <div
+    :class="[
+      'rounded-lg border border-border bg-surface p-5 shadow-card',
+      visual ? `border-l-4 ${visual.borderClass}` : '',
+    ]"
+  >
     <div class="flex items-start justify-between gap-3">
       <div class="min-w-0">
         <p class="flex items-center gap-1.5 truncate text-[13px] font-medium text-foreground-muted">

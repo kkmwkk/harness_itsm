@@ -117,7 +117,9 @@ export function useDashboard(opts: UseDashboardOptions = {}): UseDashboardResult
   }
 
   if (opts.poll) {
-    const { pause } = useIntervalFn(reload, opts.intervalMs ?? 30_000);
+    const { pause } = useIntervalFn(() => {
+      void reload();
+    }, opts.intervalMs ?? 30_000);
     onScopeDispose(pause);
   }
 

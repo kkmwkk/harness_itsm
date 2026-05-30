@@ -82,7 +82,8 @@
     },
     {
       "dir": "16-design-system-v2",
-      "status": "pending"
+      "status": "error",
+      "failed_at": "2026-05-30T09:58:07+0900"
     }
   ]
 }
