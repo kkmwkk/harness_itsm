@@ -80,7 +80,7 @@
       "status": "completed",
       "started_at": "2026-05-30T12:01:35+0900",
       "summary": "FieldType 풀 위젯 — placeholder 였던 date/date-range/user-picker/file/textarea(markdown)/number(slider) 를 본격 위젯으로 교체. ui/popover(reka PopoverRoot)·ui/calendar(Calendar·RangeCalendar, reka+@internationalized/date 3.12.1 reka와 dedupe·ko-KR·토큰 다크) + common 위젯 7종: DatePicker(popover 캘린더·ISO 모델·clear)·DateRangePicker(2칸 from~to)·UserPicker(/api/users?kw= watchDebounced 200ms 자동완성·Avatar 칩·onClickOutside)·FileUpload(드래그앤드롭·다중·이미지 thumbnail·POST /api/attachments stub)·MarkdownEditor(textarea+marked+DOMPurify 새니타이즈 미리보기)·SliderInput(native range·tabular)·ColorPicker(swatch+hex). 순수 헬퍼 lib/date-field.ts·lib/markdown.ts·lib/form-widget.ts(widgetFor 분기 매트릭스) 로 DynamicForm 분기 추출. 백엔드 common.attachment.AttachmentController stub(multipart→메타만, 저장 X, 인증 가드). 단위테스트 6 spec(date-field·markdown·form-widget 순수 + Slider/Color/Markdown 마운트). type-check·lint(max-warnings 0)·build·test(267) PASS, 백엔드 compileJava PASS.",
-      "completed_at": "2026-05-30T12:20:00+0900"
+      "completed_at": "2026-05-30T12:19:12+0900"
     },
     {
       "step": 10,
