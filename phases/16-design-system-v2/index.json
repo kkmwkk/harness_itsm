@@ -1,0 +1,17 @@
+{
+  "project": "Polestar10 ITG v2",
+  "phase": "16-design-system-v2",
+  "steps": [
+    { "step": 0,  "name": "design-language-and-tokens-v2", "status": "pending" },
+    { "step": 1,  "name": "dark-mode-and-theme-switcher", "status": "pending" },
+    { "step": 2,  "name": "charts-and-kpi-components", "status": "pending" },
+    { "step": 3,  "name": "dashboard-redesign", "status": "pending" },
+    { "step": 4,  "name": "kanban-board", "status": "pending" },
+    { "step": 5,  "name": "gantt-timeline", "status": "pending" },
+    { "step": 6,  "name": "micro-interactions", "status": "pending" },
+    { "step": 7,  "name": "notification-center", "status": "pending" },
+    { "step": 8,  "name": "rich-empty-states-and-module-identity", "status": "pending" },
+    { "step": 9,  "name": "form-widget-enhancement", "status": "pending" },
+    { "step": 10, "name": "playwright-baseline-and-final-report", "status": "pending" }
+  ]
+}
