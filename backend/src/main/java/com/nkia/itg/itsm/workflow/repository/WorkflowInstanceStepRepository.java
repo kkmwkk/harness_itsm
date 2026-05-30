@@ -17,4 +17,7 @@ public interface WorkflowInstanceStepRepository extends JpaRepository<WorkflowIn
     /** SLA 초과 미완료 단계 (배치·polling 용). */
     List<WorkflowInstanceStep> findByCompletedAtIsNullAndSlaDueAtIsNotNullAndSlaDueAtBefore(
             LocalDateTime now);
+
+    /** 진행 중(미완료) 단계 전체 — 대시보드 내 작업 큐·SLA 임박 집계용. */
+    List<WorkflowInstanceStep> findByCompletedAtIsNull();
 }
