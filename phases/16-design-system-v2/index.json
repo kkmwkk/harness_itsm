@@ -24,7 +24,7 @@
       "status": "completed",
       "started_at": "2026-05-30T09:39:13+0900",
       "summary": "ECharts 6 + vue-echarts 8 도입(lib/echarts.ts tree-shaking 등록, main.ts 부팅 import) + chart-theme.ts(토큰→getComputedStyle 색 읽기, useChartColors 다크 watch, 순수 옵션 빌더 build{Line,Bar,Donut,Sparkline}Option·trendInfo·moduleChartColor) + dataviz 7종(KpiCard·Sparkline·TrendIndicator·DonutChart·BarChart·LineChart·MetricRow, 토큰·모듈컬러·다크 자동) + /_dev/charts 갤러리 + chart-theme.spec(15 tests). type-check·lint·build·test(188) PASS.",
-      "completed_at": "2026-05-30T09:49:00+0900"
+      "completed_at": "2026-05-30T09:49:20+0900"
     },
     {
       "step": 3,
