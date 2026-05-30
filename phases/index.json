@@ -82,8 +82,9 @@
     },
     {
       "dir": "16-design-system-v2",
-      "status": "error",
-      "failed_at": "2026-05-30T09:58:07+0900"
+      "status": "completed",
+      "failed_at": "2026-05-30T09:58:07+0900",
+      "completed_at": "2026-05-30T12:34:07+0900"
     }
   ]
 }
