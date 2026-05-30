@@ -7,9 +7,11 @@ test.describe('Home (대시보드)', () => {
     await expect(page).toHaveScreenshot('login.png');
   });
 
-  test('admin 로그인 후 홈 카드 그리드', async ({ page, asAdmin }) => {
+  test('admin 로그인 후 홈 대시보드', async ({ page, asAdmin }) => {
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: /대시보드|Polestar/ })).toBeVisible();
+    // 디자인 v2 대시보드 재설계(step 3) — 환영 헤더로 진입 확인.
+    await expect(page.getByRole('heading', { name: /안녕하세요/ })).toBeVisible();
+    await page.waitForLoadState('networkidle');
     await expect(page).toHaveScreenshot('home-admin.png', { fullPage: true });
   });
 });
