@@ -281,7 +281,7 @@ Attachment
 ### 5-4. No-code WYSIWYG 편집기 (신규 — 단계적)
 - **1단계 (M9)**: 폼/그리드 메타 편집 UI. 필드 추가·삭제·라벨 편집·옵션 편집·발행. JSON 직접 노출 없음.
 - **2단계 (M10)**: 드래그앤드롭. 필드 순서·레이아웃 변경, 그리드 컬럼 순서·width.
-- **3단계 (M11)**: WYSIWYG. 실 미리보기에서 직접 클릭·편집. (Stretch — Builder.io 급)
+- **3단계 (M11)**: WYSIWYG. 실 미리보기에서 직접 클릭·편집. (Stretch — Builder.io 급) — **PoC 완료, 결정: 보류**(M9·M10 폼 UI 로 충분, PoC 자산 보존·재도입 트리거 명시 — `docs/STRETCH_DECISION_REPORT.md`).
 
 ### 5-5. AI 메타 자동 생성 (v2.0 유지 + 확장)
 - `scripts/generate_meta.py` 기본 매핑.
@@ -376,7 +376,7 @@ Attachment
 | **M8** | **도메인 깊이** — 요청 유형·자산 분류·워크플로우 MVP | **최우선** | 4~5 phase |
 | **M9** | **메타 편집 UI (No-code 1단계)** — 폼 기반 메타 편집·발행 | 높음 | 2~3 phase |
 | M10 | 드래그앤드롭 page builder (No-code 2단계) | 중간 | 2~3 phase |
-| M11 | WYSIWYG · BPMN 엔진 (Stretch) | 낮음 | 별도 PoC 후 결정 |
+| M11 | WYSIWYG · BPMN 엔진 (Stretch) | 낮음 | **PoC 완료 — 결정: 보류 (WYSIWYG·BPMN 둘 다)** — `docs/STRETCH_DECISION_REPORT.md` |
 | 베이스라인 | UX 카탈로그 + Playwright e2e + Dialog/스타일 hotfix | M7 와 병행 | 1 phase |
 
 ### 권장 진행 순서

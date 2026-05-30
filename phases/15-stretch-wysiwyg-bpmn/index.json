@@ -2,8 +2,31 @@
   "project": "Polestar10 ITG v2",
   "phase": "15-stretch-wysiwyg-bpmn",
   "steps": [
-    { "step": 0, "name": "wysiwyg-poc-meta-edit", "status": "pending" },
-    { "step": 1, "name": "bpmn-engine-evaluation", "status": "pending" },
-    { "step": 2, "name": "stretch-decision-report", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "wysiwyg-poc-meta-edit",
+      "status": "completed",
+      "started_at": "2026-05-30T08:49:07+0900",
+      "summary": "WYSIWYG PoC — WysiwygPreview.vue(좌측 기존 편집기 패널 재사용 + 우측 실 미리보기·편집모드 토글: 폼 라벨·그리드 헤더 라벨/width 인플레이스 편집 + 삭제) + useWysiwygPreview 순수 헬퍼(setFieldLabel/removeFieldAt/setColumnLabel/setColumnWidth/removeColumnAt, 불변) + /system/meta-editor/:metaId/wysiwyg 라우트 + 단위 테스트. type-check·lint·build·test(160) PASS.",
+      "completed_at": "2026-05-30T08:55:00+0900"
+    },
+    {
+      "step": 1,
+      "name": "bpmn-engine-evaluation",
+      "status": "completed",
+      "started_at": "2026-05-30T08:55:00+0900",
+      "summary": "BPMN/Camunda 도입 평가(실 통합 X) — docs/BPMN_EVAL_NOTES.md: 자체 엔진 코드 실측(applyTransition `+1` 선형·SLA findOverdue 조회까지·assignee 정적)으로 병렬분기·타이머 자동escalation·서브프로세스 3/3 표현 불가 확인. 결정기준상 능력 천장은 초과하나 ADR-017 실 수요 트리거(3건 누적·모델러 요구) 0건 미충족 → 권장: 보류 + 자체 모델 점진 확장(스케줄 escalation·조건분기 필드). Camunda7 통합 시뮬(~80MB·ACT_* 40여테이블·/engine-rest 래퍼 불일치)·선형→sequence flow 변환가능성 정리. ADR-017 에 M8 후 1차 평가 이력 한 줄+노트 참조 추가. AC 3/3 PASS.",
+      "completed_at": "2026-05-30T08:57:58+0900"
+    },
+    {
+      "step": 2,
+      "name": "stretch-decision-report",
+      "status": "completed",
+      "started_at": "2026-05-30T08:57:58+0900",
+      "summary": "M11 Stretch 종합 결정 보고서 — docs/STRETCH_DECISION_REPORT.md: WYSIWYG·BPMN 둘 다 도입 보류로 명시 결정. WYSIWYG(step0 PoC) — 인플레이스 라벨/width 편집+삭제만 가능·신규추가는 좌측패널 의존, M9·M10 폼UI로 비개발자 진입장벽 해소됨 → 보류(PoC 자산 보존+재도입 트리거 명시). BPMN(step1) — 자체모델 표현력 천장 3/3 확인하나 실수요 0건으로 ADR-017 트리거 미충족·Camunda 비용>이득 → 보류+자체 점진확장(스케줄 escalation·조건분기 필드). ADR-016 3단계·ADR-017 에 최종결정 이력 추가, PRD §5-4·§10 M11 상태를 'PoC 완료—결정:보류'로 갱신. AC 4/4 PASS.",
+      "completed_at": "2026-05-30T09:01:29+0900"
+    }
+  ],
+  "created_at": "2026-05-30T08:49:07+0900",
+  "completed_at": "2026-05-30T09:01:29+0900"
 }
