@@ -10,7 +10,10 @@ import { TriangleAlertIcon } from '@lucide/vue';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useDashboard } from '@/composables/useDashboard';
 import { UI } from '@/lib/ui-messages';
+import type { SystemType } from '@/types/meta';
 import { Button } from '@/components/ui/button';
+import KpiCard from '@/components/dataviz/KpiCard.vue';
+import Skeleton from '@/components/feedback/Skeleton.vue';
 import DashboardWelcome from '@/components/dashboard/DashboardWelcome.vue';
 import KpiGrid from '@/components/dashboard/KpiGrid.vue';
 import TicketByPriorityCard from '@/components/dashboard/TicketByPriorityCard.vue';
@@ -27,6 +30,14 @@ const canTickets = computed<boolean>(() =>
 const { summary, isFetching, error, reload } = useDashboard({ poll: true });
 
 const showInitialLoading = computed(() => !summary.value && isFetching.value);
+
+// 최초 로딩 KPI 스켈레톤 라벨 — 실제 KpiGrid 와 결을 맞춘 자리표시(모듈 좌측 보더 유지).
+const skeletonKpis: { label: string; module?: SystemType }[] = [
+  { label: '열린 티켓', module: 'ITSM' },
+  { label: 'SLA 임박·초과' },
+  { label: '내 작업', module: 'COMMON' },
+  { label: '전체 자산', module: 'ITAM' },
+];
 </script>
 
 <template>
@@ -43,15 +54,39 @@ const showInitialLoading = computed(() => !summary.value && isFetching.value);
         {{ UI.loading.data }}
       </p>
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div
-          v-for="i in 4"
-          :key="i"
-          class="h-28 animate-pulse rounded-lg border border-border bg-surface-muted"
+        <KpiCard
+          v-for="k in skeletonKpis"
+          :key="k.label"
+          loading
+          :label="k.label"
+          :module="k.module"
         />
       </div>
       <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div class="h-72 animate-pulse rounded-xl border border-border bg-surface-muted lg:col-span-2" />
-        <div class="h-72 animate-pulse rounded-xl border border-border bg-surface-muted" />
+        <div class="rounded-xl border border-border bg-surface p-5 shadow-card lg:col-span-2">
+          <Skeleton
+            width="40%"
+            height="1rem"
+          />
+          <Skeleton
+            class="mt-4"
+            width="100%"
+            height="14rem"
+            rounded="lg"
+          />
+        </div>
+        <div class="rounded-xl border border-border bg-surface p-5 shadow-card">
+          <Skeleton
+            width="50%"
+            height="1rem"
+          />
+          <Skeleton
+            class="mt-4"
+            width="100%"
+            height="14rem"
+            rounded="lg"
+          />
+        </div>
       </div>
     </div>
 

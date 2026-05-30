@@ -53,7 +53,10 @@
     {
       "step": 6,
       "name": "micro-interactions",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-30T11:28:05+0900",
+      "summary": "마이크로 인터랙션 풀세트 — feedback/Skeleton.vue(shimmer, blink 금지·토큰만·rounded prop) + tokens.css @keyframes shimmer/.animate-shimmer + base.css .page-* 트랜지션(fade+slide-up, --motion-base, prefers-reduced-motion 흡수). 적용: DynamicGrid loading prop→헤더1+본문8줄 스켈레톤 그리드(DynamicPage 가 isDataFetching 전달), KpiCard loading prop→숫자·스파크라인 스켈레톤(HomePage 최초 로딩 KPI 4종 + 차트 자리 Skeleton 으로 교체), itam DetailPage 자산 로딩 스켈레톤 카드. Optimistic UI: useDataMutation.submitOptimistic(즉시 적용 rollback 반환·실패 시 원복·언마운트 race 가드 onScopeDispose) + DynamicPage onFormSubmit 가 그리드 상단 임시 행 즉시 추가→성공 reload 후 비움·실패 rollback. App.vue RouterView v-slot + <transition name=page mode=out-in>. Toast stagger 는 vue-sonner 기본 스택. submitOptimistic 성공/실패 단위테스트 2종. type-check·lint(max-warnings 0)·build·test(210) PASS.",
+      "completed_at": "2026-05-30T11:37:30+0900"
     },
     {
       "step": 7,

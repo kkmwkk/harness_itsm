@@ -118,3 +118,13 @@
   --shadow-hover:   0 4px 12px rgba(0,0,0,0.5);
   --shadow-overlay: 0 8px 24px rgba(0,0,0,0.6);
 }
+
+/* Skeleton shimmer (UI_GUIDE §9 — 로딩은 blink 금지, 좌→우 shimmer loop).
+   prefers-reduced-motion 사용자에게는 base.css 전역 규칙이 animation 을 사실상 제거한다. */
+@keyframes shimmer {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}
+.animate-shimmer {
+  animation: shimmer 1.2s infinite ease-out;
+}

@@ -27,6 +27,7 @@ import { useDataMutation } from '@/composables/useDataMutation';
 import { asPageMetaBody, MetaBodyShapeError } from '@/lib/meta-body';
 import { UI } from '@/lib/ui-messages';
 import DynamicForm from '@/components/dynamic/DynamicForm.vue';
+import Skeleton from '@/components/feedback/Skeleton.vue';
 import EventTimeline, { type TimelineItem, type TimelineTone } from '@/components/dataviz/EventTimeline.vue';
 import type { ApiEnvelope, MetaStatus } from '@/types/meta';
 import type { PageMetaBody } from '@/types/meta-body';
@@ -265,12 +266,28 @@ const timelineItems = computed<TimelineItem[]>(() =>
       </Button>
     </div>
 
-    <p
+    <!-- 자산 단건 로딩 스켈레톤 — 상세 카드 자리(제목 + 속성 dl) (UI_GUIDE §9). -->
+    <Card
       v-if="isAssetLoading"
-      class="text-foreground-muted"
+      aria-busy="true"
     >
-      자산 조회 중…
-    </p>
+      <CardHeader>
+        <Skeleton
+          width="42%"
+          height="1.25rem"
+        />
+      </CardHeader>
+      <CardContent>
+        <div class="grid grid-cols-2 gap-3">
+          <Skeleton
+            v-for="i in 10"
+            :key="i"
+            height="0.9rem"
+            :width="i % 2 === 1 ? '40%' : '70%'"
+          />
+        </div>
+      </CardContent>
+    </Card>
     <Card
       v-else-if="assetError"
       class="border-danger"

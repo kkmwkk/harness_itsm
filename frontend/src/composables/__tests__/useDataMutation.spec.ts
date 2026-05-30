@@ -76,4 +76,27 @@ describe('useDataMutation', () => {
     expect(result).toBeNull();
     expect(error.value).toBe('네트워크 오류');
   });
+
+  it('submitOptimistic_성공이면_rollback_미호출_및_data_반환', async () => {
+    jsonSpy.mockResolvedValue(mockResponse({ data: { id: 7 }, statusCode: 201 }));
+    const { submitOptimistic } = useDataMutation<Record<string, unknown>, { id: number }>();
+    const rollback = vi.fn();
+
+    const result = await submitOptimistic('/api/tickets', { title: '샘플-제목' }, () => rollback);
+
+    expect(result).toEqual({ id: 7 });
+    expect(rollback).not.toHaveBeenCalled();
+  });
+
+  it('submitOptimistic_실패면_rollback_호출_및_null_에러_적재', async () => {
+    jsonSpy.mockResolvedValue(mockResponse({ statusCode: 400, message: '거부됨' }));
+    const { submitOptimistic, error } = useDataMutation();
+    const rollback = vi.fn();
+
+    const result = await submitOptimistic('/api/tickets', {}, () => rollback);
+
+    expect(result).toBeNull();
+    expect(rollback).toHaveBeenCalledOnce();
+    expect(error.value).toBe('거부됨');
+  });
 });

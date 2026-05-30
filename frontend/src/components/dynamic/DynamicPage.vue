@@ -84,7 +84,12 @@ const {
   setQuery,
 } = usePageData<Record<string, unknown>>(api);
 
-const rows = computed<unknown[]>(() => props.rows ?? fetchedRows.value ?? []);
+// Optimistic 행 — submit 직후 백엔드 응답 전 그리드 상단에 즉시 노출되는 임시 행(UI_GUIDE §9).
+// 성공 시 reload 후 비우고(백엔드 truth 로 교체), 실패 시 submitOptimistic 의 rollback 이 제거한다.
+const optimisticRows = ref<Record<string, unknown>[]>([]);
+const rows = computed<unknown[]>(
+  () => props.rows ?? [...optimisticRows.value, ...(fetchedRows.value ?? [])],
+);
 
 // 그리드의 page/sort 이벤트 연결과 reload 트리거는 후속 step 에서 사용 (defineExpose 로 노출).
 defineExpose({ reload, setQuery });
@@ -100,7 +105,7 @@ function onAction(a: ActionMeta): void {
 
 // 폼 submit → meta.api 로 실 POST (도메인-중립: ticket 전용 분기 없음, ADR-004).
 // 성공 시 그리드 reload + 성공 토스트 + 다이얼로그 닫힘, 실패 시 에러 토스트.
-const { submit: submitForm } = useDataMutation<
+const { submitOptimistic: submitFormOptimistic } = useDataMutation<
   Record<string, unknown>,
   Record<string, unknown>
 >();
@@ -110,12 +115,22 @@ async function onFormSubmit(values: Record<string, unknown>): Promise<void> {
   if (!path) return;
   // 분류 등 컨텍스트 기본값을 먼저 깔고 폼 입력값으로 덮어쓴다(폼 우선).
   const payload = { ...props.submitDefaults, ...values };
-  const result = await submitForm(path, payload);
+  // Optimistic: 응답을 기다리지 않고 그리드 상단에 임시 행을 즉시 추가한다.
+  const result = await submitFormOptimistic(path, payload, () => {
+    const temp = { ...payload };
+    optimisticRows.value = [temp, ...optimisticRows.value];
+    return () => {
+      optimisticRows.value = optimisticRows.value.filter((r) => r !== temp);
+    };
+  });
   if (result) {
     toast.success(UI.success.created(meta.value?.title ?? '항목'));
     dialogOpen.value = false;
     await reload();
+    // 백엔드 truth 로 그리드가 다시 채워졌으므로 임시 행을 비운다(중복 방지).
+    optimisticRows.value = [];
   } else {
+    // 실패 시 rollback 이 임시 행을 이미 제거했다 — 에러만 안내.
     toast.error(UI.error.submit);
   }
 }
@@ -190,16 +205,11 @@ async function onFormSubmit(values: Record<string, unknown>): Promise<void> {
           </p>
         </CardContent>
       </Card>
-      <p
-        v-else-if="isDataFetching && !props.rows"
-        class="text-foreground-muted"
-      >
-        {{ UI.loading.data }}
-      </p>
-
       <DynamicGrid
+        v-else
         :meta="body.grid"
         :rows="rows"
+        :loading="isDataFetching && !props.rows"
         @row-click="(r) => emit('row-click', r)"
       />
 

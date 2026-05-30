@@ -45,6 +45,24 @@
   }
 }
 
+/* Page transition (UI_GUIDE §9 — route 전환 시 fade + slide-up 8px, --motion-base).
+   out-in 모드라 이전 화면이 사라진 뒤 새 화면이 들어온다. 전역 스타일이어야 라우트
+   컴포넌트 root 에 transition 클래스가 닿는다(scoped 로는 불가). */
+.page-enter-active,
+.page-leave-active {
+  transition:
+    opacity var(--motion-base),
+    transform var(--motion-base);
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
 /* 모션 민감 사용자 — 모든 애니메이션·트랜지션 사실상 제거 (UI_GUIDE §7·§11) */
 @media (prefers-reduced-motion: reduce) {
   *,
