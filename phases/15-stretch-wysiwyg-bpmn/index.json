@@ -24,7 +24,7 @@
       "status": "completed",
       "started_at": "2026-05-30T08:57:58+0900",
       "summary": "M11 Stretch 종합 결정 보고서 — docs/STRETCH_DECISION_REPORT.md: WYSIWYG·BPMN 둘 다 도입 보류로 명시 결정. WYSIWYG(step0 PoC) — 인플레이스 라벨/width 편집+삭제만 가능·신규추가는 좌측패널 의존, M9·M10 폼UI로 비개발자 진입장벽 해소됨 → 보류(PoC 자산 보존+재도입 트리거 명시). BPMN(step1) — 자체모델 표현력 천장 3/3 확인하나 실수요 0건으로 ADR-017 트리거 미충족·Camunda 비용>이득 → 보류+자체 점진확장(스케줄 escalation·조건분기 필드). ADR-016 3단계·ADR-017 에 최종결정 이력 추가, PRD §5-4·§10 M11 상태를 'PoC 완료—결정:보류'로 갱신. AC 4/4 PASS.",
-      "completed_at": "2026-05-30T08:59:30+0900"
+      "completed_at": "2026-05-30T09:01:29+0900"
     }
   ],
   "created_at": "2026-05-30T08:49:07+0900"
