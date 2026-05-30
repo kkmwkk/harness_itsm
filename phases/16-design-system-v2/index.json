@@ -64,7 +64,7 @@
       "status": "completed",
       "started_at": "2026-05-30T11:37:49+0900",
       "summary": "알림 센터 — 백엔드 notification 모듈(system.notification: Notification 엔티티·NotificationType enum·Repository·NotificationService(notifyUser/notifyRole/list/unreadCount/markRead/markAllRead)·NotificationController /api/notifications[GET·/{id}/read PATCH·/read-all POST·/unread-count GET]) + sql/init/20_notification.sql(+test init·PostgresIntegrationTestBase 등록) + 자동 생성 트리거(WorkflowEngineService 단계 진입→assignee_role 사용자에게, TicketService.changeStatus→requester 에게, body plain text·NotificationService 통일) + UserRepository.findByRoles_Code. 프런트 — NotificationBell(종+미읽음 뱃지+onClickOutside 팝오버)·NotificationPanel(목록+모두 읽음+전체 보기)·NotificationItem(아이콘·제목·본문 텍스트·상대시각·미읽음 점) + useNotifications(30초 폴링·markRead/markAllRead·unreadCount) + /notifications 전체 목록 페이지(페이지네이션) + TopBar 통합 + types/notification.ts. 단위테스트: NotificationServiceTest 8건·useNotifications.spec 4건. 백엔드 test BUILD SUCCESSFUL(통합 validate 포함), 프런트 type-check·lint(max-warnings 0)·build·test(214) PASS. websocket 없이 폴링 stub.",
-      "completed_at": "2026-05-30T11:52:00+0900"
+      "completed_at": "2026-05-30T11:51:48+0900"
     },
     {
       "step": 8,
