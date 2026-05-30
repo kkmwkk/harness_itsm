@@ -91,6 +91,7 @@ curl http://localhost:8080/v3/api-docs.yaml -o itg-api-spec.yaml
   - admin / admin-sample-1234 (ROLE_ADMIN)
   - it-support / it-sample-1234 (ROLE_IT_SUPPORT)
   - user-sample-1 / user-sample-1234 (ROLE_USER)
+- 다크 모드: 로그인 후 TopBar 우측의 테마 토글(라이트/시스템/다크 3버튼)로 전환. 선택은 `localStorage('itg.theme')` 에 영구화되며, 디자인 v2 토큰이 light/dark 자동 전환된다 (`docs/UI_GUIDE.md` §8 · `docs/DESIGN_V2_REPORT.md`).
 
 ## 환경 변수 / 런타임
 - Java 21 (LTS) · Spring Boot 3.x · Gradle 8.x

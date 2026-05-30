@@ -17,9 +17,13 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  TableEmpty,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import EmptyState from '@/components/feedback/EmptyState.vue';
+import { UI } from '@/lib/ui-messages';
 import { ChevronsUpDown, ChevronUp, ChevronDown } from 'lucide-vue-next';
+import { InboxIcon } from '@lucide/vue';
 
 interface Props {
   columns: ColumnDef<TData, unknown>[];
@@ -69,6 +73,10 @@ const table = useVueTable({
 });
 
 const rowHeight = computed(() => (props.density === 'compact' ? 'h-9' : 'h-10'));
+
+// 빈 상태(0건)를 한 행으로 펼치기 위한 컬럼 수 (최소 1).
+const columnCount = computed(() => props.columns.length || 1);
+const isEmpty = computed(() => props.rows.length === 0);
 
 const pageSizeOptions = [20, 50, 100];
 
@@ -130,6 +138,15 @@ function onPageSizeChange(event: Event): void {
         </TableRow>
       </TableHeader>
       <TableBody>
+        <TableEmpty
+          v-if="isEmpty"
+          :colspan="columnCount"
+        >
+          <EmptyState
+            :icon="InboxIcon"
+            :title="UI.empty.grid"
+          />
+        </TableEmpty>
         <TableRow
           v-for="row in table.getRowModel().rows"
           :key="row.id"

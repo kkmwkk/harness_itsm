@@ -2,16 +2,95 @@
   "project": "Polestar10 ITG v2",
   "phase": "16-design-system-v2",
   "steps": [
-    { "step": 0,  "name": "design-language-and-tokens-v2", "status": "pending" },
-    { "step": 1,  "name": "dark-mode-and-theme-switcher", "status": "pending" },
-    { "step": 2,  "name": "charts-and-kpi-components", "status": "pending" },
-    { "step": 3,  "name": "dashboard-redesign", "status": "pending" },
-    { "step": 4,  "name": "kanban-board", "status": "pending" },
-    { "step": 5,  "name": "gantt-timeline", "status": "pending" },
-    { "step": 6,  "name": "micro-interactions", "status": "pending" },
-    { "step": 7,  "name": "notification-center", "status": "pending" },
-    { "step": 8,  "name": "rich-empty-states-and-module-identity", "status": "pending" },
-    { "step": 9,  "name": "form-widget-enhancement", "status": "pending" },
-    { "step": 10, "name": "playwright-baseline-and-final-report", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "design-language-and-tokens-v2",
+      "status": "completed",
+      "started_at": "2026-05-30T09:28:29+0900",
+      "summary": "UI_GUIDE v2 전면 개정(정보밀도·모듈별 컬러·마이크로 인터랙션·다크 우선) + tokens.css v2(모듈 컬러 5종·elevation·motion·spacing·tabular-nums, light/dark 전체 매핑) + base.css(tabular-nums·prefers-reduced-motion) + module-color.ts 헬퍼·단위테스트. type-check·lint·build·test(168) PASS.",
+      "completed_at": "2026-05-30T09:35:59+0900"
+    },
+    {
+      "step": 1,
+      "name": "dark-mode-and-theme-switcher",
+      "status": "completed",
+      "started_at": "2026-05-30T09:35:59+0900",
+      "summary": "useThemeStore(light/dark/system + localStorage 'itg.theme' 영구화 + prefers-color-scheme 감지, SSR/node 가드) + ThemeToggle.vue(TopBar 우측 3버튼 segmented) + main.ts 부팅 시 apply()로 FOUC 회피 + useThemeStore.spec(5 tests). type-check·lint·build·test(173) PASS, dev 200.",
+      "completed_at": "2026-05-30T09:39:13+0900"
+    },
+    {
+      "step": 2,
+      "name": "charts-and-kpi-components",
+      "status": "completed",
+      "started_at": "2026-05-30T09:39:13+0900",
+      "summary": "ECharts 6 + vue-echarts 8 도입(lib/echarts.ts tree-shaking 등록, main.ts 부팅 import) + chart-theme.ts(토큰→getComputedStyle 색 읽기, useChartColors 다크 watch, 순수 옵션 빌더 build{Line,Bar,Donut,Sparkline}Option·trendInfo·moduleChartColor) + dataviz 7종(KpiCard·Sparkline·TrendIndicator·DonutChart·BarChart·LineChart·MetricRow, 토큰·모듈컬러·다크 자동) + /_dev/charts 갤러리 + chart-theme.spec(15 tests). type-check·lint·build·test(188) PASS.",
+      "completed_at": "2026-05-30T09:49:20+0900"
+    },
+    {
+      "step": 3,
+      "name": "dashboard-redesign",
+      "status": "completed",
+      "started_at": "2026-05-30T10:50:38+0900",
+      "summary": "HomePage 를 5 모듈 카드 그리드 → 운영 대시보드 위젯 그리드로 전면 교체. 백엔드 /api/dashboard/summary(인증 가드, 현재 사용자 기준 집계 — 기존 commit 의 컨트롤러 매핑을 full-path 로 정리) + dashboard 컴포넌트 7종(DashboardWelcome·KpiGrid·TicketByPriority/StatusCard·RecentActivityFeed·AssetByCategoryCard·MyWorkflowQueueCard) + useDashboard(30초 폴링). KpiCard 모듈 좌측 4px 액센트 보더·shadow-card 추가, 권한별 티켓 위젯 토글·ADMIN 추가 KPI, 0건 풍부한 빈 상태, 차트 다크 자동(chart-theme). type-check·lint(max-warnings 0)·build·test(188) PASS, 백엔드 dashboard 테스트 PASS.",
+      "completed_at": "2026-05-30T11:00:30+0900"
+    },
+    {
+      "step": 4,
+      "name": "kanban-board",
+      "status": "completed",
+      "started_at": "2026-05-30T11:00:30+0900",
+      "summary": "ITSM 티켓 칸반 보드 — DynamicKanban.vue(4 컬럼 OPEN/IN_PROGRESS/RESOLVED/CLOSED × vue-draggable-plus 드래그 이동→상태 전이, onMove reject 시 카드 원위치, CLOSED 이동 확인 다이얼로그, 카드: ticketNo mono·title·PriorityBadge·이니셜 아바타·SLA 잔여시간·hover quick-action dropdown 편집/종료 권한별, Enter→상세·Alt+→ 다음 상태 키보드) + BoardPage.vue(/itsm/board, 전체 티켓 1페이지 조회·PATCH /api/tickets/{id}/status·실패 토스트+throw) + TopBar ITSM 화면 목록↔보드 토글 + 순수 헬퍼 lib/kanban.ts(KANBAN_COLUMNS·groupByStatus·nextStatus·initials·slaRemaining)·테스트 12종. 전이 매트릭스는 백엔드 단독 판정(프론트 미강제). type-check·lint(max-warnings 0)·build·test(200) PASS, dev /itsm/board 200.",
+      "completed_at": "2026-05-30T11:10:31+0900"
+    },
+    {
+      "step": 5,
+      "name": "gantt-timeline",
+      "status": "completed",
+      "started_at": "2026-05-30T11:10:31+0900",
+      "summary": "간트+타임라인 — lib/gantt.ts(ECharts custom series 순수 옵션 빌더: clampProgress·ganttTimeDomain·formatGanttDate·toGanttData·buildGanttOption, 토큰 색·다크 자동) + GanttChart.vue(time x축·category y축·진행률 채움) + EventTimeline.vue(세로 타임라인, 시맨틱 톤 마커·연결선, TimelineItem 타입 export) + echarts.ts CustomChart 등록. itam DetailPage 라이프사이클 dl/ol → EventTimeline 교체(이벤트 타입별 톤). PMS: pages/pms/IndexPage.vue(/api/projects 조회→프로젝트 그리드+간트, 선택 시 프로젝트+태스크 행 전환, 친화 빈/에러 상태) + router /pms _DynamicRoute→IndexPage + types/pms.ts. 최소 PMS 백엔드 정착 — sql/init/19_pms_seed.sql(project/task DDL+itg-project 메타 PUBLISHED+샘플 3프로젝트·8태스크, 멱등) + Project/Task 엔티티·ProjectStatus/TaskStatus enum·Repository·ProjectService(N+1 회피 일괄 로드)·ProjectController(GET 목록·단건, Swagger·인증) + test/resources/init/19_pms.sql(validate용 DDL)·PostgresIntegrationTestBase 등록·ApplicationContextLoadTest mock 보강·ProjectServiceTest 4건. 프론트 type-check·lint·build·test(208) PASS, /pms·/itam/1 dev 200, 백엔드 전체 test PASS, bootRun 후 /api/projects 3건+태스크·/api/projects/9999 404 e2e 확인.",
+      "completed_at": "2026-05-30T11:28:05+0900"
+    },
+    {
+      "step": 6,
+      "name": "micro-interactions",
+      "status": "completed",
+      "started_at": "2026-05-30T11:28:05+0900",
+      "summary": "마이크로 인터랙션 풀세트 — feedback/Skeleton.vue(shimmer, blink 금지·토큰만·rounded prop) + tokens.css @keyframes shimmer/.animate-shimmer + base.css .page-* 트랜지션(fade+slide-up, --motion-base, prefers-reduced-motion 흡수). 적용: DynamicGrid loading prop→헤더1+본문8줄 스켈레톤 그리드(DynamicPage 가 isDataFetching 전달), KpiCard loading prop→숫자·스파크라인 스켈레톤(HomePage 최초 로딩 KPI 4종 + 차트 자리 Skeleton 으로 교체), itam DetailPage 자산 로딩 스켈레톤 카드. Optimistic UI: useDataMutation.submitOptimistic(즉시 적용 rollback 반환·실패 시 원복·언마운트 race 가드 onScopeDispose) + DynamicPage onFormSubmit 가 그리드 상단 임시 행 즉시 추가→성공 reload 후 비움·실패 rollback. App.vue RouterView v-slot + <transition name=page mode=out-in>. Toast stagger 는 vue-sonner 기본 스택. submitOptimistic 성공/실패 단위테스트 2종. type-check·lint(max-warnings 0)·build·test(210) PASS.",
+      "completed_at": "2026-05-30T11:37:49+0900"
+    },
+    {
+      "step": 7,
+      "name": "notification-center",
+      "status": "completed",
+      "started_at": "2026-05-30T11:37:49+0900",
+      "summary": "알림 센터 — 백엔드 notification 모듈(system.notification: Notification 엔티티·NotificationType enum·Repository·NotificationService(notifyUser/notifyRole/list/unreadCount/markRead/markAllRead)·NotificationController /api/notifications[GET·/{id}/read PATCH·/read-all POST·/unread-count GET]) + sql/init/20_notification.sql(+test init·PostgresIntegrationTestBase 등록) + 자동 생성 트리거(WorkflowEngineService 단계 진입→assignee_role 사용자에게, TicketService.changeStatus→requester 에게, body plain text·NotificationService 통일) + UserRepository.findByRoles_Code. 프런트 — NotificationBell(종+미읽음 뱃지+onClickOutside 팝오버)·NotificationPanel(목록+모두 읽음+전체 보기)·NotificationItem(아이콘·제목·본문 텍스트·상대시각·미읽음 점) + useNotifications(30초 폴링·markRead/markAllRead·unreadCount) + /notifications 전체 목록 페이지(페이지네이션) + TopBar 통합 + types/notification.ts. 단위테스트: NotificationServiceTest 8건·useNotifications.spec 4건. 백엔드 test BUILD SUCCESSFUL(통합 validate 포함), 프런트 type-check·lint(max-warnings 0)·build·test(214) PASS. websocket 없이 폴링 stub.",
+      "completed_at": "2026-05-30T11:51:48+0900"
+    },
+    {
+      "step": 8,
+      "name": "rich-empty-states-and-module-identity",
+      "status": "completed",
+      "started_at": "2026-05-30T11:51:48+0900",
+      "summary": "풍부한 빈 상태 + 모듈 시각 아이덴티티 — feedback/EmptyState.vue(lucide 아이콘·모듈 soft 색 강조·설명·actionLabel 있을 때만 버튼, moduleVisual 정적 클래스로 동적 클래스 footgun 회피) + common/Avatar.vue(sm/md/lg·이니셜·결정적 해시 색) + lib/avatar.ts 순수 헬퍼(avatarInitials·avatarColorIndex·avatarColor, 토큰 기반 5색 팔레트)·avatar.spec(10 tests). PageHeader 에 module prop + route.meta.systemType 폴백 → 좌측 4px 컬러 띠·모듈 아이콘·컬러 강조. DynamicPage 가 module(props ?? meta.systemType) 을 PageHeader 로 전달하고 notPublished 카드를 EmptyState(Sparkles·메타관리 이동)로 교체. _DynamicRoute 가 route.meta.systemType 전달. router 모듈 라우트(itsm/itam/pms/common/system·상세·보드) 전부 systemType 추가. DataTable 0건 시 TableEmpty+EmptyState(Inbox·UI.empty.grid), AG Grid overlayNoRowsTemplate 친화 메시지. DynamicKanban 인라인 이니셜 → Avatar 교체. type-check·lint(max-warnings 0)·build·test(224) PASS.",
+      "completed_at": "2026-05-30T12:01:35+0900"
+    },
+    {
+      "step": 9,
+      "name": "form-widget-enhancement",
+      "status": "completed",
+      "started_at": "2026-05-30T12:01:35+0900",
+      "summary": "FieldType 풀 위젯 — placeholder 였던 date/date-range/user-picker/file/textarea(markdown)/number(slider) 를 본격 위젯으로 교체. ui/popover(reka PopoverRoot)·ui/calendar(Calendar·RangeCalendar, reka+@internationalized/date 3.12.1 reka와 dedupe·ko-KR·토큰 다크) + common 위젯 7종: DatePicker(popover 캘린더·ISO 모델·clear)·DateRangePicker(2칸 from~to)·UserPicker(/api/users?kw= watchDebounced 200ms 자동완성·Avatar 칩·onClickOutside)·FileUpload(드래그앤드롭·다중·이미지 thumbnail·POST /api/attachments stub)·MarkdownEditor(textarea+marked+DOMPurify 새니타이즈 미리보기)·SliderInput(native range·tabular)·ColorPicker(swatch+hex). 순수 헬퍼 lib/date-field.ts·lib/markdown.ts·lib/form-widget.ts(widgetFor 분기 매트릭스) 로 DynamicForm 분기 추출. 백엔드 common.attachment.AttachmentController stub(multipart→메타만, 저장 X, 인증 가드). 단위테스트 6 spec(date-field·markdown·form-widget 순수 + Slider/Color/Markdown 마운트). type-check·lint(max-warnings 0)·build·test(267) PASS, 백엔드 compileJava PASS.",
+      "completed_at": "2026-05-30T12:19:12+0900"
+    },
+    {
+      "step": 10,
+      "name": "playwright-baseline-and-final-report",
+      "status": "completed",
+      "started_at": "2026-05-30T12:19:12+0900",
+      "summary": "Playwright baseline 전면 갱신 + 디자인 v2 종합 보고서. 신규 6 spec(dashboard·kanban·gantt·dark-mode·notification·chart-gallery) + v1 baseline 9개 .png.bak 백업 후 v2 재생성(신규 6 baseline + 기존 home/itsm/itam/system/dialog 갱신). home.spec 어서션을 대시보드 재설계(step 3)에 맞게 갱신. 본 step 범위 15 test 전부 PASS(재실행 안정). docs/DESIGN_V2_REPORT.md(v1→v2 비교표·baseline 인덱스·UI_GUIDE v2 정착 매핑·잔존 한계·다음 단계) + CLAUDE.md 다크 모드 토글 안내 1줄. 적발 결함 F-PH16-BOARD(BoardPage mount 이중 fetch→첫 요청 abort→프로덕션 dataLoad 에러, 일반 /itsm 그리드는 단일 fetch 정상) 기록(운영 코드 수정 금지 준수, 별도 phase 교정 권고). meta-editor 2 spec 은 기존 F-PH13-E2E 로 범위 밖. baseline 갱신 전 20_notification.sql 수동 적용해 백엔드 기동. type-check·lint(max-warnings 0)·build·test(267) PASS.",
+      "completed_at": "2026-05-30T12:34:07+0900"
+    }
+  ],
+  "created_at": "2026-05-30T09:28:29+0900",
+  "completed_at": "2026-05-30T12:34:07+0900"
 }

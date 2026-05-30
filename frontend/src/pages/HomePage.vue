@@ -1,113 +1,149 @@
 <script setup lang="ts">
-import {
-  TicketCheckIcon,
-  BoxesIcon,
-  FolderKanbanIcon,
-  LayersIcon,
-  DatabaseIcon,
-} from '@lucide/vue';
-import type { FunctionalComponent } from 'vue';
-import PageHeader from '@/components/layout/PageHeader.vue';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+/**
+ * 운영 대시보드 홈 — 위젯 그리드(환영 헤더 · KPI · 차트 · 활동 피드 · 자산 분포 · 워크플로우 큐).
+ * 데이터는 useDashboard(`GET /api/dashboard/summary`, 30초 폴링)로 현재 사용자 기준 집계를 받는다.
+ * 티켓 위젯은 TICKET 권한 보유자에게만 노출(보안 경계는 백엔드 @PreAuthorize 가 책임).
+ */
+import { computed } from 'vue';
+import { storeToRefs } from 'pinia';
+import { TriangleAlertIcon } from '@lucide/vue';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { useDashboard } from '@/composables/useDashboard';
+import { UI } from '@/lib/ui-messages';
+import type { SystemType } from '@/types/meta';
+import { Button } from '@/components/ui/button';
+import KpiCard from '@/components/dataviz/KpiCard.vue';
+import Skeleton from '@/components/feedback/Skeleton.vue';
+import DashboardWelcome from '@/components/dashboard/DashboardWelcome.vue';
+import KpiGrid from '@/components/dashboard/KpiGrid.vue';
+import TicketByPriorityCard from '@/components/dashboard/TicketByPriorityCard.vue';
+import TicketByStatusCard from '@/components/dashboard/TicketByStatusCard.vue';
+import RecentActivityFeed from '@/components/dashboard/RecentActivityFeed.vue';
+import AssetByCategoryCard from '@/components/dashboard/AssetByCategoryCard.vue';
+import MyWorkflowQueueCard from '@/components/dashboard/MyWorkflowQueueCard.vue';
 
-type ModuleCard = {
-  to: string;
-  title: string;
-  description: string;
-  icon: FunctionalComponent;
-  /** PUBLISHED 메타가 시드되어 DynamicPage 가 즉시 동작하는 모듈. */
-  ready: boolean;
-};
+const { permissions } = storeToRefs(useAuthStore());
+const canTickets = computed<boolean>(() =>
+  permissions.value.some((p) => p.startsWith('TICKET')),
+);
 
-const modules: ModuleCard[] = [
-  {
-    to: '/itsm',
-    title: 'ITSM',
-    description: '티켓·변경·문제·SLA 워크플로우',
-    icon: TicketCheckIcon,
-    ready: true,
-  },
-  {
-    to: '/itam',
-    title: 'ITAM',
-    description: '자산원장·라이선스·계약 이력',
-    icon: BoxesIcon,
-    ready: true,
-  },
-  {
-    to: '/pms',
-    title: 'PMS',
-    description: '프로젝트·태스크·일정 관리',
-    icon: FolderKanbanIcon,
-    ready: false,
-  },
-  {
-    to: '/common',
-    title: '공통',
-    description: '코드 관리·공지·첨부',
-    icon: LayersIcon,
-    ready: false,
-  },
-  {
-    to: '/system/meta',
-    title: '시스템 / 메타 관리',
-    description: 'PageMeta 버전 그룹 관리',
-    icon: DatabaseIcon,
-    ready: true,
-  },
+const { summary, isFetching, error, reload } = useDashboard({ poll: true });
+
+const showInitialLoading = computed(() => !summary.value && isFetching.value);
+
+// 최초 로딩 KPI 스켈레톤 라벨 — 실제 KpiGrid 와 결을 맞춘 자리표시(모듈 좌측 보더 유지).
+const skeletonKpis: { label: string; module?: SystemType }[] = [
+  { label: '열린 티켓', module: 'ITSM' },
+  { label: 'SLA 임박·초과' },
+  { label: '내 작업', module: 'COMMON' },
+  { label: '전체 자산', module: 'ITAM' },
 ];
 </script>
 
 <template>
-  <section>
-    <PageHeader />
-    <p class="mb-6 text-sm text-foreground-muted">
-      신규 화면은 Vue 파일을 작성하지 않고 page_meta 한 건만 추가하여 자동 생성한다.
-    </p>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <RouterLink
-        v-for="m in modules"
-        :key="m.to"
-        :to="m.to"
-        class="block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        <Card class="h-full transition-colors hover:bg-surface-hover">
-          <CardHeader>
-            <div class="flex items-start gap-3">
-              <span
-                class="inline-flex h-9 w-9 items-center justify-center rounded-md bg-surface-muted text-primary"
-              >
-                <component
-                  :is="m.icon"
-                  class="h-5 w-5"
-                  :stroke-width="1.5"
-                />
-              </span>
-              <div>
-                <CardTitle>{{ m.title }}</CardTitle>
-                <CardDescription>{{ m.description }}</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p
-              :class="[
-                'text-xs',
-                m.ready ? 'text-success' : 'text-foreground-subtle',
-              ]"
-            >
-              <span v-if="m.ready">● 메타 PUBLISHED — 화면 자동 생성 중</span>
-              <span v-else>○ 메타 미배포 — DRAFT 생성 후 publish 필요</span>
-            </p>
-          </CardContent>
-        </Card>
-      </RouterLink>
+  <section class="flex flex-col gap-6">
+    <DashboardWelcome />
+
+    <!-- 최초 로딩 — 스켈레톤 자리 표시 -->
+    <div
+      v-if="showInitialLoading"
+      class="flex flex-col gap-6"
+      aria-busy="true"
+    >
+      <p class="sr-only">
+        {{ UI.loading.data }}
+      </p>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <KpiCard
+          v-for="k in skeletonKpis"
+          :key="k.label"
+          loading
+          :label="k.label"
+          :module="k.module"
+        />
+      </div>
+      <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div class="rounded-xl border border-border bg-surface p-5 shadow-card lg:col-span-2">
+          <Skeleton
+            width="40%"
+            height="1rem"
+          />
+          <Skeleton
+            class="mt-4"
+            width="100%"
+            height="14rem"
+            rounded="lg"
+          />
+        </div>
+        <div class="rounded-xl border border-border bg-surface p-5 shadow-card">
+          <Skeleton
+            width="50%"
+            height="1rem"
+          />
+          <Skeleton
+            class="mt-4"
+            width="100%"
+            height="14rem"
+            rounded="lg"
+          />
+        </div>
+      </div>
     </div>
+
+    <!-- 에러 -->
+    <div
+      v-else-if="error"
+      class="flex flex-col items-center justify-center gap-3 rounded-xl border border-border bg-surface py-16 text-center shadow-card"
+    >
+      <span class="inline-flex size-12 items-center justify-center rounded-full bg-danger/10 text-danger">
+        <TriangleAlertIcon
+          class="size-6"
+          :stroke-width="1.5"
+        />
+      </span>
+      <p class="text-sm text-foreground-muted">
+        {{ error }}
+      </p>
+      <Button
+        variant="outline"
+        size="sm"
+        @click="reload"
+      >
+        다시 시도
+      </Button>
+    </div>
+
+    <!-- 위젯 그리드 -->
+    <template v-else-if="summary">
+      <KpiGrid
+        :summary="summary"
+        :can-tickets="canTickets"
+      />
+
+      <!-- 행 1: (canTickets) 2/3 차트 + 1/3 활동 피드 / (그 외) 활동 피드 전폭 -->
+      <div
+        v-if="canTickets"
+        class="grid grid-cols-1 gap-4 lg:grid-cols-3"
+      >
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:col-span-2">
+          <TicketByPriorityCard :counts="summary.ticketsByPriority" />
+          <TicketByStatusCard :counts="summary.ticketsByStatus" />
+        </div>
+        <RecentActivityFeed :activities="summary.recentActivities" />
+      </div>
+      <RecentActivityFeed
+        v-else
+        :activities="summary.recentActivities"
+      />
+
+      <!-- 행 2: 자산 분류 도넛 + 내 워크플로우 작업 -->
+      <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <AssetByCategoryCard
+          :categories="summary.assetsByCategory"
+          :trend="summary.lifecycleTrend"
+        />
+        <MyWorkflowQueueCard :steps="summary.myWorkflowSteps" />
+      </div>
+    </template>
   </section>
 </template>

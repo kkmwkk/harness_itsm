@@ -31,6 +31,16 @@ export interface FieldMeta {
   min?:        number;
   max?:        number;
   pattern?:    string;            // RegExp 문자열
+  /** number 의 step (slider·input 공통) */
+  step?:       number;
+  /** textarea 를 마크다운 에디터로 렌더 (좌 textarea + 우 미리보기) */
+  markdown?:   boolean;
+  /** number 위젯 변형 — 'slider' 면 SliderInput, 그 외 기본 Input */
+  widget?:     'slider';
+  /** file 의 다중 선택 허용 여부 */
+  multiple?:   boolean;
+  /** file 의 accept (예: 'image/*,.pdf') */
+  accept?:     string;
 }
 
 /** 폼 전체 정의 */

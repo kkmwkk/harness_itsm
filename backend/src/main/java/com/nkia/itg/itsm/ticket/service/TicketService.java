@@ -15,6 +15,8 @@ import com.nkia.itg.itsm.ticket.repository.TicketRepository;
 import com.nkia.itg.itsm.requesttype.entity.TicketRequestType;
 import com.nkia.itg.itsm.requesttype.repository.TicketRequestTypeRepository;
 import com.nkia.itg.itsm.workflow.service.WorkflowEngineService;
+import com.nkia.itg.system.notification.domain.NotificationType;
+import com.nkia.itg.system.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +34,7 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final TicketRequestTypeRepository requestTypeRepository;
     private final WorkflowEngineService workflowEngineService;
+    private final NotificationService notificationService;
 
     /**
      * 신규 생성. ticket_no 는 ITSM-{id5} 패턴으로 부여 (save 후 dirty checking). 요청 유형에 기본
@@ -104,7 +107,22 @@ public class TicketService {
     public TicketResponse changeStatus(Long id, TicketStatusChangeRequest req) {
         Ticket ticket = loadOrThrow(id);
         ticket.changeStatus(req.next());
+        notifyRequesterOfStatusChange(ticket);
         return TicketResponse.from(ticket);
+    }
+
+    /**
+     * 본인(요청자) 티켓 상태 변경 시 요청자에게 알림 생성 (NotificationService 통일).
+     * requester_user_id 가 없으면(구티켓 등) 생성하지 않는다. body 는 plain text.
+     */
+    private void notifyRequesterOfStatusChange(Ticket ticket) {
+        String ref = ticket.getTicketNo() != null ? ticket.getTicketNo() : ("#" + ticket.getId());
+        notificationService.notifyUser(
+                ticket.getRequesterUserId(),
+                NotificationType.TICKET_STATUS_CHANGED,
+                "티켓 상태가 변경되었습니다",
+                "티켓 " + ref + " 의 상태가 '" + ticket.getStatus().name() + "' 로 변경되었습니다.",
+                "/itsm/" + ticket.getId());
     }
 
     /** 우선순위 변경. CLOSED 면 도메인 예외. */

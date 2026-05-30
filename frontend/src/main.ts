@@ -6,9 +6,15 @@ import './assets/styles/ag-theme-itg.css';
 import 'vue-sonner/style.css';
 import './assets/styles/toast.css';
 import '@/lib/ag-grid-modules';
+import '@/lib/echarts';
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import App from './App.vue';
 import router from './router';
+import { useThemeStore } from '@/stores/useThemeStore';
 
-createApp(App).use(createPinia()).use(router).mount('#app');
+const pinia = createPinia();
+const app = createApp(App).use(pinia).use(router);
+// 부팅 시 즉시 테마 적용 — 다크 모드 flash(FOUC) 회피
+useThemeStore(pinia).apply();
+app.mount('#app');

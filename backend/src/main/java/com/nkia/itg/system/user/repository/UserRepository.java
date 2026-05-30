@@ -2,6 +2,7 @@ package com.nkia.itg.system.user.repository;
 
 import com.nkia.itg.system.user.domain.UserStatus;
 import com.nkia.itg.system.user.entity.UserAccount;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,9 @@ public interface UserRepository extends JpaRepository<UserAccount, Long> {
     Optional<UserAccount> findByUsername(String username);
 
     boolean existsByUsername(String username);
+
+    /** 특정 역할 코드를 보유한 사용자 목록 (알림 대상자 조회 — 워크플로우 단계 담당 역할). */
+    List<UserAccount> findByRoles_Code(String roleCode);
 
     /**
      * 페이지 검색. dept·roleCode·status·keyword 모두 옵션(null 이면 무시).

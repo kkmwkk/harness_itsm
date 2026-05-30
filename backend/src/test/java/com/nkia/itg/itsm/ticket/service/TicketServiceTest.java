@@ -48,6 +48,9 @@ class TicketServiceTest {
     @Mock
     private WorkflowEngineService workflowEngineService;
 
+    @Mock
+    private com.nkia.itg.system.notification.service.NotificationService notificationService;
+
     @InjectMocks
     private TicketService ticketService;
 
