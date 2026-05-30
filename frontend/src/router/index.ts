@@ -62,8 +62,8 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'pms',
         name: 'pms',
-        component: () => import('@/pages/_DynamicRoute.vue'),
-        meta: { title: 'PMS', groupId: 'itg-project' },
+        component: () => import('@/pages/pms/IndexPage.vue'),
+        meta: { title: 'PMS' },
       },
       {
         path: 'common',

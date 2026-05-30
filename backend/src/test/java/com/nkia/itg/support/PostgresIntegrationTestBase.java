@@ -38,7 +38,11 @@ public abstract class PostgresIntegrationTestBase {
                             "/docker-entrypoint-initdb.d/11_itsm_workflow.sql")
                     .withCopyFileToContainer(
                             MountableFile.forClasspathResource("init/12_itam_category.sql"),
-                            "/docker-entrypoint-initdb.d/12_itam_category.sql");
+                            "/docker-entrypoint-initdb.d/12_itam_category.sql")
+                    // 19_pms.sql → project/task (phase 16 step 5). ddl-auto=validate 가 신규 엔티티를 검증.
+                    .withCopyFileToContainer(
+                            MountableFile.forClasspathResource("init/19_pms.sql"),
+                            "/docker-entrypoint-initdb.d/19_pms.sql");
 
     @DynamicPropertySource
     static void register(DynamicPropertyRegistry r) {

@@ -6,6 +6,8 @@ import com.nkia.itg.itam.category.repository.AssetCategoryRepository;
 import com.nkia.itg.itsm.requesttype.repository.TicketRequestTypeRepository;
 import com.nkia.itg.itsm.ticket.repository.TicketRepository;
 import com.nkia.itg.meta.repository.MetaRepository;
+import com.nkia.itg.pms.project.repository.ProjectRepository;
+import com.nkia.itg.pms.project.repository.TaskRepository;
 import com.nkia.itg.system.dept.repository.DepartmentRepository;
 import com.nkia.itg.system.menu.repository.MenuRepository;
 import com.nkia.itg.system.permission.repository.PermissionRepository;
@@ -69,6 +71,12 @@ class ApplicationContextLoadTest {
 
     @MockitoBean
     private TicketRequestTypeRepository ticketRequestTypeRepository;
+
+    @MockitoBean
+    private ProjectRepository projectRepository;
+
+    @MockitoBean
+    private TaskRepository taskRepository;
 
     @Test
     void contextLoads() {}

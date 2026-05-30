@@ -27,6 +27,7 @@ import { useDataMutation } from '@/composables/useDataMutation';
 import { asPageMetaBody, MetaBodyShapeError } from '@/lib/meta-body';
 import { UI } from '@/lib/ui-messages';
 import DynamicForm from '@/components/dynamic/DynamicForm.vue';
+import EventTimeline, { type TimelineItem, type TimelineTone } from '@/components/dataviz/EventTimeline.vue';
 import type { ApiEnvelope, MetaStatus } from '@/types/meta';
 import type { PageMetaBody } from '@/types/meta-body';
 import type { LifecycleEvent, LifecycleEventType } from '@/types/asset-category';
@@ -220,13 +221,35 @@ async function onRecordEvent(): Promise<void> {
   }
 }
 
-// payload 객체를 "키: 값" 한 줄 요약으로 — 타임라인 표시용.
+// payload 객체를 "키: 값" 한 줄 요약으로 — 타임라인 설명 표시용.
 function payloadSummary(p: Record<string, unknown> | null): string {
   if (!p) return '-';
   const entries = Object.entries(p);
   if (entries.length === 0) return '-';
   return entries.map(([k, v]) => `${k}: ${String(v)}`).join(', ');
 }
+
+// 이벤트 타입별 시맨틱 톤 (UI_GUIDE §3-6 — 상태=시맨틱 색).
+const EVENT_TONE: Record<LifecycleEventType, TimelineTone> = {
+  ACQUIRED: 'success',
+  TRANSFERRED: 'info',
+  REPAIRED: 'warning',
+  DISPOSED: 'neutral',
+  RENEWED: 'success',
+};
+
+// 라이프사이클 이벤트 → EventTimeline 항목 (dl 형태 폐기, 세로 타임라인으로 교체).
+const timelineItems = computed<TimelineItem[]>(() =>
+  events.value.map((e) => ({
+    id: e.id,
+    badge: eventTypeLabel(e.eventType),
+    tone: EVENT_TONE[e.eventType] ?? 'info',
+    time: e.eventDate,
+    label: eventTypeLabel(e.eventType),
+    description: payloadSummary(e.payload),
+    user: e.byUserId ? `처리자 ${e.byUserId}` : undefined,
+  })),
+);
 </script>
 
 <template>
@@ -368,40 +391,11 @@ function payloadSummary(p: Record<string, unknown> | null): string {
         >
           {{ eventsError.message ?? UI.error.dataLoad }}
         </p>
-        <p
-          v-else-if="events.length === 0"
-          class="text-foreground-muted text-sm"
-        >
-          아직 기록된 이력 이벤트가 없습니다.
-        </p>
-        <ol
+        <EventTimeline
           v-else
-          class="space-y-3"
-        >
-          <li
-            v-for="e in events"
-            :key="e.id"
-            class="flex gap-3 border-b border-border-subtle pb-3 last:border-b-0 last:pb-0"
-          >
-            <span
-              class="mt-0.5 inline-flex shrink-0 items-center rounded-pill bg-info/10 px-2.5 py-0.5 text-[12px] font-semibold text-info"
-            >
-              {{ eventTypeLabel(e.eventType) }}
-            </span>
-            <div class="min-w-0 text-[13px]">
-              <p class="text-foreground-muted">
-                <span class="font-mono">{{ e.eventDate }}</span>
-                <span
-                  v-if="e.byUserId"
-                  class="ml-2"
-                >· 처리자 {{ e.byUserId }}</span>
-              </p>
-              <p class="break-words text-foreground">
-                {{ payloadSummary(e.payload) }}
-              </p>
-            </div>
-          </li>
-        </ol>
+          :items="timelineItems"
+          empty-text="아직 기록된 이력 이벤트가 없습니다."
+        />
       </CardContent>
     </Card>
 

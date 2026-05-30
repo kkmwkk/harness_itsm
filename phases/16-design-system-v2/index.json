@@ -45,7 +45,10 @@
     {
       "step": 5,
       "name": "gantt-timeline",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-30T11:10:31+0900",
+      "summary": "간트+타임라인 — lib/gantt.ts(ECharts custom series 순수 옵션 빌더: clampProgress·ganttTimeDomain·formatGanttDate·toGanttData·buildGanttOption, 토큰 색·다크 자동) + GanttChart.vue(time x축·category y축·진행률 채움) + EventTimeline.vue(세로 타임라인, 시맨틱 톤 마커·연결선, TimelineItem 타입 export) + echarts.ts CustomChart 등록. itam DetailPage 라이프사이클 dl/ol → EventTimeline 교체(이벤트 타입별 톤). PMS: pages/pms/IndexPage.vue(/api/projects 조회→프로젝트 그리드+간트, 선택 시 프로젝트+태스크 행 전환, 친화 빈/에러 상태) + router /pms _DynamicRoute→IndexPage + types/pms.ts. 최소 PMS 백엔드 정착 — sql/init/19_pms_seed.sql(project/task DDL+itg-project 메타 PUBLISHED+샘플 3프로젝트·8태스크, 멱등) + Project/Task 엔티티·ProjectStatus/TaskStatus enum·Repository·ProjectService(N+1 회피 일괄 로드)·ProjectController(GET 목록·단건, Swagger·인증) + test/resources/init/19_pms.sql(validate용 DDL)·PostgresIntegrationTestBase 등록·ApplicationContextLoadTest mock 보강·ProjectServiceTest 4건. 프론트 type-check·lint·build·test(208) PASS, /pms·/itam/1 dev 200, 백엔드 전체 test PASS, bootRun 후 /api/projects 3건+태스크·/api/projects/9999 404 e2e 확인.",
+      "completed_at": "2026-05-30T11:28:00+0900"
     },
     {
       "step": 6,
