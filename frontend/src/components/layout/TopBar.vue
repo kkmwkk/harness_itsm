@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { MenuIcon, CircleUserIcon, LogOutIcon } from '@lucide/vue';
+import { useRoute, useRouter } from 'vue-router';
+import {
+  MenuIcon,
+  CircleUserIcon,
+  LogOutIcon,
+  LayoutGridIcon,
+  ListIcon,
+} from '@lucide/vue';
 import { storeToRefs } from 'pinia';
 import { useLayoutStore } from '@/stores/useLayoutStore';
 import { useAuthStore } from '@/stores/useAuthStore';
@@ -12,9 +18,14 @@ const layout = useLayoutStore();
 const auth = useAuthStore();
 const menu = useMenuStore();
 const router = useRouter();
+const route = useRoute();
 const { user } = storeToRefs(auth);
 
 const displayName = computed(() => user.value?.name ?? user.value?.username ?? '');
+
+// ITSM 화면(목록/보드)에서만 노출하는 목록↔보드 토글.
+const isItsm = computed(() => route.path === '/itsm' || route.path === '/itsm/board');
+const isBoard = computed(() => route.path === '/itsm/board');
 
 function onLogout() {
   auth.clearSession();
@@ -43,6 +54,18 @@ function onLogout() {
       class="text-[15px] font-semibold tracking-tight text-foreground hover:text-primary"
     >
       Polestar10 ITG
+    </RouterLink>
+    <RouterLink
+      v-if="isItsm"
+      :to="isBoard ? '/itsm' : '/itsm/board'"
+      class="inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-sm text-foreground hover:bg-surface-hover"
+    >
+      <component
+        :is="isBoard ? ListIcon : LayoutGridIcon"
+        class="h-4 w-4"
+        :stroke-width="1.5"
+      />
+      <span class="hidden sm:inline">{{ isBoard ? '목록 보기' : '보드 보기' }}</span>
     </RouterLink>
     <div class="ml-auto flex items-center gap-1">
       <ThemeToggle />

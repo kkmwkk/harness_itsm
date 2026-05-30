@@ -30,6 +30,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'ITSM', groupId: 'itg-ticket', detailUrlTemplate: '/itsm/{id}' },
       },
       {
+        path: 'itsm/board',
+        name: 'itsm-board',
+        component: () => import('@/pages/itsm/BoardPage.vue'),
+        meta: { title: 'ITSM / 티켓 보드' },
+      },
+      {
         path: 'itsm/new/:requestType',
         name: 'itsm-new',
         component: () => import('@/pages/itsm/TicketNewPage.vue'),
