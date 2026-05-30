@@ -6,6 +6,7 @@ import './assets/styles/ag-theme-itg.css';
 import 'vue-sonner/style.css';
 import './assets/styles/toast.css';
 import '@/lib/ag-grid-modules';
+import '@/lib/echarts';
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import App from './App.vue';

@@ -155,6 +155,11 @@ const routes: RouteRecordRaw[] = [
     name: 'dev-badges',
     component: () => import('@/views/_dev/BadgeGallery.vue'),
   },
+  {
+    path: '/_dev/charts',
+    name: 'dev-charts',
+    component: () => import('@/views/_dev/ChartsGallery.vue'),
+  },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ];
 
