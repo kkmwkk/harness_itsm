@@ -40,7 +40,7 @@
       "status": "completed",
       "started_at": "2026-05-30T11:00:30+0900",
       "summary": "ITSM 티켓 칸반 보드 — DynamicKanban.vue(4 컬럼 OPEN/IN_PROGRESS/RESOLVED/CLOSED × vue-draggable-plus 드래그 이동→상태 전이, onMove reject 시 카드 원위치, CLOSED 이동 확인 다이얼로그, 카드: ticketNo mono·title·PriorityBadge·이니셜 아바타·SLA 잔여시간·hover quick-action dropdown 편집/종료 권한별, Enter→상세·Alt+→ 다음 상태 키보드) + BoardPage.vue(/itsm/board, 전체 티켓 1페이지 조회·PATCH /api/tickets/{id}/status·실패 토스트+throw) + TopBar ITSM 화면 목록↔보드 토글 + 순수 헬퍼 lib/kanban.ts(KANBAN_COLUMNS·groupByStatus·nextStatus·initials·slaRemaining)·테스트 12종. 전이 매트릭스는 백엔드 단독 판정(프론트 미강제). type-check·lint(max-warnings 0)·build·test(200) PASS, dev /itsm/board 200.",
-      "completed_at": "2026-05-30T11:10:00+0900"
+      "completed_at": "2026-05-30T11:10:31+0900"
     },
     {
       "step": 5,
