@@ -88,7 +88,7 @@
       "status": "completed",
       "started_at": "2026-05-30T12:19:12+0900",
       "summary": "Playwright baseline 전면 갱신 + 디자인 v2 종합 보고서. 신규 6 spec(dashboard·kanban·gantt·dark-mode·notification·chart-gallery) + v1 baseline 9개 .png.bak 백업 후 v2 재생성(신규 6 baseline + 기존 home/itsm/itam/system/dialog 갱신). home.spec 어서션을 대시보드 재설계(step 3)에 맞게 갱신. 본 step 범위 15 test 전부 PASS(재실행 안정). docs/DESIGN_V2_REPORT.md(v1→v2 비교표·baseline 인덱스·UI_GUIDE v2 정착 매핑·잔존 한계·다음 단계) + CLAUDE.md 다크 모드 토글 안내 1줄. 적발 결함 F-PH16-BOARD(BoardPage mount 이중 fetch→첫 요청 abort→프로덕션 dataLoad 에러, 일반 /itsm 그리드는 단일 fetch 정상) 기록(운영 코드 수정 금지 준수, 별도 phase 교정 권고). meta-editor 2 spec 은 기존 F-PH13-E2E 로 범위 밖. baseline 갱신 전 20_notification.sql 수동 적용해 백엔드 기동. type-check·lint(max-warnings 0)·build·test(267) PASS.",
-      "completed_at": "2026-05-30T12:33:30+0900"
+      "completed_at": "2026-05-30T12:34:07+0900"
     }
   ],
   "created_at": "2026-05-30T09:28:29+0900"
