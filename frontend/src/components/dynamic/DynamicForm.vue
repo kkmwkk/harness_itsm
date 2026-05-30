@@ -15,7 +15,14 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import DatePicker from '@/components/common/DatePicker.vue';
+import DateRangePicker from '@/components/common/DateRangePicker.vue';
+import UserPicker from '@/components/common/UserPicker.vue';
+import FileUpload from '@/components/common/FileUpload.vue';
+import MarkdownEditor from '@/components/common/MarkdownEditor.vue';
+import SliderInput from '@/components/common/SliderInput.vue';
 import { buildFormSchema } from '@/composables/useFormSchema';
+import { widgetFor } from '@/lib/form-widget';
 import type { FormMeta, FieldMeta } from '@/types/meta-body';
 
 interface Props {
@@ -34,24 +41,27 @@ const { handleSubmit, errors, values, setFieldValue } = useForm({
   initialValues: props.initialValues,
 });
 
-/** plain Input 으로 렌더링하는 타입(코어 text/number + 다음 phase 정식 구현 전 placeholder). */
-const TEXT_LIKE: ReadonlyArray<FieldMeta['type']> = [
-  'text',
-  'number',
-  'user-picker',
-  'file',
-  'status',
-  'priority',
-];
-
 /** 폼 값을 컴포넌트 모델 타입으로 좁힌다 — 템플릿 안 union 캐스트(`|`)는 Vue 필터로 오인되므로 스크립트에서 처리. */
 function strValue(name: string): string | number | undefined {
   const v = values[name];
   return typeof v === 'string' || typeof v === 'number' ? v : undefined;
 }
+/** string 전용 위젯(DatePicker·MarkdownEditor·UserPicker·FileUpload)용 — number 를 배제한다. */
+function textValue(name: string): string | undefined {
+  const v = values[name];
+  return typeof v === 'string' ? v : undefined;
+}
+function numValue(name: string): number | undefined {
+  const v = values[name];
+  return typeof v === 'number' ? v : typeof v === 'string' && v !== '' ? Number(v) : undefined;
+}
 function boolValue(name: string): boolean | undefined {
   const v = values[name];
   return typeof v === 'boolean' ? v : undefined;
+}
+function rangeValue(name: string): { from?: string; to?: string } | null {
+  const v = values[name];
+  return v && typeof v === 'object' ? v : null;
 }
 
 function fieldSpanClass(f: FieldMeta): string {
@@ -88,9 +98,9 @@ const onSubmit = handleSubmit((v) => emit('submit', v));
           >*</span>
         </Label>
 
-        <!-- text / number / (placeholder: user-picker·file·status·priority — 다음 phase 정식 구현) -->
+        <!-- text / number / (options 없는 status·priority) -->
         <Input
-          v-if="TEXT_LIKE.includes(f.type)"
+          v-if="widgetFor(f) === 'input'"
           :id="f.name"
           :type="f.type === 'number' ? 'number' : 'text'"
           :placeholder="f.placeholder"
@@ -98,18 +108,74 @@ const onSubmit = handleSubmit((v) => emit('submit', v));
           @update:model-value="(val) => setFieldValue(f.name, val)"
         />
 
+        <!-- number + slider -->
+        <SliderInput
+          v-else-if="widgetFor(f) === 'slider'"
+          :id="f.name"
+          :model-value="numValue(f.name)"
+          :min="f.min"
+          :max="f.max"
+          :step="f.step"
+          @update:model-value="(val) => setFieldValue(f.name, val)"
+        />
+
+        <!-- textarea + markdown -->
+        <MarkdownEditor
+          v-else-if="widgetFor(f) === 'markdown'"
+          :id="f.name"
+          :placeholder="f.placeholder"
+          :model-value="textValue(f.name)"
+          @update:model-value="(val) => setFieldValue(f.name, val)"
+        />
+
         <!-- textarea -->
         <Textarea
-          v-else-if="f.type === 'textarea'"
+          v-else-if="widgetFor(f) === 'textarea'"
           :id="f.name"
           :placeholder="f.placeholder"
           :model-value="strValue(f.name)"
           @update:model-value="(val) => setFieldValue(f.name, val)"
         />
 
-        <!-- select -->
+        <!-- date -->
+        <DatePicker
+          v-else-if="widgetFor(f) === 'date'"
+          :id="f.name"
+          :placeholder="f.placeholder"
+          :model-value="textValue(f.name)"
+          @update:model-value="(val) => setFieldValue(f.name, val)"
+        />
+
+        <!-- date-range -->
+        <DateRangePicker
+          v-else-if="widgetFor(f) === 'date-range'"
+          :id="f.name"
+          :model-value="rangeValue(f.name)"
+          @update:model-value="(val) => setFieldValue(f.name, val)"
+        />
+
+        <!-- user-picker -->
+        <UserPicker
+          v-else-if="widgetFor(f) === 'user-picker'"
+          :id="f.name"
+          :placeholder="f.placeholder"
+          :model-value="textValue(f.name)"
+          @update:model-value="(val) => setFieldValue(f.name, val)"
+        />
+
+        <!-- file -->
+        <FileUpload
+          v-else-if="widgetFor(f) === 'file'"
+          :id="f.name"
+          :multiple="f.multiple"
+          :accept="f.accept"
+          :model-value="textValue(f.name)"
+          @update:model-value="(val) => setFieldValue(f.name, val)"
+        />
+
+        <!-- select / (options 있는 status·priority) -->
         <Select
-          v-else-if="f.type === 'select'"
+          v-else-if="widgetFor(f) === 'select'"
           :model-value="strValue(f.name)"
           @update:model-value="(val) => setFieldValue(f.name, val)"
         >
@@ -129,7 +195,7 @@ const onSubmit = handleSubmit((v) => emit('submit', v));
 
         <!-- radio -->
         <RadioGroup
-          v-else-if="f.type === 'radio'"
+          v-else-if="widgetFor(f) === 'radio'"
           :model-value="strValue(f.name)"
           @update:model-value="(val) => setFieldValue(f.name, val)"
         >
@@ -151,7 +217,7 @@ const onSubmit = handleSubmit((v) => emit('submit', v));
 
         <!-- checkbox -->
         <div
-          v-else-if="f.type === 'checkbox'"
+          v-else-if="widgetFor(f) === 'checkbox'"
           class="flex items-center gap-2"
         >
           <Checkbox
@@ -164,16 +230,6 @@ const onSubmit = handleSubmit((v) => emit('submit', v));
             class="text-[14px] font-normal"
           >{{ f.placeholder ?? '동의' }}</Label>
         </div>
-
-        <!-- date / date-range 등 (다음 phase 에서 DatePicker·DateRangePicker 정식 구현) -->
-        <Input
-          v-else
-          :id="f.name"
-          :type="f.type === 'date' ? 'date' : 'text'"
-          :placeholder="`(${f.type}) ${f.placeholder ?? ''}`"
-          :model-value="strValue(f.name)"
-          @update:model-value="(val) => setFieldValue(f.name, val)"
-        />
 
         <p
           v-if="f.helpText && !errors[f.name]"
