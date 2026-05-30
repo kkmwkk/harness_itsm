@@ -29,7 +29,10 @@
     {
       "step": 3,
       "name": "dashboard-redesign",
-      "status": "pending"
+      "status": "error",
+      "started_at": "2026-05-30T09:49:20+0900",
+      "error_message": "[3회 시도 후 실패] Step did not update status",
+      "failed_at": "2026-05-30T09:58:06+0900"
     },
     {
       "step": 4,
