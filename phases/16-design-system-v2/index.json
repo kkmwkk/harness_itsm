@@ -32,7 +32,7 @@
       "status": "completed",
       "started_at": "2026-05-30T10:50:38+0900",
       "summary": "HomePage 를 5 모듈 카드 그리드 → 운영 대시보드 위젯 그리드로 전면 교체. 백엔드 /api/dashboard/summary(인증 가드, 현재 사용자 기준 집계 — 기존 commit 의 컨트롤러 매핑을 full-path 로 정리) + dashboard 컴포넌트 7종(DashboardWelcome·KpiGrid·TicketByPriority/StatusCard·RecentActivityFeed·AssetByCategoryCard·MyWorkflowQueueCard) + useDashboard(30초 폴링). KpiCard 모듈 좌측 4px 액센트 보더·shadow-card 추가, 권한별 티켓 위젯 토글·ADMIN 추가 KPI, 0건 풍부한 빈 상태, 차트 다크 자동(chart-theme). type-check·lint(max-warnings 0)·build·test(188) PASS, 백엔드 dashboard 테스트 PASS.",
-      "completed_at": "2026-05-30T11:00:00+0900"
+      "completed_at": "2026-05-30T11:00:30+0900"
     },
     {
       "step": 4,
