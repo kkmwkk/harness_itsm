@@ -16,7 +16,7 @@
       "status": "completed",
       "started_at": "2026-05-30T09:35:59+0900",
       "summary": "useThemeStore(light/dark/system + localStorage 'itg.theme' 영구화 + prefers-color-scheme 감지, SSR/node 가드) + ThemeToggle.vue(TopBar 우측 3버튼 segmented) + main.ts 부팅 시 apply()로 FOUC 회피 + useThemeStore.spec(5 tests). type-check·lint·build·test(173) PASS, dev 200.",
-      "completed_at": "2026-05-30T09:39:00+0900"
+      "completed_at": "2026-05-30T09:39:13+0900"
     },
     {
       "step": 2,
