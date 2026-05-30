@@ -4,6 +4,7 @@ import { AgGridVue } from 'ag-grid-vue3';
 import { DataTable } from '@/components/ui/data-table';
 import Skeleton from '@/components/feedback/Skeleton.vue';
 import { useGridColumns } from '@/composables/useGridColumns';
+import { UI } from '@/lib/ui-messages';
 import type { GridMeta } from '@/types/meta-body';
 
 interface Props {
@@ -17,6 +18,8 @@ const props = defineProps<Props>();
 // 스켈레톤 컬럼 수 — 메타 컬럼 수 기준(최소 3). 첫 컬럼은 넓게 그려 실제 그리드와 결을 맞춘다.
 const skeletonCols = computed(() => Math.max(props.meta.columns.length, 3));
 const showSkeleton = computed(() => props.loading === true && props.rows.length === 0);
+// AG Grid 빈 상태(noRowsOverlay) — 카탈로그 메시지(토큰 색)로 친화 안내.
+const noRowsTemplate = `<span class="text-sm text-foreground-muted">${UI.empty.grid}</span>`;
 const emit = defineEmits<{ 'row-click': [row: TData] }>();
 
 const metaRef = toRef(props, 'meta');
@@ -76,6 +79,7 @@ function onAgRowClick(ev: { data?: TData }): void {
       :row-data="rows"
       :column-defs="agGridColDefs"
       row-selection="single"
+      :overlay-no-rows-template="noRowsTemplate"
       style="height: 100%; width: 100%"
       @row-clicked="onAgRowClick"
     />

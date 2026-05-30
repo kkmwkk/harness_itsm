@@ -6,6 +6,7 @@ import { MoreVerticalIcon, PencilIcon, XCircleIcon, ClockIcon } from '@lucide/vu
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/useAuthStore';
 import PriorityBadge from '@/components/common/PriorityBadge.vue';
+import Avatar from '@/components/common/Avatar.vue';
 import {
   Dialog,
   DialogContent,
@@ -19,7 +20,6 @@ import {
   KANBAN_COLUMNS,
   groupByStatus,
   nextStatus,
-  initials,
   slaRemaining,
 } from '@/lib/kanban';
 import type { TicketStatus, TicketSummary } from '@/types/ticket';
@@ -244,13 +244,11 @@ function slaFor(ticket: TicketSummary) {
 
           <div class="mt-2 flex items-center justify-between gap-2">
             <PriorityBadge :value="t.priority" />
-            <!-- assignee 아바타 (이니셜) -->
-            <span
-              :title="t.assigneeId ?? '미지정'"
-              class="inline-flex size-6 items-center justify-center rounded-full bg-itsm-soft text-[11px] font-semibold text-itsm"
-            >
-              {{ initials(t.assigneeId) }}
-            </span>
+            <!-- assignee 아바타 (이니셜·결정적 색) -->
+            <Avatar
+              :name="t.assigneeId"
+              size="sm"
+            />
           </div>
 
           <!-- SLA 잔여시간 (slaDueAt 제공 시) -->

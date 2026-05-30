@@ -69,7 +69,10 @@
     {
       "step": 8,
       "name": "rich-empty-states-and-module-identity",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-05-30T11:51:48+0900",
+      "summary": "풍부한 빈 상태 + 모듈 시각 아이덴티티 — feedback/EmptyState.vue(lucide 아이콘·모듈 soft 색 강조·설명·actionLabel 있을 때만 버튼, moduleVisual 정적 클래스로 동적 클래스 footgun 회피) + common/Avatar.vue(sm/md/lg·이니셜·결정적 해시 색) + lib/avatar.ts 순수 헬퍼(avatarInitials·avatarColorIndex·avatarColor, 토큰 기반 5색 팔레트)·avatar.spec(10 tests). PageHeader 에 module prop + route.meta.systemType 폴백 → 좌측 4px 컬러 띠·모듈 아이콘·컬러 강조. DynamicPage 가 module(props ?? meta.systemType) 을 PageHeader 로 전달하고 notPublished 카드를 EmptyState(Sparkles·메타관리 이동)로 교체. _DynamicRoute 가 route.meta.systemType 전달. router 모듈 라우트(itsm/itam/pms/common/system·상세·보드) 전부 systemType 추가. DataTable 0건 시 TableEmpty+EmptyState(Inbox·UI.empty.grid), AG Grid overlayNoRowsTemplate 친화 메시지. DynamicKanban 인라인 이니셜 → Avatar 교체. type-check·lint(max-warnings 0)·build·test(224) PASS.",
+      "completed_at": "2026-05-30T12:01:30+0900"
     },
     {
       "step": 9,

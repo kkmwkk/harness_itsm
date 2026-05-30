@@ -10,6 +10,9 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { toast } from 'vue-sonner';
+import { useRouter } from 'vue-router';
+import { SparklesIcon } from '@lucide/vue';
+import EmptyState from '@/components/feedback/EmptyState.vue';
 import { usePageMeta, type MetaIdent } from '@/composables/usePageMeta';
 import { usePageData } from '@/composables/usePageData';
 import { useDataMutation } from '@/composables/useDataMutation';
@@ -18,6 +21,7 @@ import { UI } from '@/lib/ui-messages';
 import DynamicGrid from './DynamicGrid.vue';
 import DynamicForm from './DynamicForm.vue';
 import type { PageMetaBody, ActionMeta } from '@/types/meta-body';
+import type { SystemType } from '@/types/meta';
 
 /**
  * 메타 한 건으로 화면 전체를 자동 구성하는 No-code 진입 컴포넌트 (ADR-004).
@@ -34,8 +38,12 @@ interface Props {
   rows?: unknown[];
   /** 폼 submit 시 payload 에 병합할 기본값 (예: 자산 분류 categoryCode). 폼 입력값이 우선. */
   submitDefaults?: Record<string, unknown>;
+  /** 모듈 시각 아이덴티티(헤더 띠·아이콘). 미지정 시 로드된 메타의 systemType 으로 폴백. */
+  module?: SystemType;
 }
 const props = defineProps<Props>();
+
+const router = useRouter();
 
 // 그리드 행 클릭을 부모(라우트 래퍼)로 전파 — 상세 라우팅은 meta-driven 으로 부모가 결정(ADR-004).
 const emit = defineEmits<{ 'row-click': [row: unknown] }>();
@@ -138,7 +146,10 @@ async function onFormSubmit(values: Record<string, unknown>): Promise<void> {
 
 <template>
   <section class="space-y-4">
-    <PageHeader :title="meta?.title">
+    <PageHeader
+      :title="meta?.title"
+      :module="props.module ?? meta?.systemType"
+    >
       <template
         v-if="body?.actions?.length"
         #actions
@@ -170,13 +181,15 @@ async function onFormSubmit(values: Record<string, unknown>): Promise<void> {
       {{ UI.loading.meta }}
     </p>
     <Card v-else-if="notPublished">
-      <CardContent class="py-8 text-center space-y-2">
-        <p class="text-base font-semibold">
-          {{ UI.empty.metaNotPublished }}
-        </p>
-        <p class="text-xs text-foreground-subtle">
-          {{ UI.empty.metaNotPublishedHint }}
-        </p>
+      <CardContent class="py-2">
+        <EmptyState
+          :icon="SparklesIcon"
+          :title="UI.empty.metaNotPublished"
+          :description="UI.empty.metaNotPublishedHint"
+          action-label="메타 관리로"
+          :module="props.module ?? meta?.systemType"
+          @action="router.push('/system/meta-editor')"
+        />
       </CardContent>
     </Card>
     <Card v-else-if="metaError">
