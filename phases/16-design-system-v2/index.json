@@ -7,7 +7,8 @@
       "name": "design-language-and-tokens-v2",
       "status": "completed",
       "started_at": "2026-05-30T09:28:29+0900",
-      "summary": "UI_GUIDE v2 전면 개정(정보밀도·모듈별 컬러·마이크로 인터랙션·다크 우선) + tokens.css v2(모듈 컬러 5종·elevation·motion·spacing·tabular-nums, light/dark 전체 매핑) + base.css(tabular-nums·prefers-reduced-motion) + module-color.ts 헬퍼·단위테스트. type-check·lint·build·test(168) PASS."
+      "summary": "UI_GUIDE v2 전면 개정(정보밀도·모듈별 컬러·마이크로 인터랙션·다크 우선) + tokens.css v2(모듈 컬러 5종·elevation·motion·spacing·tabular-nums, light/dark 전체 매핑) + base.css(tabular-nums·prefers-reduced-motion) + module-color.ts 헬퍼·단위테스트. type-check·lint·build·test(168) PASS.",
+      "completed_at": "2026-05-30T09:35:59+0900"
     },
     {
       "step": 1,
