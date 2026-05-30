@@ -44,6 +44,8 @@ class WorkflowEngineServiceTest {
     private WorkflowInstanceStepRepository stepRepo;
     @Mock
     private TicketRepository ticketRepo;
+    @Mock
+    private com.nkia.itg.system.notification.service.NotificationService notificationService;
 
     @InjectMocks
     private WorkflowEngineService engine;

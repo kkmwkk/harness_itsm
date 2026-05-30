@@ -11,6 +11,8 @@ import com.nkia.itg.itsm.workflow.entity.WorkflowInstanceStep;
 import com.nkia.itg.itsm.workflow.repository.WorkflowDefinitionRepository;
 import com.nkia.itg.itsm.workflow.repository.WorkflowInstanceRepository;
 import com.nkia.itg.itsm.workflow.repository.WorkflowInstanceStepRepository;
+import com.nkia.itg.system.notification.domain.NotificationType;
+import com.nkia.itg.system.notification.service.NotificationService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +43,7 @@ public class WorkflowEngineService {
     private final WorkflowInstanceRepository instanceRepo;
     private final WorkflowInstanceStepRepository stepRepo;
     private final TicketRepository ticketRepo;
+    private final NotificationService notificationService;
 
     /** 티켓 생성 시 호출 — request_type 의 default_workflow 로 인스턴스 시작 (current_step 0). */
     public WorkflowInstance start(Ticket ticket, String workflowDefCode) {
@@ -54,8 +57,10 @@ public class WorkflowEngineService {
                 .ticketId(ticket.getId())
                 .currentStepIndex(0)
                 .build());
-        stepRepo.save(newStepRow(instance.getId(), 0, def.stepAt(0)));
+        Map<String, Object> firstStep = def.stepAt(0);
+        stepRepo.save(newStepRow(instance.getId(), 0, firstStep));
         ticket.linkWorkflowInstance(instance.getId());
+        notifyStepAssignees(ticket.getId(), ticket.getTicketNo(), firstStep);
         return instance;
     }
 
@@ -150,7 +155,9 @@ public class WorkflowEngineService {
                 } else {
                     int next = stepIndex + 1;
                     instance.advance(next);
-                    stepRepo.save(newStepRow(instance.getId(), next, def.stepAt(next)));
+                    Map<String, Object> nextStep = def.stepAt(next);
+                    stepRepo.save(newStepRow(instance.getId(), next, nextStep));
+                    notifyStepAssignees(instance.getTicketId(), ticketNoOf(instance), nextStep);
                 }
             }
             case CONFIRM -> {
@@ -160,9 +167,36 @@ public class WorkflowEngineService {
             case REJECT -> instance.reject();
             case REOPEN -> {
                 instance.reopen();
-                stepRepo.save(newStepRow(instance.getId(), 0, def.stepAt(0)));
+                Map<String, Object> firstStep = def.stepAt(0);
+                stepRepo.save(newStepRow(instance.getId(), 0, firstStep));
+                notifyStepAssignees(instance.getTicketId(), ticketNoOf(instance), firstStep);
             }
         }
+    }
+
+    /**
+     * 새 단계 진입 시 단계 담당 역할(assignee_role)의 사용자에게 알림 생성 (NotificationService 통일).
+     * 역할 미지정 단계면 생성하지 않는다. body 는 plain text (티켓 번호 + 단계명).
+     */
+    private void notifyStepAssignees(Long ticketId, String ticketNo, Map<String, Object> stepDef) {
+        String roleCode = assigneeRole(stepDef);
+        if (roleCode == null) {
+            return;
+        }
+        String ticketRef = ticketNo != null ? ticketNo : ("#" + ticketId);
+        String step = stepName(stepDef);
+        notificationService.notifyRole(
+                roleCode,
+                NotificationType.WORKFLOW_STEP_ASSIGNED,
+                "새 워크플로우 단계가 배정되었습니다",
+                "티켓 " + ticketRef + " 의 '" + step + "' 단계를 처리해 주세요.",
+                "/itsm/" + ticketId);
+    }
+
+    private String ticketNoOf(WorkflowInstance instance) {
+        return ticketRepo.findById(instance.getTicketId())
+                .map(Ticket::getTicketNo)
+                .orElse(null);
     }
 
     private void closeTicket(WorkflowInstance instance) {

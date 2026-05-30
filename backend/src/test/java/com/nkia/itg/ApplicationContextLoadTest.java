@@ -10,6 +10,7 @@ import com.nkia.itg.pms.project.repository.ProjectRepository;
 import com.nkia.itg.pms.project.repository.TaskRepository;
 import com.nkia.itg.system.dept.repository.DepartmentRepository;
 import com.nkia.itg.system.menu.repository.MenuRepository;
+import com.nkia.itg.system.notification.repository.NotificationRepository;
 import com.nkia.itg.system.permission.repository.PermissionRepository;
 import com.nkia.itg.system.role.repository.RoleRepository;
 import com.nkia.itg.system.user.repository.UserRepository;
@@ -59,6 +60,9 @@ class ApplicationContextLoadTest {
 
     @MockitoBean
     private MenuRepository menuRepository;
+
+    @MockitoBean
+    private NotificationRepository notificationRepository;
 
     @MockitoBean
     private WorkflowDefinitionRepository workflowDefinitionRepository;

@@ -24,6 +24,13 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '대시보드' },
       },
       {
+        // 절대 경로 자식 — AppLayout 안에서 렌더되며 URL 은 /notifications.
+        path: '/notifications',
+        name: 'notifications',
+        component: () => import('@/pages/NotificationsPage.vue'),
+        meta: { title: '알림' },
+      },
+      {
         path: 'itsm',
         name: 'itsm',
         component: () => import('@/pages/_DynamicRoute.vue'),
