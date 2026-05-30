@@ -18,6 +18,8 @@
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* 숫자 자릿수 통일 — KPI·그리드 수치 정렬 (UI_GUIDE §4 v2) */
+    font-feature-settings: var(--font-feature-tabular);
   }
   h1 {
     font-size: 28px;
@@ -40,5 +42,17 @@
   *:focus-visible {
     outline: 2px solid var(--color-ring);
     outline-offset: 2px;
+  }
+}
+
+/* 모션 민감 사용자 — 모든 애니메이션·트랜지션 사실상 제거 (UI_GUIDE §7·§11) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

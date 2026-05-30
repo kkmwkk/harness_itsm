@@ -2,16 +2,63 @@
   "project": "Polestar10 ITG v2",
   "phase": "16-design-system-v2",
   "steps": [
-    { "step": 0,  "name": "design-language-and-tokens-v2", "status": "pending" },
-    { "step": 1,  "name": "dark-mode-and-theme-switcher", "status": "pending" },
-    { "step": 2,  "name": "charts-and-kpi-components", "status": "pending" },
-    { "step": 3,  "name": "dashboard-redesign", "status": "pending" },
-    { "step": 4,  "name": "kanban-board", "status": "pending" },
-    { "step": 5,  "name": "gantt-timeline", "status": "pending" },
-    { "step": 6,  "name": "micro-interactions", "status": "pending" },
-    { "step": 7,  "name": "notification-center", "status": "pending" },
-    { "step": 8,  "name": "rich-empty-states-and-module-identity", "status": "pending" },
-    { "step": 9,  "name": "form-widget-enhancement", "status": "pending" },
-    { "step": 10, "name": "playwright-baseline-and-final-report", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "design-language-and-tokens-v2",
+      "status": "completed",
+      "started_at": "2026-05-30T09:28:29+0900",
+      "summary": "UI_GUIDE v2 전면 개정(정보밀도·모듈별 컬러·마이크로 인터랙션·다크 우선) + tokens.css v2(모듈 컬러 5종·elevation·motion·spacing·tabular-nums, light/dark 전체 매핑) + base.css(tabular-nums·prefers-reduced-motion) + module-color.ts 헬퍼·단위테스트. type-check·lint·build·test(168) PASS."
+    },
+    {
+      "step": 1,
+      "name": "dark-mode-and-theme-switcher",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "charts-and-kpi-components",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "dashboard-redesign",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "kanban-board",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "gantt-timeline",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "name": "micro-interactions",
+      "status": "pending"
+    },
+    {
+      "step": 7,
+      "name": "notification-center",
+      "status": "pending"
+    },
+    {
+      "step": 8,
+      "name": "rich-empty-states-and-module-identity",
+      "status": "pending"
+    },
+    {
+      "step": 9,
+      "name": "form-widget-enhancement",
+      "status": "pending"
+    },
+    {
+      "step": 10,
+      "name": "playwright-baseline-and-final-report",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-05-30T09:28:29+0900"
 }
