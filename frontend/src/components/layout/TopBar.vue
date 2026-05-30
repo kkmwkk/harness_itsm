@@ -6,6 +6,7 @@ import { storeToRefs } from 'pinia';
 import { useLayoutStore } from '@/stores/useLayoutStore';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useMenuStore } from '@/stores/useMenuStore';
+import ThemeToggle from '@/components/layout/ThemeToggle.vue';
 
 const layout = useLayoutStore();
 const auth = useAuthStore();
@@ -44,6 +45,7 @@ function onLogout() {
       Polestar10 ITG
     </RouterLink>
     <div class="ml-auto flex items-center gap-1">
+      <ThemeToggle />
       <span
         class="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm text-foreground"
       >
